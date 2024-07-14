@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "express": "^4.19.2",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "nodejs-web-app1",
+  "version": "0.0.0",
+  "description": "NodejsWebApp1",
+  "main": "server.js",
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.21.0",
+    "express": "^4.19.2",
+    "mssql": "^11.0.1"
+  },
+  "eslintConfig": {},
+  "express": {},
+  "mssql": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "license": "ISC"
+}
