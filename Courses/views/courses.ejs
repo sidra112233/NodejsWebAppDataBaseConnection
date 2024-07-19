@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+</head>
+<body>
+    <h1>List of Courses</h1>
+
+    <ul>
+        <% courses.forEach(course => { %>
+            <li>
+                <strong>Course ID:</strong> <%= course.course_id %><br>
+                <strong>Name:</strong> <%= course.course_name %><br>
+                <strong>Category:</strong> <%= course.category %><br>
+                <strong>Difficulty:</strong> <%= course.difficulty %><br>
+                <strong>Description:</strong> <%= course.description %><br>
+                <strong>Payment Status:</strong> <%= course.payment_status %><br>
+                <strong>Payment Amount:</strong> <%= course.payment_amount %><br>
+                <strong>Payment Date:</strong> <%= course.payment_date %><br>
+                <strong>Enrolled Students:</strong> <%= course.enrolled_students %><br>
+                <strong>Start Date:</strong> <%= course.start_date %><br>
+                <strong>Duration:</strong> <%= course.duration %> days<br>
+                <br>
+            </li>
+        <% }); %>
+    </ul>
+</body>
+</html>

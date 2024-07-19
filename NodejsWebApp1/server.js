@@ -1,39 +1,34 @@
+const sql = require('mssql');
+const express = require('express');
+const app = express();
+const port = 3000;
 
-var express = require('express');
-var app = express();
+const config = {
+    server: 'DESKTOP-5NP2PDK\\MSSQLSERVER2022',          // Your server name or IP address
+    database: 'LearnCodePro',// Your database name
+    driver: 'msnodesqlv8',
+    user: 'Sidra',
+    password: 'Sidra',
+    options: {
+        encrypt: true,             // Use encryption
+        trustServerCertificate: true // Trust the server certificate
+    }
+};
 
-app.get('/', function (req, res) {
+async function executeQuery() {
+    try {
+        // Connect to the database
+        await sql.connect(config);
 
-    var sql = require("mssql");
+        // Query database
+        const result = await sql.query`SELECT * FROM Student`; // Replace YourTableName with your actual table name
+        console.log(result.recordset); // Output the result set
 
-    // config for your database
-    var config = {
-        user: 'Sidra',
-        password: 'Sidra',
-        server: 'DESKTOP-5NP2PDK\MSSQLSERVER2022',
-        database: 'LearnCodePro'
-    };
+    } catch (err) {
+        console.error('Error querying database:', err);
+    } 
+}
 
-    // connect to your database
-    sql.connect(config, function (err) {
+// Call the function to execute the query
+executeQuery();
 
-        if (err) console.log(err);
-
-        // create Request object
-        var request = new sql.Request();
-
-        // query to the database and get the records
-        request.query('select * from Student', function (err, recordset) {
-
-            if (err) console.log(err)
-
-            // send records as a response
-            res.send(recordset);
-
-        });
-    });
-});
-
-var server = app.listen(3000, function () {
-    console.log('Server is running..');
-});

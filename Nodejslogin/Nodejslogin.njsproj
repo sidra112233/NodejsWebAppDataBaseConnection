@@ -2,17 +2,16 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>NodejsWebApp1</Name>
-    <RootNamespace>NodejsWebApp1</RootNamespace>
+    <Name>Nodejslogin</Name>
+    <RootNamespace>Nodejslogin</RootNamespace>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>a988198b-baeb-43e7-97ec-d0cf0255dc9b</ProjectGuid>
+    <ProjectGuid>d071bc68-7165-461e-b126-6eb11a62845e</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>index.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -29,11 +28,16 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="material.js" />
+    <Content Include="index.js" />
     <Content Include="package.json" />
-    <Content Include="quiz.js" />
+    <Content Include="public\stylesheet\style.css" />
     <Content Include="README.md" />
-    <Content Include="server.js" />
+    <Content Include="views\login.ejs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="public\stylesheet\" />
+    <Folder Include="views\" />
+    <Folder Include="public\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

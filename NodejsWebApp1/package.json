@@ -13,7 +13,7 @@
   "express": {},
   "mssql": {},
   "scripts": {
-    "start": "node server.js"
+    "start": "node quiz.js"
   },
   "keywords": [],
   "license": "ISC"

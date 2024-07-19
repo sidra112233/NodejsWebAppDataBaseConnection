@@ -1,0 +1,16 @@
+{
+  "name": "courses",
+  "version": "0.0.0",
+  "description": "Courses",
+  "main": "courses.js",
+  "author": {
+    "name": ""
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "mssql": "^11.0.1"
+  },
+  "eslintConfig": {}
+}
