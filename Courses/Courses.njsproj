@@ -29,9 +29,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="courses.js" />
+    <Content Include="enrollment.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="views\courses.ejs" />
+    <Content Include="views\enroll.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="views\" />
