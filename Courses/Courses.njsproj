@@ -34,6 +34,8 @@
     <Content Include="README.md" />
     <Content Include="views\courses.ejs" />
     <Content Include="views\enroll.ejs" />
+    <Content Include="views\materials.ejs" />
+    <Content Include="views\modules.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="views\" />

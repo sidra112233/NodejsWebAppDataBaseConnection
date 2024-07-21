@@ -1,0 +1,15 @@
+<!-- materials.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Materials</title>
+</head>
+<body>
+    <h1>Materials</h1>
+    <ul>
+        <% materials.forEach(material => { %>
+            <li><a href="<%= material.link %>"><%= material.title %></a></li>
+        <% }); %>
+    </ul>
+</body>
+</html>

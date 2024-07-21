@@ -1,34 +1,19 @@
 <!-- courses.ejs -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Courses with Modules</title>
+    <title>Courses</title>
 </head>
 <body>
-  <h1>Online Courses</h1>
-
-  <% courses.forEach(course => { %>
-    <div>
-      <h2><%= course.course_name %></h2>
-      <p><%= course.description %></p>
-      <h3>Modules:</h3>
-      <ul>
-        <% course.modules.forEach(module => { %>
-          <li>
-            <strong><%= module.module_name %></strong>
-            <p><%= module.description %></p>
-            <ul>
-              <% module.materials.forEach(material => { %>
-                <li><a href="<%= material.link %>"><%= material.title %></a></li>
-              <% }) %>
-            </ul>
-          </li>
-        <% }) %>
-      </ul>
-    </div>
-  <% }) %>
+    <h1>Courses</h1>
+    <ul>
+        <% courses.forEach(course => { %>
+            <li>
+                <h2><%= course.course_name %></h2>
+                <p><%= course.description %></p>
+                <a href="/courses/<%= course.course_id %>/modules">View Modules</a>
+            </li>
+        <% }); %>
+    </ul>
 </body>
 </html>
