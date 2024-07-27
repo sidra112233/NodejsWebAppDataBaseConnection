@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Application</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .question, .options {
+            width: 45%;
+        }
+        .next-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz Application</h1>
+    <form action="/next" method="POST">
+        <input type="hidden" name="student_id" value="<%= student_id %>">
+
+        <div class="container">
+            <div class="question">
+                <h3><%= questions[currentQuestionIndex].question_text %></h3>
+            </div>
+            <div class="options">
+                <% questions[currentQuestionIndex].options.forEach((option, index) => { %>
+                    <input type="radio" name="answers[<%= questions[currentQuestionIndex].question_id %>]" value="<%= index + 1 %>" required> <%= option %><br>
+                <% }) %>
+            </div>
+        </div>
+        <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
+            <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
+        </button>
+    </form>
+</body>
+</html>

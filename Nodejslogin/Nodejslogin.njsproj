@@ -11,7 +11,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d071bc68-7165-461e-b126-6eb11a62845e</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>signin.js</StartupFile>
+    <StartupFile>server.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,13 +28,12 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="signup.js" />
     <Content Include="package.json" />
     <Content Include="public\stylesheet\style.css" />
     <Content Include="README.md" />
-    <Content Include="signin.js" />
-    <Content Include="views\signin.ejs" />
-    <Content Include="views\signup.ejs" />
+    <Content Include="server.js" />
+    <Content Include="views\login.ejs" />
+    <Content Include="views\register.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\stylesheet\" />

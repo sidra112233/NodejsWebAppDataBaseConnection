@@ -11,26 +11,40 @@ const config = {
         trustServerCertificate: true // Trust the server certificate
     }
 };
-// Function to insert data into the Materials table
-async function fetchMaterials() {
+const sql = require('mssql');
+// Function to fetch questions from the database
+async function fetchQuestions() {
     try {
-        // Connect to the MSSQL database
-        await sql.connect(config);
-
-        // SQL query to fetch data from the Materials table
-        const query = 'SELECT * FROM Materials;';
-
-        // Execute the query
-        const result = await sql.query(query);
-
-        // Display fetched data
-        console.log('Material data:');
-        console.table(result.recordset); // Display fetched data in a table format
-
+        let pool = await sql.connect(config);
+        let result = await pool.request().query('SELECT * FROM QuizQuestions');
+        return result.recordset;
     } catch (err) {
-        console.error('Error fetching material data:', err.message);
-    } 
+        console.error('SQL error', err);
+    }
 }
 
-// Call the fetchMaterials function
-fetchMaterials();
+// Function to store quiz score in the database
+async function storeScore(userId, score) {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request()
+            .input('student_id', sql.Int, userId)
+            .input('score', sql.Int, score)
+            .query('INSERT INTO QuizSubmissions (student_id, score) VALUES (@student_id, @score)');
+    } catch (err) {
+        console.error('SQL error', err);
+    }
+}
+
+// Example usage
+(async () => {
+    let questions = await fetchQuestions();
+    console.log('Fetched Questions:', questions);
+
+    // Simulate quiz submission
+    let student_id = 1; // Example user ID
+    let score = 85; // Example score
+    await storeScore(student_id, score);
+    console.log('Score stored successfully');
+})();
+

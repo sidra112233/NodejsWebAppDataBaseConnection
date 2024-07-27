@@ -1,0 +1,31 @@
+/* public/sidebar.css */
+
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    overflow-y: auto;
+}
+
+    .sidebar h2 {
+        margin-top: 0;
+        font-size: 1.5rem;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        .sidebar ul li {
+            padding: 10px 0;
+        }
+
+.show-sidebar {
+    left: 0;
+}

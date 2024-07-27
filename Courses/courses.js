@@ -1,36 +1,34 @@
 const express = require('express');
-const app = express();
 const sql = require('mssql');
+const config = require('./config'); // Ensure the correct path
 
-const config = {
-    server: 'DESKTOP-5NP2PDK\\MSSQLSERVER2022',          // Your server name or IP address
-    database: 'LearnCodePro',// Your database name
-    driver: 'msnodesqlv8',
-    user: 'Sidra',
-    password: 'Sidra',
-    options: {
-        encrypt: true,             // Use encryption
-        trustServerCertificate: true // Trust the server certificate
-    }
-};
+const app = express();
+
+// Configure Express to use EJS as the view engine
+app.set('view engine', 'ejs');
+
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Route to fetch all courses
-app.get('/courses', async (req, res) => {
+// Route for home page to show courses in sidebar and initial content
+app.get('/', async (req, res) => {
     try {
         const pool = await sql.connect(config);
-
-        // Fetch all courses
         const coursesResult = await pool.request().query(`
             SELECT course_id, course_name, description
             FROM Courses
         `);
 
-        // Render EJS template with courses data
-        res.render('courses', { courses: coursesResult.recordset });
+        res.render('layout', {
+            courses: coursesResult.recordset,
+            modules: [],
+            materials: [],
+            courseName: '',
+            courseDescription: '',
+            selectedModule: ''
+        });
     } catch (err) {
-        console.error('Error fetching courses:', err);
+        console.error('Error fetching courses:', err.message, err.stack);
         res.status(500).send('Error fetching courses');
     }
 });
@@ -41,6 +39,18 @@ app.get('/courses/:courseId/modules', async (req, res) => {
         const courseId = req.params.courseId;
         const pool = await sql.connect(config);
 
+        // Fetch the course name and description
+        const courseResult = await pool.request().query(`
+            SELECT course_name, description
+            FROM Courses
+            WHERE course_id = ${courseId}
+        `);
+        if (courseResult.recordset.length === 0) {
+            throw new Error('Course not found');
+        }
+        const courseName = courseResult.recordset[0].course_name;
+        const courseDescription = courseResult.recordset[0].description;
+
         // Fetch modules for the specific course
         const modulesResult = await pool.request().query(`
             SELECT module_id, module_name, description
@@ -48,10 +58,14 @@ app.get('/courses/:courseId/modules', async (req, res) => {
             WHERE course_id = ${courseId}
         `);
 
-        // Render EJS template with modules data
-        res.render('modules', { modules: modulesResult.recordset });
+        // Render EJS template with modules data, course name, and course description
+        res.json({
+            courseName,
+            courseDescription,
+            modules: modulesResult.recordset
+        });
     } catch (err) {
-        console.error('Error fetching modules:', err);
+        console.error('Error fetching modules:', err.message, err.stack);
         res.status(500).send('Error fetching modules');
     }
 });
@@ -70,19 +84,17 @@ app.get('/modules/:moduleId/materials', async (req, res) => {
         `);
 
         // Render EJS template with materials data
-        res.render('materials', { materials: materialsResult.recordset });
+        res.json({
+            materials: materialsResult.recordset
+        });
     } catch (err) {
-        console.error('Error fetching materials:', err);
+        console.error('Error fetching materials:', err.message, err.stack);
         res.status(500).send('Error fetching materials');
     }
 });
 
-
-
-// Configure Express to use EJS as the view engine
-app.set('view engine', 'ejs');
 // Start the server
-const PORT = 3000;
+const PORT = 2000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

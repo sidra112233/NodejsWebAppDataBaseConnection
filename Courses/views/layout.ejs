@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Management</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 15px;
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            transition: width 0.3s ease;
+            position: relative; /* Ensure relative positioning for adjustments */
+            height: auto; /* Auto height to accommodate dynamic content */
+        }
+        #sidebar.collapsed {
+            width: 300px; /* Adjust width if needed */
+        }
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #sidebar ul li {
+            margin-bottom: 10px;
+        }
+        #sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+        #content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto; /* Ensure content area can scroll */
+        }
+        #module-list {
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Courses</h2>
+        <ul id="course-list">
+            <% courses.forEach(course => { %>
+                <li>
+                    <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
+                </li>
+            <% }) %>
+        </ul>
+        <div id="module-list">
+            <h3>Modules</h3>
+            <ul id="module-items"></ul>
+        </div>
+    </div>
+    <div id="content">
+        <h2 id="course-name"><%= courseName %></h2>
+        <p id="course-description"><%= courseDescription %></p>
+        <ul id="material-list">
+            <% materials.forEach(material => { %>
+                <li><a href="<%= material.link %>"><%= material.title %></a></li>
+            <% }) %>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const courseList = document.getElementById('course-list');
+            const moduleList = document.getElementById('module-list');
+            const moduleItems = document.getElementById('module-items');
+            const courseNameElement = document.getElementById('course-name');
+            const courseDescriptionElement = document.getElementById('course-description');
+            const materialList = document.getElementById('material-list');
+            const sidebar = document.getElementById('sidebar');
+
+            courseList.addEventListener('click', async (event) => {
+                if (event.target && event.target.classList.contains('course-link')) {
+                    event.preventDefault();
+                    const courseId = event.target.dataset.courseId;
+
+                    // Fetch modules for the selected course
+                    const response = await fetch(`/courses/${courseId}/modules`);
+                    const data = await response.json();
+
+                    // Update sidebar and content with modules
+                    courseNameElement.textContent = data.courseName;
+                    courseDescriptionElement.textContent = data.courseDescription;
+
+                    moduleItems.innerHTML = '';
+                    data.modules.forEach(module => {
+                        moduleItems.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
+                    });
+                    moduleList.style.display = 'block'; // Show module list
+                    sidebar.classList.add('collapsed'); // Optionally adjust sidebar width
+
+                    // Clear materials
+                    materialList.innerHTML = '';
+                }
+            });
+
+            moduleList.addEventListener('click', async (event) => {
+                if (event.target && event.target.classList.contains('module-link')) {
+                    event.preventDefault();
+                    const moduleId = event.target.dataset.moduleId;
+
+                    // Fetch materials for the selected module
+                    const response = await fetch(`/modules/${moduleId}/materials`);
+                    const data = await response.json();
+
+                    // Update content with materials
+                    materialList.innerHTML = '<h3>Materials</h3><ul>';
+                    data.materials.forEach(material => {
+                        materialList.innerHTML += `<li><a href="${material.link}">${material.title}</a></li>`;
+                    });
+                    materialList.innerHTML += '</ul>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
