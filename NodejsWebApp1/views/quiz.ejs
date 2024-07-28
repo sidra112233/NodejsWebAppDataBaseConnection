@@ -24,13 +24,21 @@
     <form action="/next" method="POST">
         <input type="hidden" name="student_id" value="<%= student_id %>">
 
+        <!-- Use a hidden input to store the current question ID -->
+        <input type="hidden" name="currentQuestionId" value="<%= questions[currentQuestionIndex].question_id %>">
+
         <div class="container">
             <div class="question">
                 <h3><%= questions[currentQuestionIndex].question_text %></h3>
             </div>
             <div class="options">
                 <% questions[currentQuestionIndex].options.forEach((option, index) => { %>
-                    <input type="radio" name="answers[<%= questions[currentQuestionIndex].question_id %>]" value="<%= index + 1 %>" required> <%= option %><br>
+                    <label>
+                        <!-- Radio buttons with the name attribute using the question ID -->
+                        <input type="radio" name="answers[<%= questions[currentQuestionIndex].question_id %>]" value="<%= index + 1 %>" required>
+                        <%= option %>
+                    </label>
+                    <br>
                 <% }) %>
             </div>
         </div>

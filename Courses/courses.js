@@ -1,6 +1,6 @@
 const express = require('express');
 const sql = require('mssql');
-const config = require('./config'); // Ensure the correct path
+const config = require('./config'); // Ensure the correct path to your config
 
 const app = express();
 
@@ -25,7 +25,8 @@ app.get('/', async (req, res) => {
             materials: [],
             courseName: '',
             courseDescription: '',
-            selectedModule: ''
+            moduleName: '',
+            moduleDescription: ''
         });
     } catch (err) {
         console.error('Error fetching courses:', err.message, err.stack);
@@ -53,12 +54,11 @@ app.get('/courses/:courseId/modules', async (req, res) => {
 
         // Fetch modules for the specific course
         const modulesResult = await pool.request().query(`
-            SELECT module_id, module_name, description
+            SELECT module_id, module_name
             FROM Modules
             WHERE course_id = ${courseId}
         `);
 
-        // Render EJS template with modules data, course name, and course description
         res.json({
             courseName,
             courseDescription,
@@ -70,28 +70,43 @@ app.get('/courses/:courseId/modules', async (req, res) => {
     }
 });
 
-// Route to fetch materials of a specific module
-app.get('/modules/:moduleId/materials', async (req, res) => {
+// Route to fetch module details and materials
+app.get('/modules/:moduleId', async (req, res) => {
     try {
         const moduleId = req.params.moduleId;
         const pool = await sql.connect(config);
 
+        // Fetch module details
+        const moduleResult = await pool.request().query(`
+            SELECT module_name, description
+            FROM Modules
+            WHERE module_id = ${moduleId}
+        `);
+
+        if (moduleResult.recordset.length === 0) {
+            throw new Error('Module not found');
+        }
+        const moduleName = moduleResult.recordset[0].module_name;
+        const moduleDescription = moduleResult.recordset[0].description;
+
         // Fetch materials for the specific module
         const materialsResult = await pool.request().query(`
-            SELECT material_id, title, link
+            SELECT material_id, title, link, description
             FROM Materials
             WHERE module_id = ${moduleId}
         `);
 
-        // Render EJS template with materials data
         res.json({
+            module_name: moduleName,
+            description: moduleDescription,
             materials: materialsResult.recordset
         });
     } catch (err) {
-        console.error('Error fetching materials:', err.message, err.stack);
-        res.status(500).send('Error fetching materials');
+        console.error('Error fetching module details or materials:', err.message, err.stack);
+        res.status(500).send('Error fetching module details or materials');
     }
 });
+
 
 // Start the server
 const PORT = 2000;

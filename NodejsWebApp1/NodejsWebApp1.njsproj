@@ -29,7 +29,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="config.js" />
-    <Content Include="material.js" />
     <Content Include="package.json" />
     <Content Include="public\styles.css" />
     <Content Include="quiz.js" />

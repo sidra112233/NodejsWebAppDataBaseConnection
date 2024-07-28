@@ -4,7 +4,7 @@ const sql = require('mssql');
 const app = express();
 
 const dbConfig = {
-    server: 'DESKTOP-5NP2PDK\\MSSQLSERVER2022',          // Your server name or IP address
+    server: 'DESKTOP-O5M8LH7\\SQLEXPRESS',          // Your server name or IP address
     database: 'LearnCodePro',// Your database name
     driver: 'msnodesqlv8',
     user: 'Sidra',
@@ -58,7 +58,7 @@ app.get('/quiz', async (req, res) => {
 });
 
 app.post('/next', async (req, res) => {
-    const { action, answers } = req.body;
+    const { action, answers, currentQuestionId } = req.body;
     const student_id = req.session.student_id;
     const quiz_id = req.session.quiz_id;
     const questions = await getQuestionsFromDatabase();
@@ -69,15 +69,32 @@ app.post('/next', async (req, res) => {
         req.session.scores = [];
     }
 
-    // Check if an answer was provided for the current question
-    if (answers) {
-        const questionId = questions[currentQuestionIndex].question_id;
-        const selectedOption = parseInt(answers[questionId]);
-        const correctOption = questions[currentQuestionIndex].correct_option;
+    // Log incoming data for debugging
+    console.log('Incoming data:', req.body);
 
-        // Add or subtract points based on whether the answer was correct or not
-        const score = selectedOption === correctOption ? 10 : -10; // 10 points for correct, -10 for incorrect
-        req.session.scores[currentQuestionIndex] = score;
+    // Check if an answer was provided
+    if (answers && currentQuestionId) {
+        // Convert answers array to object
+        const answersObj = Array.isArray(answers) ? { [currentQuestionId]: answers[0] } : answers;
+
+        const selectedOptionId = parseInt(answersObj[currentQuestionId], 10); // Convert to integer
+        const currentQuestion = questions.find(q => q.question_id == currentQuestionId);
+        const correctOptionId = currentQuestion.correct_option;
+
+        // Log values for debugging
+        console.log(`Question ID: ${currentQuestionId}`);
+        console.log(`Selected Option ID: ${answersObj[currentQuestionId]}`); // Check raw value
+        console.log(`Parsed Selected Option ID: ${selectedOptionId}`);
+        console.log(`Correct Option ID: ${correctOptionId}`);
+
+        // Validate and calculate score
+        if (isNaN(selectedOptionId)) {
+            console.error('Selected option is not a valid number');
+        } else {
+            const score = selectedOptionId === correctOptionId ? 10 : 0; // Adjust scoring as needed
+            console.log(`Score for this question: ${score}`);
+            req.session.scores[currentQuestionIndex] = score;
+        }
     }
 
     // Increment the question index if the action is 'next'
@@ -88,7 +105,12 @@ app.post('/next', async (req, res) => {
 
     // If the quiz is complete or submit button is clicked
     if (action === 'submit' || currentQuestionIndex >= totalQuestions) {
+        // Ensure scores are initialized
+        req.session.scores = req.session.scores || [];
+
         const totalScore = req.session.scores.reduce((acc, cur) => acc + cur, 0);
+        console.log(`Total Score: ${totalScore}`);
+
         await saveQuizSubmission(student_id, quiz_id, totalScore);
 
         // Clear session data for a new quiz
@@ -97,6 +119,7 @@ app.post('/next', async (req, res) => {
         return res.render('result', { totalScore });
     }
 
+    // Render the next question
     res.render('quiz', {
         student_id,
         quiz_id,
@@ -105,6 +128,9 @@ app.post('/next', async (req, res) => {
         totalQuestions
     });
 });
+
+
+
 
 async function getQuestionsFromDatabase() {
     const pool = await sql.connect(dbConfig);
@@ -140,3 +166,4 @@ async function saveQuizSubmission(student_id, quiz_id, totalScore) {
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
 });
+//const questionId = questions[currentQuestionIndex].question_id;

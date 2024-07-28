@@ -12,6 +12,7 @@
             height: 100vh;
             overflow: hidden;
         }
+
         #sidebar {
             width: 250px;
             background: #f4f4f4;
@@ -21,27 +22,66 @@
             position: relative; /* Ensure relative positioning for adjustments */
             height: auto; /* Auto height to accommodate dynamic content */
         }
-        #sidebar.collapsed {
-            width: 300px; /* Adjust width if needed */
-        }
+
         #sidebar ul {
             list-style-type: none;
             padding: 0;
         }
+
         #sidebar ul li {
             margin-bottom: 10px;
         }
+
         #sidebar ul li a {
             text-decoration: none;
             color: #333;
+            display: block; /* Make link take full width of li */
+            padding: 5px;
         }
+
+        .module-list {
+            display: none; /* Initially hidden */
+            padding-left: 20px; /* Indent modules */
+        }
+
+        .module-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .module-list ul li {
+            margin-bottom: 5px;
+        }
+
+        .module-list ul li a {
+            text-decoration: none;
+            color: #007bff; /* Blue color for module links */
+        }
+
+        .module-list ul li a:hover {
+            text-decoration: underline; /* Underline on hover for better UX */
+        }
+
         #content {
             flex: 1;
             padding: 15px;
             overflow-y: auto; /* Ensure content area can scroll */
         }
-        #module-list {
-            display: none; /* Initially hidden */
+
+        .material-description {
+            display: block; /* Ensures the description takes a full line */
+            color: #555; /* Darker gray for readability */
+            font-style: italic; /* Italic style to differentiate from other text */
+            margin-bottom: 5px; /* Space below the description */
+        }
+
+        .material-link {
+            color: #1a73e8; /* Google blue color for the link */
+            text-decoration: none; /* Removes underline from link */
+        }
+
+        .material-link:hover {
+            text-decoration: underline; /* Underline on hover for better UX */
         }
     </style>
 </head>
@@ -52,31 +92,31 @@
             <% courses.forEach(course => { %>
                 <li>
                     <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
+                    <div id="modules-course-<%= course.course_id %>" class="module-list">
+                        <h3>Modules</h3>
+                        <ul id="module-items-<%= course.course_id %>"></ul>
+                    </div>
                 </li>
             <% }) %>
         </ul>
-        <div id="module-list">
-            <h3>Modules</h3>
-            <ul id="module-items"></ul>
-        </div>
     </div>
     <div id="content">
         <h2 id="course-name"><%= courseName %></h2>
         <p id="course-description"><%= courseDescription %></p>
-        <ul id="material-list">
-            <% materials.forEach(material => { %>
-                <li><a href="<%= material.link %>"><%= material.title %></a></li>
-            <% }) %>
-        </ul>
+        <div id="module-name"></div>
+        <div id="module-description"></div>
+        <ul id="material-list"></ul>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const courseList = document.getElementById('course-list');
-            const moduleList = document.getElementById('module-list');
+            const content = document.getElementById('content');
             const moduleItems = document.getElementById('module-items');
             const courseNameElement = document.getElementById('course-name');
             const courseDescriptionElement = document.getElementById('course-description');
+            const moduleNameElement = document.getElementById('module-name');
+            const moduleDescriptionElement = document.getElementById('module-description');
             const materialList = document.getElementById('material-list');
             const sidebar = document.getElementById('sidebar');
 
@@ -85,41 +125,72 @@
                     event.preventDefault();
                     const courseId = event.target.dataset.courseId;
 
-                    // Fetch modules for the selected course
-                    const response = await fetch(`/courses/${courseId}/modules`);
-                    const data = await response.json();
-
-                    // Update sidebar and content with modules
-                    courseNameElement.textContent = data.courseName;
-                    courseDescriptionElement.textContent = data.courseDescription;
-
-                    moduleItems.innerHTML = '';
-                    data.modules.forEach(module => {
-                        moduleItems.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
+                    // Hide all module lists and remove module list content from other courses
+                    document.querySelectorAll('.module-list').forEach(moduleList => {
+                        if (moduleList.id !== `modules-course-${courseId}`) {
+                            moduleList.style.display = 'none';
+                        }
                     });
-                    moduleList.style.display = 'block'; // Show module list
-                    sidebar.classList.add('collapsed'); // Optionally adjust sidebar width
 
-                    // Clear materials
-                    materialList.innerHTML = '';
+                    const selectedModuleList = document.getElementById(`modules-course-${courseId}`);
+
+                    try {
+                        // Fetch modules for the selected course
+                        const response = await fetch(`/courses/${courseId}/modules`);
+                        const data = await response.json();
+
+                        // Update course content
+                        courseNameElement.textContent = data.courseName;
+                        courseDescriptionElement.textContent = data.courseDescription;
+
+                        // Show or update the module list for the selected course
+                        if (selectedModuleList) {
+                            selectedModuleList.style.display = 'block';
+                            const moduleItemsElement = document.getElementById(`module-items-${courseId}`);
+                            moduleItemsElement.innerHTML = '';
+                            data.modules.forEach(module => {
+                                moduleItemsElement.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
+                            });
+                        }
+
+                        // Clear materials
+                        materialList.innerHTML = '';
+                        moduleNameElement.textContent = '';
+                        moduleDescriptionElement.textContent = '';
+                    } catch (error) {
+                        console.error('Error fetching course modules:', error);
+                    }
                 }
             });
 
-            moduleList.addEventListener('click', async (event) => {
+            // Event handler for clicking on a module
+            sidebar.addEventListener('click', async (event) => {
                 if (event.target && event.target.classList.contains('module-link')) {
                     event.preventDefault();
                     const moduleId = event.target.dataset.moduleId;
 
-                    // Fetch materials for the selected module
-                    const response = await fetch(`/modules/${moduleId}/materials`);
-                    const data = await response.json();
+                    try {
+                        // Fetch module details and materials
+                        const moduleResponse = await fetch(`/modules/${moduleId}`);
+                        const moduleData = await moduleResponse.json();
 
-                    // Update content with materials
-                    materialList.innerHTML = '<h3>Materials</h3><ul>';
-                    data.materials.forEach(material => {
-                        materialList.innerHTML += `<li><a href="${material.link}">${material.title}</a></li>`;
-                    });
-                    materialList.innerHTML += '</ul>';
+                        // Update content with module and materials
+                        moduleNameElement.textContent = moduleData.module_name;
+                        moduleDescriptionElement.textContent = moduleData.description;
+
+                        // Update content with materials
+                        materialList.innerHTML = '<h3>Materials</h3><ul>';
+                        moduleData.materials.forEach(material => {
+                            materialList.innerHTML += `
+                                <li>
+                                    <span class="material-description">${material.description}</span><br>
+                                    <a href="${material.link}" class="material-link" target="_blank">${material.link}</a>
+                                </li>`;
+                        });
+                        materialList.innerHTML += '</ul>';
+                    } catch (error) {
+                        console.error('Error fetching module details or materials:', error);
+                    }
                 }
             });
         });
