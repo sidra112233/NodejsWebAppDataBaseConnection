@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Start Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .start-container {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .start-btn {
+            background-color: #04AA6D;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .start-btn:hover {
+            background-color:  #04AA6D;
+        }
+        .start-btn:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="start-container">
+        <h1>Quiz Information</h1>
+        <p><strong>Time Limit:</strong> <%= timeLimit %> minutes</p>
+        <p><strong>Number of Questions:</strong> <%= numberOfQuestions %></p>
+        <p><strong>Points to Score:</strong> <%= pointsToScore %></p>
+        <p><strong>Passing Score:</strong> <%= passingScore %></p>
+        <form action="/quiz" method="GET">
+            <button class="start-btn" type="submit">Start Quiz</button>
+        </form>
+    </div>
+</body>
+</html>

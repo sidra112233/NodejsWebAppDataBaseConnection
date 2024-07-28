@@ -3,48 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Application</title>
+    <!-- Include the updated CSS here -->
     <style>
-        .container {
-            display: flex;
-            justify-content: space-between;
+    /* Existing styles here */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        position: relative; /* Position relative to manage header and button */
+    }
+
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 10px 20px;
+        box-sizing: border-box;
+        font-size: 1.2rem;
+        color: #333;
+        display: flex;
+        justify-content: space-between; /* Space between question info and timer */
+        align-items: center; /* Center items vertically */
+        z-index: 1000; /* Ensure the header is above other elements */
+    }
+
+    .header .question-info {
+        flex: 1;
+        text-align: center; /* Center text in header */
+    }
+
+    .header .timer {
+        text-align: right; /* Align timer to the right */
+    }
+
+    .quiz-container {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        background: #fff;
+        border-radius: 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        position: relative;
+        margin-top: 60px; /* Space for header */
+        padding-top: 20px; /* Space for button */
+        box-sizing: border-box;
+        overflow: hidden; /* Prevents overflow issues */
+    }
+
+    .question-container,
+    .options-container {
+        flex: 1;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto; /* Allow scrolling if content exceeds view */
+    }
+
+    .question-container {
+        border-right: 2px solid #ddd;
+        background-color: #f9f9f9;
+        font-size: 2rem; /* Increased font size for question */
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .options-container {
+        background-color: #f4f4f4;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center content vertically */
+        align-items: center; /* Center content horizontally */
+    }
+
+    .options-container label {
+        margin-bottom: 15px;
+        font-size: 1.5rem; /* Increased font size for options */
+        color: #555;
+        display: flex;
+        align-items: center;
+        width: 100%; /* Ensure labels take full width */
+        text-align: center; /* Center text in label */
+    }
+
+    .options-container input[type="radio"] {
+        margin-right: 15px; /* Increase space between radio button and label text */
+    }
+
+    .next-btn {
+        position: absolute;
+        top: 20px; /* Position below header */
+        right: 20px;
+        background-color: #04AA6D;
+        color: #fff;
+        border-radius: 12px;
+        padding: 15px 30px;
+        font-size: 1.5rem; /* Increased font size for button */
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border-style: none;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to button */
+    }
+
+    .next-btn:hover {
+        background-color: #028a5e;
+    }
+
+    .next-btn:focus {
+        outline: none;
+    }
+
+    /* Add additional styling if necessary */
+</style>
+
+    <script>
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            var intervalId = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                display.textContent = minutes + ':' + seconds;
+
+                if (--timer < 0) {
+                    timer = 0;
+                    clearInterval(intervalId);
+                    document.querySelector('form').submit(); // Auto-submit when time expires
+                }
+            }, 1000);
         }
-        .question, .options {
-            width: 45%;
-        }
-        .next-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
+
+        window.onload = function () {
+            var timeLimitInSeconds = <%= timeLimit * 60 %>; // Total quiz time in seconds
+            var timeLeftInSeconds = <%= timeLeft %>; // Remaining time in seconds
+            var display = document.querySelector('#time');
+            startTimer(timeLeftInSeconds, display);
+        };
+    </script>
 </head>
 <body>
-    <h1>Quiz Application</h1>
+    <div class="header">
+        <div class="question-info">
+            Question <%= currentQuestionIndex + 1 %> of <%= totalQuestions %>
+        </div>
+        <div class="timer">
+            Time Left: <span id="time"></span>
+        </div>
+    </div>
     <form action="/next" method="POST">
         <input type="hidden" name="student_id" value="<%= student_id %>">
-
-        <!-- Use a hidden input to store the current question ID -->
         <input type="hidden" name="currentQuestionId" value="<%= questions[currentQuestionIndex].question_id %>">
 
-        <div class="container">
-            <div class="question">
+        <div class="quiz-container">
+            <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
+                <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
+            </button>
+            <div class="question-container">
                 <h3><%= questions[currentQuestionIndex].question_text %></h3>
             </div>
-            <div class="options">
+            <div class="options-container">
                 <% questions[currentQuestionIndex].options.forEach((option, index) => { %>
                     <label>
-                        <!-- Radio buttons with the name attribute using the question ID -->
                         <input type="radio" name="answers[<%= questions[currentQuestionIndex].question_id %>]" value="<%= index + 1 %>" required>
                         <%= option %>
                     </label>
-                    <br>
                 <% }) %>
             </div>
         </div>
-        <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
-            <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
-        </button>
     </form>
 </body>
 </html>
