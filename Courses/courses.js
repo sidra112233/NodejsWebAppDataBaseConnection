@@ -35,6 +35,7 @@ app.get('/', async (req, res) => {
 });
 
 // Route to fetch modules of a specific course
+// Route to fetch modules and quizzes of a specific course
 app.get('/courses/:courseId/modules', async (req, res) => {
     try {
         const courseId = req.params.courseId;
@@ -59,18 +60,35 @@ app.get('/courses/:courseId/modules', async (req, res) => {
             WHERE course_id = ${courseId}
         `);
 
+        // Fetch quizzes for each module
+        const quizzesResult = await pool.request().query(`
+            SELECT quiz_id, module_id, quiz_title
+            FROM Quizzes
+            WHERE module_id IN (SELECT module_id FROM Modules WHERE course_id = ${courseId})
+        `);
+
+        // Organize quizzes by module
+        const quizzesByModule = quizzesResult.recordset.reduce((acc, quiz) => {
+            if (!acc[quiz.module_id]) {
+                acc[quiz.module_id] = [];
+            }
+            acc[quiz.module_id].push(quiz);
+            return acc;
+        }, {});
+
         res.json({
             courseName,
             courseDescription,
-            modules: modulesResult.recordset
+            modules: modulesResult.recordset,
+            quizzes: quizzesByModule
         });
     } catch (err) {
-        console.error('Error fetching modules:', err.message, err.stack);
-        res.status(500).send('Error fetching modules');
+        console.error('Error fetching modules or quizzes:', err.message, err.stack);
+        res.status(500).send('Error fetching modules or quizzes');
     }
 });
 
-// Route to fetch module details and materials
+// Route to fetch module details, materials, and quizzes
 app.get('/modules/:moduleId', async (req, res) => {
     try {
         const moduleId = req.params.moduleId;
@@ -96,17 +114,26 @@ app.get('/modules/:moduleId', async (req, res) => {
             WHERE module_id = ${moduleId}
         `);
 
+        // Fetch quizzes for the specific module
+        const quizzesResult = await pool.request().query(`
+            SELECT quiz_id, quiz_title
+            FROM Quizzes
+            WHERE module_id = ${moduleId}
+        `);
+
+        console.log('Quizzes result:', quizzesResult.recordset); // Debugging line
+
         res.json({
             module_name: moduleName,
             description: moduleDescription,
-            materials: materialsResult.recordset
+            materials: materialsResult.recordset,
+            quizzes: quizzesResult.recordset
         });
     } catch (err) {
-        console.error('Error fetching module details or materials:', err.message, err.stack);
-        res.status(500).send('Error fetching module details or materials');
+        console.error('Error fetching module details, materials, or quizzes:', err.message, err.stack);
+        res.status(500).send('Error fetching module details, materials, or quizzes');
     }
 });
-
 
 // Start the server
 const PORT = 2000;

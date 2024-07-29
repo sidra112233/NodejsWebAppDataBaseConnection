@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Course Management</title>
     <style>
-        body {
+        /* (Your existing CSS styles) */
+          body {
             display: flex;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -17,10 +18,10 @@
             width: 250px;
             background: #f4f4f4;
             padding: 15px;
-            overflow-y: auto; /* Enable scrolling if content overflows */
+            overflow-y: auto;
             transition: width 0.3s ease;
-            position: relative; /* Ensure relative positioning for adjustments */
-            height: auto; /* Auto height to accommodate dynamic content */
+            position: relative;
+            height: auto;
         }
 
         #sidebar ul {
@@ -35,13 +36,13 @@
         #sidebar ul li a {
             text-decoration: none;
             color: #333;
-            display: block; /* Make link take full width of li */
+            display: block;
             padding: 5px;
         }
 
         .module-list {
-            display: none; /* Initially hidden */
-            padding-left: 20px; /* Indent modules */
+            display: none;
+            padding-left: 20px;
         }
 
         .module-list ul {
@@ -55,33 +56,42 @@
 
         .module-list ul li a {
             text-decoration: none;
-            color: #007bff; /* Blue color for module links */
+            color: #007bff;
         }
 
         .module-list ul li a:hover {
-            text-decoration: underline; /* Underline on hover for better UX */
+            text-decoration: underline;
         }
 
         #content {
             flex: 1;
             padding: 15px;
-            overflow-y: auto; /* Ensure content area can scroll */
+            overflow-y: auto;
         }
 
         .material-description {
-            display: block; /* Ensures the description takes a full line */
-            color: #555; /* Darker gray for readability */
-            font-style: italic; /* Italic style to differentiate from other text */
-            margin-bottom: 5px; /* Space below the description */
+            display: block;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 5px;
         }
 
         .material-link {
-            color: #1a73e8; /* Google blue color for the link */
-            text-decoration: none; /* Removes underline from link */
+            color: #1a73e8;
+            text-decoration: none;
         }
 
         .material-link:hover {
-            text-decoration: underline; /* Underline on hover for better UX */
+            text-decoration: underline;
+        }
+
+        .quiz-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .quiz-list ul li {
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -106,18 +116,19 @@
         <div id="module-name"></div>
         <div id="module-description"></div>
         <ul id="material-list"></ul>
+        <ul id="quiz-list"></ul>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const courseList = document.getElementById('course-list');
-            const content = document.getElementById('content');
             const moduleItems = document.getElementById('module-items');
             const courseNameElement = document.getElementById('course-name');
             const courseDescriptionElement = document.getElementById('course-description');
             const moduleNameElement = document.getElementById('module-name');
             const moduleDescriptionElement = document.getElementById('module-description');
             const materialList = document.getElementById('material-list');
+            const quizList = document.getElementById('quiz-list');
             const sidebar = document.getElementById('sidebar');
 
             courseList.addEventListener('click', async (event) => {
@@ -139,6 +150,8 @@
                         const response = await fetch(`/courses/${courseId}/modules`);
                         const data = await response.json();
 
+                        console.log('Modules data:', data); // Debugging line
+
                         // Update course content
                         courseNameElement.textContent = data.courseName;
                         courseDescriptionElement.textContent = data.courseDescription;
@@ -153,8 +166,9 @@
                             });
                         }
 
-                        // Clear materials
+                        // Clear materials and quizzes
                         materialList.innerHTML = '';
+                        quizList.innerHTML = '';
                         moduleNameElement.textContent = '';
                         moduleDescriptionElement.textContent = '';
                     } catch (error) {
@@ -170,9 +184,11 @@
                     const moduleId = event.target.dataset.moduleId;
 
                     try {
-                        // Fetch module details and materials
+                        // Fetch module details, materials, and quizzes
                         const moduleResponse = await fetch(`/modules/${moduleId}`);
                         const moduleData = await moduleResponse.json();
+
+                        console.log('Module data:', moduleData); // Debugging line
 
                         // Update content with module and materials
                         moduleNameElement.textContent = moduleData.module_name;
@@ -188,8 +204,19 @@
                                 </li>`;
                         });
                         materialList.innerHTML += '</ul>';
+
+                        // Update content with quizzes
+                        quizList.innerHTML = '<h3>Quizzes</h3><ul>';
+                        if (moduleData.quizzes.length === 0) {
+                            quizList.innerHTML += '<li>No quizzes available.</li>';
+                        } else {
+                            moduleData.quizzes.forEach(quiz => {
+                                quizList.innerHTML += `<li>${quiz.quiz_title}</li>`;
+                            });
+                        }
+                        quizList.innerHTML += '</ul>';
                     } catch (error) {
-                        console.error('Error fetching module details or materials:', error);
+                        console.error('Error fetching module details, materials, or quizzes:', error);
                     }
                 }
             });
