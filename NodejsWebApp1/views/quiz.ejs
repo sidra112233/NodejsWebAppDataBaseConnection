@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Include the updated CSS here -->
-    <style>
-    /* Existing styles here */
+<style>
     body {
         margin: 0;
         padding: 0;
         font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
+        background: linear-gradient(to right, #001f3f, #003366); /* Navy Blue gradient background */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -24,12 +23,12 @@
         top: 0;
         left: 0;
         width: 100%;
-        background-color: #fff;
+        background-color: #001f3f; /* Navy Blue header */
+        color: #fff; /* White text for contrast */
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         padding: 10px 20px;
         box-sizing: border-box;
         font-size: 1.2rem;
-        color: #333;
         display: flex;
         justify-content: space-between; /* Space between question info and timer */
         align-items: center; /* Center items vertically */
@@ -47,14 +46,14 @@
 
     .quiz-container {
         display: flex;
-        width: 100vw;
-        height: 100vh;
+        width: 90vw; /* Decreased width */
+        height: 90vh; /* Decreased height */
         background: #fff;
-        border-radius: 0;
+        border-radius: 8px; /* Optional: Add border-radius for rounded corners */
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         position: relative;
         margin-top: 60px; /* Space for header */
-        padding-top: 20px; /* Space for button */
+        margin-bottom: 20px; /* Add some space below */
         box-sizing: border-box;
         overflow: hidden; /* Prevents overflow issues */
     }
@@ -68,36 +67,89 @@
     }
 
     .question-container {
+        flex: 1; /* Takes half of the width */
         border-right: 2px solid #ddd;
         background-color: #f9f9f9;
-        font-size: 2rem; /* Increased font size for question */
+        font-size: 1.7rem; /* Increased font size for question */
         color: #333;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
+        width: 50%; /* Takes half of the width */
     }
 
     .options-container {
         background-color: #f4f4f4;
-        display: flex;
-        flex-direction: column;
-        justify-content: center; /* Center content vertically */
-        align-items: center; /* Center content horizontally */
+        font-size: 1.7rem;
+        display: grid; /* Use grid layout */
+        grid-template-columns: 1fr; /* Single column layout */
+        width: 50%; /* Takes half of the width */
+        gap: 0; /* Remove gap between grid items */
     }
 
     .options-container label {
-        margin-bottom: 15px;
         font-size: 1.5rem; /* Increased font size for options */
         color: #555;
         display: flex;
         align-items: center;
         width: 100%; /* Ensure labels take full width */
         text-align: center; /* Center text in label */
+        padding: 10px; /* Add padding to labels */
+        border: 1px solid #ddd; /* Border around options */
+        border-radius: 5px; /* Rounded corners for options */
+        background-color: #fff; /* Background color for options */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Shadow for options */
+        box-sizing: border-box; /* Ensure padding and border are included in width */
+        margin: 0; /* Remove margin to eliminate spacing between options */
     }
 
     .options-container input[type="radio"] {
-        margin-right: 15px; /* Increase space between radio button and label text */
+        display: none; /* Hide the default radio button */
+    }
+
+    .options-container .custom-radio {
+        position: relative;
+        display: flex;
+        align-items: center;
+        font-size: 1.3rem; /* Match the font size of options */
+    }
+
+    .options-container .custom-radio input[type="radio"] + span {
+        position: relative;
+        padding-left: 2rem; /* Space for the custom radio button */
+        cursor: pointer;
+    }
+
+    .options-container .custom-radio input[type="radio"] + span::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.3em; /* Adjust size to match font size */
+        height: 1.3em; /* Adjust size to match font size */
+        border: 2px solid #555;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 0 3px #fff inset; /* Add inner white circle to make it look cleaner */
+    }
+
+    .options-container input[type="radio"]:checked + span::before {
+        background: #001f3f; /* Navy blue background for selected state */
+        box-shadow: 0 0 0 6px #fff inset; /* Add inner white circle to make it look cleaner */
+    }
+
+    .options-container input[type="radio"]:checked + span::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 0.5em; /* Smaller inner circle for selected state */
+        height: 0.5em;
+        border-radius: 50%;
+        background: #fff;
     }
 
     .next-btn {
@@ -114,6 +166,7 @@
         transition: background-color 0.3s ease;
         border-style: none;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to button */
+        z-index: 1001; /* Ensure the button is above other elements */
     }
 
     .next-btn:hover {
@@ -123,9 +176,11 @@
     .next-btn:focus {
         outline: none;
     }
-
-    /* Add additional styling if necessary */
 </style>
+
+
+
+
 
     <script>
         function startTimer(duration, display) {
@@ -177,10 +232,10 @@
             </div>
             <div class="options-container">
                 <% questions[currentQuestionIndex].options.forEach((option, index) => { %>
-                    <label>
-                        <input type="radio" name="answers[<%= questions[currentQuestionIndex].question_id %>]" value="<%= index + 1 %>" required>
-                        <%= option %>
-                    </label>
+                   <label class="custom-radio">
+    <input type="radio" name="answers[<%= questions[currentQuestionIndex].question_id %>]" value="<%= index + 1 %>" required>
+    <span><%= option %></span>
+</label>
                 <% }) %>
             </div>
         </div>
