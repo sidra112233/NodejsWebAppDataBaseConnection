@@ -4,7 +4,7 @@ const sql = require('mssql');
 const app = express();
 
 const dbConfig = {
-    server: 'DESKTOP-O5M8LH7\\SQLEXPRESS',          // Your server name or IP address
+    server: 'DESKTOP-5NP2PDK\\MSSQLSERVER2022',          // Your server name or IP address
     database: 'LearnCodePro',// Your database name
     driver: 'msnodesqlv8',
     user: 'Sidra',

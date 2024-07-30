@@ -32,9 +32,15 @@
     <Content Include="courses.js" />
     <Content Include="enrollment.js" />
     <Content Include="package.json" />
+    <Content Include="quiz.js" />
     <Content Include="README.md" />
     <Content Include="views\enroll.ejs" />
     <Content Include="views\layout.ejs" />
+    <Content Include="views\login.ejs" />
+    <Content Include="views\quiz.ejs" />
+    <Content Include="views\quizStart.ejs" />
+    <Content Include="views\result.ejs" />
+    <Content Include="views\signup.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="views\" />

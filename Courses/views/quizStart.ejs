@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= quizTitle %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><%= quizTitle %></h1>
+        <p>Time Limit: <%= timeLimit %> minutes</p>
+        <p>Number of Questions: <%= numberOfQuestions %></p>
+        <p>Points to Score: <%= pointsToScore %></p>
+        <p>Passing Score: <%= passingScore %></p>
+
+        <!-- Button to start the quiz -->
+        <form action="/quiz/start" method="post">
+            <input type="hidden" name="quiz_id" value="<%= quiz.quiz_id %>">
+            <button type="submit">Start Quiz</button>
+        </form>
+    </div>
+</body>
+</html>
