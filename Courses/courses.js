@@ -377,62 +377,6 @@ async function saveQuizSubmission(student_id, quiz_id, totalScore) {
     }
 }
 
-app.use(session({
-    secret: 'Sidra', // Use a strong secret key
-    resave: false,
-    saveUninitialized: true,
-}));
-
-const isAuthenticated = require('./middleware/auth');
-// Example of setting session data
-req.session.user = user; // Assuming `user` is an object representing the logged-in user
-
-app.get('/materials', isAuthenticated, (req, res) => {
-    // Code to fetch and display materials
-});
-
-app.get('/quizzes', isAuthenticated, (req, res) => {
-    // Code to fetch and display quizzes
-});
-
-
-// Handle login
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    // Authenticate user (this is just a placeholder, use your actual authentication logic)
-    const user = await authenticateUser(username, password);
-    if (user) {
-        req.session.user = user; // Store user info in session
-        res.redirect('/materials'); // Redirect to a protected route
-    } else {
-        res.redirect('/login'); // Redirect back to login if authentication fails
-    }
-});
-
-// Handle signup
-app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
-
-    // Register user (this is just a placeholder, use your actual registration logic)
-    const user = await registerUser(username, password);
-    if (user) {
-        req.session.user = user; // Store user info in session
-        res.redirect('/materials'); // Redirect to a protected route
-    } else {
-        res.redirect('/signup'); // Redirect back to signup if registration fails
-    }
-});
-
-// Placeholder functions
-async function authenticateUser(username, password) {
-    // Implement your user authentication logic here
-}
-
-async function registerUser(username, password) {
-    // Implement your user registration logic here
-}
-
 // Start the server
 const PORT = 2000;
 app.listen(PORT, () => {
