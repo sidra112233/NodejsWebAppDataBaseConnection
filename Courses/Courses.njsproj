@@ -34,6 +34,7 @@
     <Content Include="package.json" />
     <Content Include="quiz.js" />
     <Content Include="README.md" />
+    <Content Include="views\dashboard.ejs" />
     <Content Include="views\enroll.ejs" />
     <Content Include="views\layout.ejs" />
     <Content Include="views\login.ejs" />

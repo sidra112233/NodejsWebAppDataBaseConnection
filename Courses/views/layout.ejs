@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Course Management</title>
     <style>
-        /* (Your existing CSS styles) */
         body {
             display: flex;
             font-family: Arial, sans-serif;
@@ -78,26 +77,34 @@
         .quiz-list ul li {
             margin-bottom: 5px;
         }
+        .loading {
+            font-style: italic;
+            color: #555;
+        }
     </style>
 </head>
 <body>
     <div id="sidebar">
         <h2>Courses</h2>
         <ul id="course-list">
-            <% courses.forEach(course => { %>
-                <li>
-                    <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
-                    <div id="modules-course-<%= course.course_id %>" class="module-list">
-                        <h3>Modules</h3>
-                        <ul id="module-items-<%= course.course_id %>"></ul>
-                    </div>
-                </li>
-            <% }) %>
+            <% if (courses && courses.length > 0) { %>
+                <% courses.forEach(course => { %>
+                    <li>
+                        <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
+                        <div class="module-list" data-course-id="<%= course.course_id %>">
+                            <h3>Modules</h3>
+                            <ul class="module-items"></ul>
+                        </div>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li>No courses available</li>
+            <% } %>
         </ul>
     </div>
     <div id="content">
-        <h2 id="course-name"><%= courseName %></h2>
-        <p id="course-description"><%= courseDescription %></p>
+        <h2 id="course-name"><%= courseName || 'Select a Course' %></h2>
+        <p id="course-description"><%= courseDescription || 'Course description will appear here.' %></p>
         <div id="module-name"></div>
         <div id="module-description"></div>
         <ul id="material-list"></ul>
@@ -107,7 +114,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const courseList = document.getElementById('course-list');
-            const moduleItems = document.getElementById('module-items');
             const courseNameElement = document.getElementById('course-name');
             const courseDescriptionElement = document.getElementById('course-description');
             const moduleNameElement = document.getElementById('module-name');
@@ -123,28 +129,30 @@
 
                     // Hide all module lists and remove module list content from other courses
                     document.querySelectorAll('.module-list').forEach(moduleList => {
-                        if (moduleList.id !== `modules-course-${courseId}`) {
+                        if (moduleList.dataset.courseId !== courseId) {
                             moduleList.style.display = 'none';
                         }
                     });
 
-                    const selectedModuleList = document.getElementById(`modules-course-${courseId}`);
+                    const selectedModuleList = document.querySelector(`.module-list[data-course-id="${courseId}"]`);
 
                     try {
+                        // Show loading message
+                        courseNameElement.textContent = 'Loading...';
+                        courseDescriptionElement.textContent = '';
+
                         // Fetch modules for the selected course
                         const response = await fetch(`/courses/${courseId}/modules`);
                         const data = await response.json();
 
-                        console.log('Modules data:', data); // Debugging line
-
                         // Update course content
-                        courseNameElement.textContent = data.courseName;
-                        courseDescriptionElement.textContent = data.courseDescription;
+                        courseNameElement.textContent = data.courseName || 'Course Name';
+                        courseDescriptionElement.textContent = data.courseDescription || 'Course Description';
 
                         // Show or update the module list for the selected course
                         if (selectedModuleList) {
                             selectedModuleList.style.display = 'block';
-                            const moduleItemsElement = document.getElementById(`module-items-${courseId}`);
+                            const moduleItemsElement = selectedModuleList.querySelector('.module-items');
                             moduleItemsElement.innerHTML = '';
                             data.modules.forEach(module => {
                                 moduleItemsElement.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
@@ -158,26 +166,29 @@
                         moduleDescriptionElement.textContent = '';
                     } catch (error) {
                         console.error('Error fetching course modules:', error);
+                        courseNameElement.textContent = 'Error loading course';
+                        courseDescriptionElement.textContent = '';
                     }
                 }
             });
 
-            // Event handler for clicking on a module
             sidebar.addEventListener('click', async (event) => {
                 if (event.target && event.target.classList.contains('module-link')) {
                     event.preventDefault();
                     const moduleId = event.target.dataset.moduleId;
 
                     try {
+                        // Show loading message
+                        moduleNameElement.textContent = 'Loading...';
+                        moduleDescriptionElement.textContent = '';
+
                         // Fetch module details, materials, and quizzes
                         const moduleResponse = await fetch(`/modules/${moduleId}`);
                         const moduleData = await moduleResponse.json();
 
-                        console.log('Module data:', moduleData); // Debugging line
-
                         // Update content with module and materials
-                        moduleNameElement.textContent = moduleData.module_name;
-                        moduleDescriptionElement.textContent = moduleData.description;
+                        moduleNameElement.textContent = moduleData.module_name || 'Module Name';
+                        moduleDescriptionElement.textContent = moduleData.description || 'Module Description';
 
                         // Update content with materials
                         materialList.innerHTML = '<h3>Materials</h3><ul>';
@@ -202,6 +213,10 @@
                         quizList.innerHTML += '</ul>';
                     } catch (error) {
                         console.error('Error fetching module details, materials, or quizzes:', error);
+                        moduleNameElement.textContent = 'Error loading module';
+                        moduleDescriptionElement.textContent = '';
+                        materialList.innerHTML = '<li>Error loading materials.</li>';
+                        quizList.innerHTML = '<li>Error loading quizzes.</li>';
                     }
                 }
             });
