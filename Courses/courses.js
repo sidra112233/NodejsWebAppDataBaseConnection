@@ -6,9 +6,7 @@ const path = require('path');
 
 const app = express();
 app.set('views', path.join(__dirname, 'views')); // Ensure this points to your views directory
-
-// Configure Express to use EJS as the view engine
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs'); // Configure Express to use EJS as the view engine
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -19,6 +17,16 @@ app.use(session({
     saveUninitialized: true,
 }));
 
+// Middleware to store the original URL if the user is not authenticated
+function storeOriginalUrl(req, res, next) {
+    if (!req.session.student_id) {
+        if (req.originalUrl !== '/login' && req.originalUrl !== '/signup' && req.originalUrl !== '/') {
+            req.session.redirectTo = req.originalUrl;
+        }
+    }
+    next();
+}
+
 // Middleware to check if the user is authenticated
 function ensureAuthenticated(req, res, next) {
     if (req.session && req.session.student_id) {
@@ -27,18 +35,15 @@ function ensureAuthenticated(req, res, next) {
     res.redirect('/login');
 }
 
-// Middleware to store the original URL if the user is not authenticated
-function storeOriginalUrl(req, res, next) {
-    if (!req.session || !req.session.student_id) {
-        if (req.originalUrl !== '/login' && req.originalUrl !== '/signup' && req.originalUrl !== '/') {
-            req.session.redirectTo = req.originalUrl;
-        }
-    }
-    next();
-}
-
 // Apply the middleware for handling original URL storage
 app.use(storeOriginalUrl);
+
+// Define protected routes
+app.use('/modules/:moduleId/materials', ensureAuthenticated);
+app.use('/modules/:moduleId/quizzes', ensureAuthenticated);
+app.use('/quiz', ensureAuthenticated);
+app.use('/quiz/start', ensureAuthenticated);
+app.use('/next', ensureAuthenticated);
 
 // Define quiz parameters
 const quizParams = {
@@ -192,22 +197,66 @@ app.get('/login', (req, res) => {
     }
     res.render('login');
 });
-
 app.post('/login', async (req, res) => {
     const { student_name, password_hash } = req.body;
     try {
         const pool = await sql.connect(config);
-        const sqlQuery = 'SELECT * FROM Student WHERE student_name = @student_name AND password_hash = @password_hash';
-        const result = await pool.request()
+
+        // Query to check user credentials
+        const userQuery = 'SELECT * FROM Student WHERE student_name = @student_name AND password_hash = @password_hash';
+        const userResult = await pool.request()
             .input('student_name', sql.VarChar, student_name)
             .input('password_hash', sql.VarChar, password_hash)
-            .query(sqlQuery);
+            .query(userQuery);
 
-        if (result.recordset.length > 0) {
-            req.session.student_id = result.recordset[0].student_id;
-            const redirectTo = req.session.redirectTo || '/'; // Redirect to the original URL or home
-            delete req.session.redirectTo; // Clear the redirect URL after use
-            res.redirect(redirectTo);
+        if (userResult.recordset.length > 0) {
+            const student = userResult.recordset[0];
+
+            // Set session data
+            req.session.student_id = student.student_id;
+
+            // Fetch enrolled courses
+            const coursesQuery = `
+                SELECT c.course_id, c.course_name, c.description
+                FROM Enrollments e
+                JOIN Courses c ON e.course_id = c.course_id
+                WHERE e.student_id = @student_id
+            `;
+            const coursesResult = await pool.request()
+                .input('student_id', sql.Int, student.student_id)
+                .query(coursesQuery);
+
+            // Fetch available courses
+            const allCoursesQuery = 'SELECT * FROM Courses';
+            const allCoursesResult = await pool.request().query(allCoursesQuery);
+
+            // Fetch modules for enrolled courses
+            const modulesQuery = `
+                SELECT m.module_id, m.course_id, m.module_name
+                FROM Modules m
+                JOIN Enrollments e ON m.course_id = e.course_id
+                WHERE e.student_id = @student_id
+            `;
+            const modulesResult = await pool.request()
+                .input('student_id', sql.Int, student.student_id)
+                .query(modulesQuery);
+
+            // Organize modules by course
+            const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
+                if (!acc[module.course_id]) {
+                    acc[module.course_id] = [];
+                }
+                acc[module.course_id].push(module);
+                return acc;
+            }, {});
+
+            // Render dashboard with all necessary data
+            res.render('dashboard', {
+                student: student,
+                enrolledCourses: coursesResult.recordset || [],
+                courses: allCoursesResult.recordset || [],
+                modulesByCourse: modulesByCourse
+            });
         } else {
             res.send('Incorrect Student Name or Password');
         }
@@ -216,6 +265,7 @@ app.post('/login', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
+
 
 app.get('/signup', (req, res) => {
     res.render('signup'); // Render the signup page
@@ -238,16 +288,110 @@ app.post('/signup', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
-// Protected routes for materials and quizzes
-app.get('/modules/:moduleId/materials', ensureAuthenticated, async (req, res) => {
+app.post('/enroll', async (req, res) => {
+    const { student_id, course_id } = req.body;
     try {
-        const moduleId = req.params.moduleId;
         const pool = await sql.connect(config);
 
+        // Enroll the student
+        const enrollQuery = 'INSERT INTO Enrollments (student_id, course_id) VALUES (@student_id, @course_id)';
+        await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .input('course_id', sql.Int, course_id)
+            .query(enrollQuery);
+
+        // Fetch course modules
+        const modulesQuery = 'SELECT module_id, module_name FROM Modules WHERE course_id = @course_id';
+        const modulesResult = await pool.request()
+            .input('course_id', sql.Int, course_id)
+            .query(modulesQuery);
+
+        // Render the dashboard with modules
+        res.render('dashboard', {
+            student: req.session.student, // Assuming you store student details in session
+            enrolledCourses: req.session.enrolledCourses,
+            courseModules: modulesResult.recordset || []
+        });
+    } catch (err) {
+        console.error('Error enrolling in course:', err);
+        res.send('Error enrolling in course.');
+    }
+});
+app.get('/module-details/:moduleId', async (req, res) => {
+    const moduleId = parseInt(req.params.moduleId);
+    if (isNaN(moduleId)) {
+        return res.status(400).send('Invalid module ID');
+    }
+
+    try {
+        const pool = await sql.connect(config);
+
+        // Fetch materials for the module
+        const materialsQuery = `
+            SELECT material_id, type, title, link, description
+            FROM Materials
+            WHERE module_id = @moduleId
+        `;
+        const materialsResult = await pool.request()
+            .input('moduleId', sql.Int, moduleId)
+            .query(materialsQuery);
+
+        // Fetch quizzes for the module
+        const quizzesQuery = `
+            SELECT quiz_id, quiz_title, total_marks
+            FROM Quizzes
+            WHERE module_id = @moduleId
+        `;
+        const quizzesResult = await pool.request()
+            .input('moduleId', sql.Int, moduleId)
+            .query(quizzesQuery);
+
+        res.json({
+            materials: materialsResult.recordset,
+            quizzes: quizzesResult.recordset
+        });
+    } catch (err) {
+        console.error('Error fetching module details:', err);
+        res.status(500).send('An error occurred while fetching module details.');
+    }
+});
+
+
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.redirect('/');
+        }
+        res.redirect('/');
+    });
+});
+// Protected route for materials with access control
+app.get('/modules/:moduleId/materials', ensureAuthenticated, async (req, res) => {
+    try {
+        const moduleId = parseInt(req.params.moduleId, 10);
+        const userId = req.session.student_id; // Assuming user_id is stored in session
+        const pool = await sql.connect(config);
+
+        // Check if the user has access to the module
+        const accessCheckResult = await pool.request()
+            .input('studentId', sql.Int, userId)
+            .input('moduleId', sql.Int, moduleId)
+            .query(`
+                SELECT *
+                FROM Modules
+                WHERE student_id = @studentId AND module_id = @moduleId
+            `);
+
+        if (accessCheckResult.recordset.length === 0) {
+            return res.status(403).send('Access Denied: You do not have permission to access this module.');
+        }
+
+        // Fetch materials if the user has access
         const materialsResult = await pool.request()
             .input('moduleId', sql.Int, moduleId)
             .query(`
-                SELECT material_id, title, link, description
+                SELECT material_id, title, link
                 FROM Materials
                 WHERE module_id = @moduleId
             `);
@@ -259,7 +403,8 @@ app.get('/modules/:moduleId/materials', ensureAuthenticated, async (req, res) =>
     }
 });
 
-app.get('/modules/:moduleId/quizzes', ensureAuthenticated, async (req, res) => {
+
+app.get('/modules/:moduleId/quizzes', async (req, res) => {
     try {
         const moduleId = req.params.moduleId;
         const pool = await sql.connect(config);
@@ -278,8 +423,9 @@ app.get('/modules/:moduleId/quizzes', ensureAuthenticated, async (req, res) => {
         res.status(500).send('Error fetching quizzes');
     }
 });
+
 // Route to start a quiz
-app.get('/quiz/start/:id', ensureAuthenticated, async (req, res) => {
+app.get('/quiz/start/:id', async (req, res) => {
     const quizId = parseInt(req.params.id, 10);
     try {
         const pool = await sql.connect(config);
@@ -306,7 +452,7 @@ app.get('/quiz/start/:id', ensureAuthenticated, async (req, res) => {
             pointsToScore: quizParams.pointsToScore,
             passingScore: quizParams.passingScore,
             quizTitle: quizParams.quizTitle,
-            quiz: quiz // Pass the quiz object here
+            quiz
         });
 
     } catch (err) {
@@ -316,7 +462,7 @@ app.get('/quiz/start/:id', ensureAuthenticated, async (req, res) => {
 });
 
 // Route to start the quiz
-app.post('/quiz/start', ensureAuthenticated, async (req, res) => {
+app.post('/quiz/start', async (req, res) => {
     const quizId = parseInt(req.body.quiz_id, 10);
 
     if (!quizId) {
@@ -347,7 +493,7 @@ app.post('/quiz/start', ensureAuthenticated, async (req, res) => {
 });
 
 // Route to render the quiz page
-app.get('/quiz', ensureAuthenticated, async (req, res) => {
+app.get('/quiz', async (req, res) => {
     try {
         const questions = await getQuestionsFromDatabase();
         const totalQuestions = questions.length;
@@ -384,7 +530,7 @@ app.get('/quiz', ensureAuthenticated, async (req, res) => {
 });
 
 // Handle quiz navigation and submission
-app.post('/next', ensureAuthenticated, async (req, res) => {
+app.post('/next', async (req, res) => {
     const { action, answers, currentQuestionId } = req.body;
     const student_id = req.session.student_id;
     const quiz_id = req.session.quiz_id;

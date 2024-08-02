@@ -1,16 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/styles.css">
-  <title>Student Dashboard</title>
+    <title>Dashboard</title>
+    <style>
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 16px;
+            margin: 16px;
+            width: calc(33.333% - 32px);
+            float: left;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .card button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background-color: #0056b3;
+        }
+
+        .course-cards {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .modules-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .module {
+            margin: 10px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="dashboard-container">
-    <h2>Welcome, <%= student.name %></h2>
-    <p>Student name: <%= student.student_name %></p>
-    <p>Email: <%= student.email %></p>
-  </div>
+    <h1>Welcome, <%= student.student_name %>!</h1>
+
+    <% if (enrolledCourses && enrolledCourses.length > 0) { %>
+        <h2>Your Enrolled Courses</h2>
+        <ul>
+            <% enrolledCourses.forEach(course => { %>
+                <li>
+                    <strong><%= course.course_name %></strong><br>
+                    <%= course.description %>
+                </li>
+            <% }); %>
+        </ul>
+
+        <h2>Course Modules</h2>
+        <% Object.keys(modulesByCourse).forEach(courseId => { %>
+            <h3>Modules for <%= enrolledCourses.find(course => course.course_id == courseId).course_name %></h3>
+            <div class="modules-container">
+                <% modulesByCourse[courseId].forEach(module => { %>
+                    <div class="module">
+                        <h4><%= module.module_name %></h4>
+                        <button onclick="showMaterialsAndQuizzes(<%= module.module_id %>)">Show Materials & Quizzes</button>
+                    </div>
+                <% }); %>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <h2>Available Courses</h2>
+        <% if (courses && courses.length > 0) { %>
+            <div class="course-cards">
+                <% courses.forEach(course => { %>
+                    <div class="card">
+                        <h3><%= course.course_name %></h3>
+                        <p><%= course.description %></p>
+                        <button onclick="showEnrollForm(<%= course.course_id %>)">Enroll</button>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>No courses available.</p>
+        <% } %>
+    <% } %>
+
+    <!-- Materials and Quizzes Display -->
+    <div id="materials-quizzes-container" class="hidden">
+        <h2>Materials</h2>
+        <div id="materials"></div>
+        <h2>Quizzes</h2>
+        <div id="quizzes"></div>
+        <button onclick="hideMaterialsAndQuizzes()">Close</button>
+    </div>
+
+    <script>
+        function showEnrollForm(courseId) {
+            document.getElementById('course_id').value = courseId;
+            document.getElementById('enroll-form').style.display = 'block';
+        }
+
+        function hideEnrollForm() {
+            document.getElementById('enroll-form').style.display = 'none';
+        }
+
+        function showMaterialsAndQuizzes(moduleId) {
+            if (!moduleId) {
+                console.error('Module ID is undefined');
+                return;
+            }
+            const url = `/module-details/${moduleId}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const materialsContainer = document.getElementById('materials');
+                    const quizzesContainer = document.getElementById('quizzes');
+
+                    materialsContainer.innerHTML = data.materials.map(material => `
+                        <div class="material">
+                            <h5>${material.title}</h5>
+                            <p>${material.description}</p>
+                            <a href="${material.link}">Access Material</a>
+                        </div>
+                    `).join('');
+
+                    quizzesContainer.innerHTML = data.quizzes.map(quiz => `
+                        <div class="quiz">
+                            <h4>${quiz.quiz_title}</h4>
+                            <p>Total Marks: ${quiz.total_marks}</p>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('materials-quizzes-container').classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error fetching module details:', error);
+                });
+        }
+
+        function hideMaterialsAndQuizzes() {
+            document.getElementById('materials-quizzes-container').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>

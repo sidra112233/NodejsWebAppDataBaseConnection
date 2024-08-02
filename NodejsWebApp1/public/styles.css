@@ -1,105 +1,93 @@
 body {
+    display: flex;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
     overflow: hidden;
-    position: relative; /* Position relative to manage header and button */
 }
 
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    padding: 10px 20px;
-    box-sizing: border-box;
-    font-size: 1.2rem;
-    color: #333;
-    text-align: center;
-    z-index: 1000; /* Ensure the header is above other elements */
-}
-
-.quiz-container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    background: #fff;
-    border-radius: 0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+#sidebar {
+    width: 250px;
+    background: #f4f4f4;
+    padding: 15px;
+    overflow-y: auto;
+    transition: width 0.3s ease;
     position: relative;
-    margin-top: 60px; /* Space for header */
-    padding-top: 20px; /* Space for button */
-    box-sizing: border-box;
-    overflow: hidden; /* Prevents overflow issues */
+    height: auto;
 }
 
-.question-container,
-.options-container {
+    #sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        #sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+            #sidebar ul li a {
+                text-decoration: none;
+                color: #333;
+                display: block;
+                padding: 5px;
+            }
+
+.module-list {
+    display: none;
+    padding-left: 20px;
+}
+
+    .module-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        .module-list ul li {
+            margin-bottom: 5px;
+        }
+
+            .module-list ul li a {
+                text-decoration: none;
+                color: #007bff;
+            }
+
+                .module-list ul li a:hover {
+                    text-decoration: underline;
+                }
+
+#content {
     flex: 1;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto; /* Allow scrolling if content exceeds view */
+    padding: 15px;
+    overflow-y: auto;
 }
 
-.question-container {
-    border-right: 2px solid #ddd;
-    background-color: #f9f9f9;
-    font-size: 2rem; /* Increased font size for question */
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+.material-description {
+    display: block;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 5px;
 }
 
-.options-container {
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+.material-link {
+    color: #1a73e8;
+    text-decoration: none;
 }
 
-    .options-container label {
-        margin-bottom: 15px;
-        font-size: 1.5rem; /* Increased font size for options */
-        color: #555;
-        display: flex;
-        align-items: center;
-        width: 100%; /* Ensure labels take full width */
+    .material-link:hover {
+        text-decoration: underline;
     }
 
-    .options-container input[type="radio"] {
-        margin-right: 15px; /* Increase space between radio button and label text */
-    }
-
-.next-btn {
-    position: absolute;
-    top: 20px; /* Position below header */
-    right: 20px;
-    background-color: #04AA6D;
-    color: #fff;
-    border-radius: 12px;
-    padding: 15px 30px;
-    font-size: 1.5rem; /* Increased font size for button */
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border-style: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to button */
+.quiz-list ul {
+    list-style-type: none;
+    padding: 0;
 }
 
-    .next-btn:hover {
-        background-color: #028a5e;
+    .quiz-list ul li {
+        margin-bottom: 5px;
     }
 
-    .next-btn:focus {
-        outline: none;
-    }
+.loading {
+    font-style: italic;
+    color: #555;
+}
