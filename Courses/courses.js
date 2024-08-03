@@ -17,15 +17,7 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-// Middleware to store the original URL if the user is not authenticated
-function storeOriginalUrl(req, res, next) {
-    if (!req.session.student_id) {
-        if (req.originalUrl !== '/login' && req.originalUrl !== '/signup' && req.originalUrl !== '/') {
-            req.session.redirectTo = req.originalUrl;
-        }
-    }
-    next();
-}
+
 
 // Middleware to check if the user is authenticated
 function ensureAuthenticated(req, res, next) {
@@ -34,9 +26,6 @@ function ensureAuthenticated(req, res, next) {
     }
     res.redirect('/login');
 }
-
-// Apply the middleware for handling original URL storage
-app.use(storeOriginalUrl);
 
 // Define protected routes
 app.use('/modules/:moduleId/materials', ensureAuthenticated);
@@ -199,6 +188,7 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', async (req, res) => {
     const { student_name, password_hash } = req.body;
+
     try {
         const pool = await sql.connect(config);
 
@@ -288,35 +278,91 @@ app.post('/signup', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
+// Add this route to your `courses.js` or relevant file
 app.post('/enroll', async (req, res) => {
-    const { student_id, course_id } = req.body;
+    const { course_id } = req.body;
+    const student_id = req.session.student_id;
+
+    if (!student_id) {
+        return res.status(401).send('Not authenticated');
+    }
+
     try {
         const pool = await sql.connect(config);
-
-        // Enroll the student
-        const enrollQuery = 'INSERT INTO Enrollments (student_id, course_id) VALUES (@student_id, @course_id)';
+        const query = `
+            INSERT INTO Enrollments (student_id, course_id)
+            VALUES (@student_id, @course_id)
+        `;
         await pool.request()
             .input('student_id', sql.Int, student_id)
             .input('course_id', sql.Int, course_id)
-            .query(enrollQuery);
+            .query(query);
 
-        // Fetch course modules
-        const modulesQuery = 'SELECT module_id, module_name FROM Modules WHERE course_id = @course_id';
-        const modulesResult = await pool.request()
-            .input('course_id', sql.Int, course_id)
-            .query(modulesQuery);
-
-        // Render the dashboard with modules
-        res.render('dashboard', {
-            student: req.session.student, // Assuming you store student details in session
-            enrolledCourses: req.session.enrolledCourses,
-            courseModules: modulesResult.recordset || []
-        });
+        res.redirect('/dashboard'); // Redirect to the dashboard or another page after enrollment
     } catch (err) {
         console.error('Error enrolling in course:', err);
-        res.send('Error enrolling in course.');
+        res.status(500).send('An error occurred while enrolling in the course.');
     }
 });
+app.get('/dashboard', async (req, res) => {
+    const student_id = req.session.student_id;
+
+    if (!student_id) {
+        return res.redirect('/login'); // Redirect to login if not authenticated
+    }
+
+    try {
+        const pool = await sql.connect(config);
+
+        // Fetch enrolled courses
+        const coursesQuery = `
+            SELECT c.course_id, c.course_name, c.description
+            FROM Enrollments e
+            JOIN Courses c ON e.course_id = c.course_id
+            WHERE e.student_id = @student_id
+        `;
+        const coursesResult = await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .query(coursesQuery);
+
+        // Fetch available courses
+        const allCoursesQuery = 'SELECT * FROM Courses';
+        const allCoursesResult = await pool.request().query(allCoursesQuery);
+
+        // Fetch modules for enrolled courses
+        const modulesQuery = `
+            SELECT m.module_id, m.course_id, m.module_name
+            FROM Modules m
+            JOIN Enrollments e ON m.course_id = e.course_id
+            WHERE e.student_id = @student_id
+        `;
+        const modulesResult = await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .query(modulesQuery);
+
+        // Organize modules by course
+        const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
+            if (!acc[module.course_id]) {
+                acc[module.course_id] = [];
+            }
+            acc[module.course_id].push(module);
+            return acc;
+        }, {});
+
+        // Render dashboard with all necessary data
+        res.render('dashboard', {
+            student: { student_id: student_id }, // Replace with actual student data if needed
+            enrolledCourses: coursesResult.recordset || [],
+            courses: allCoursesResult.recordset || [],
+            modulesByCourse: modulesByCourse
+        });
+    } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        res.send('An error occurred while processing your request.');
+    }
+});
+
+
 app.get('/module-details/:moduleId', async (req, res) => {
     const moduleId = parseInt(req.params.moduleId);
     if (isNaN(moduleId)) {
@@ -366,43 +412,28 @@ app.get('/logout', (req, res) => {
         res.redirect('/');
     });
 });
-// Protected route for materials with access control
-app.get('/modules/:moduleId/materials', ensureAuthenticated, async (req, res) => {
+// Serve the material link if authenticated
+app.get('/materials/:materialId', ensureAuthenticated, async (req, res) => {
     try {
-        const moduleId = parseInt(req.params.moduleId, 10);
-        const userId = req.session.student_id; // Assuming user_id is stored in session
+        const materialId = req.params.materialId;
         const pool = await sql.connect(config);
 
-        // Check if the user has access to the module
-        const accessCheckResult = await pool.request()
-            .input('studentId', sql.Int, userId)
-            .input('moduleId', sql.Int, moduleId)
-            .query(`
-                SELECT *
-                FROM Modules
-                WHERE student_id = @studentId AND module_id = @moduleId
-            `);
+        const materialResult = await pool.request()
+            .input('materialId', sql.Int, materialId)
+            .query('SELECT description, link FROM Materials WHERE material_id = @materialId');
 
-        if (accessCheckResult.recordset.length === 0) {
-            return res.status(403).send('Access Denied: You do not have permission to access this module.');
+        if (materialResult.recordset.length === 0) {
+            return res.status(404).send('Material not found');
         }
 
-        // Fetch materials if the user has access
-        const materialsResult = await pool.request()
-            .input('moduleId', sql.Int, moduleId)
-            .query(`
-                SELECT material_id, title, link
-                FROM Materials
-                WHERE module_id = @moduleId
-            `);
-
-        res.json(materialsResult.recordset);
+        // Retrieve material link and description
+        const material = materialResult.recordset[0];
+        res.json(material);
     } catch (err) {
-        console.error('Error fetching materials:', err.message);
-        res.status(500).send('Error fetching materials');
+        console.error('Error fetching material details:', err.message);
+        res.status(500).send('Error fetching material details');
     }
 });
-
 
 app.get('/modules/:moduleId/quizzes', async (req, res) => {
     try {

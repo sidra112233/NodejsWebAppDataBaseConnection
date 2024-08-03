@@ -1,10 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Course Management</title>
     <style>
-        body {
+        /* Your existing CSS here */
+         body {
             display: flex;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -110,13 +112,6 @@
         <ul id="material-list"></ul>
         <ul id="quiz-list"></ul>
     </div>
-    <nav>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <!-- Other navigation items -->
-    </ul>
-</nav>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -203,7 +198,7 @@
                             materialList.innerHTML += `
                                 <li>
                                     <span class="material-description">${material.description}</span><br>
-                                    <a href="${material.link}" class="material-link" target="_blank">${material.link}</a>
+                                    <a href="#" class="material-link" data-material-id="${material.material_id}">${material.link}</a>
                                 </li>`;
                         });
                         materialList.innerHTML += '</ul>';
@@ -227,7 +222,30 @@
                     }
                 }
             });
+
+            materialList.addEventListener('click', async (event) => {
+                if (event.target && event.target.classList.contains('material-link')) {
+                    event.preventDefault();
+                    const materialId = event.target.dataset.materialId;
+
+                    try {
+                        // Fetch material details
+                        const response = await fetch(`/materials/${materialId}`);
+                        if (response.redirected) {
+                            // Redirect to login page if not authenticated
+                            window.location.href = response.url;
+                        } else {
+                            const material = await response.json();
+                            // Open material link in a new tab
+                            window.open(material.link, '_blank');
+                        }
+                    } catch (error) {
+                        console.error('Error fetching material details:', error);
+                    }
+                }
+            });
         });
     </script>
 </body>
 </html>
+

@@ -47,6 +47,15 @@
         .hidden {
             display: none;
         }
+
+        #enroll-form {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 16px;
+            margin: 16px;
+            width: 300px;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
@@ -92,6 +101,15 @@
         <% } %>
     <% } %>
 
+    <!-- Enrollment Form -->
+    <div id="enroll-form" class="hidden">
+        <form action="/enroll" method="POST">
+            <input type="hidden" id="course_id" name="course_id">
+            <button type="submit">Enroll</button>
+            <button type="button" onclick="hideEnrollForm()">Cancel</button>
+        </form>
+    </div>
+
     <!-- Materials and Quizzes Display -->
     <div id="materials-quizzes-container" class="hidden">
         <h2>Materials</h2>
@@ -103,12 +121,13 @@
 
     <script>
         function showEnrollForm(courseId) {
+            console.log('Enroll button clicked. Course ID:', courseId);
             document.getElementById('course_id').value = courseId;
-            document.getElementById('enroll-form').style.display = 'block';
+            document.getElementById('enroll-form').classList.remove('hidden');
         }
 
         function hideEnrollForm() {
-            document.getElementById('enroll-form').style.display = 'none';
+            document.getElementById('enroll-form').classList.add('hidden');
         }
 
         function showMaterialsAndQuizzes(moduleId) {
