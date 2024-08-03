@@ -1,0 +1,150 @@
+   body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #333; /* Dark background color */
+            color: #fff; /* Light text color */
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background-color: #f9f9f9; /* Light container color */
+            margin-top: 20px;
+            color: #333; /* Dark text color inside the container */
+        }
+
+        .course-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .module-container {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .module {
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+            border-right: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .module:last-child {
+            border-right: none;
+        }
+
+        .module h4 {
+            margin-bottom: 5px;
+        }
+
+        .module p {
+            margin: 3px 0;
+        }
+
+        .resume-course {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .resume-course button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .resume-course button:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .course-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            width: calc(33.333% - 20px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            background-color: #fff; /* Light card color */
+            color: #333; /* Dark text color inside the card */
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .card button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background-color: #0056b3;
+        }
+
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            color: #333;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+            overflow-y: auto;
+            transition: right 0.3s;
+            padding: 20px;
+        }
+
+        .side-panel.show {
+            right: 0;
+        }
+
+        .side-panel h2 {
+            margin-top: 0;
+        }
+
+        .side-panel button {
+            display: block;
+            margin: 10px 0;
+            padding: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .side-panel button:hover {
+            background-color: #0056b3;
+        }

@@ -2,135 +2,233 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <style>
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 16px;
-            margin: 16px;
-            width: calc(33.333% - 32px);
-            float: left;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+   <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #001f3f; /* Navy blue background color */
+        color: #fff; /* Light text color */
+    }
 
-        .card h3 {
-            margin-top: 0;
-        }
+    .container {
+        max-width: 1200px;
+        width: 100%;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #f9f9f9; /* Light container color */
+        margin-top: 20px;
+        color: #333; /* Dark text color inside the container */
+        min-height: 80vh; /* Minimum height to ensure the container is taller */
+    }
 
-        .card button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .course-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
 
-        .card button:hover {
-            background-color: #0056b3;
-        }
+    .module-container {
+        display: flex;
+        justify-content: space-between;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+    }
 
-        .course-cards {
-            display: flex;
-            flex-wrap: wrap;
-        }
+    .module {
+        flex: 1;
+        text-align: center;
+        padding: 5px;
+        border-right: 1px solid #ddd;
+        cursor: pointer;
+    }
 
-        .modules-container {
-            display: flex;
-            flex-direction: column;
-        }
+    .module:last-child {
+        border-right: none;
+    }
 
-        .module {
-            margin: 10px 0;
-        }
+    .module h4 {
+        margin-bottom: 5px;
+    }
 
-        .hidden {
-            display: none;
-        }
+    .module p {
+        margin: 3px 0;
+    }
 
-        #enroll-form {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 16px;
-            margin: 16px;
-            width: 300px;
-            background-color: #f9f9f9;
-        }
-    </style>
+    .resume-course {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .resume-course button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .resume-course button:hover {
+        background-color: #0056b3;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .course-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+        width: calc(33.333% - 20px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        background-color: #fff; /* Light card color */
+        color: #333; /* Dark text color inside the card */
+    }
+
+    .card h3 {
+        margin-top: 0;
+    }
+
+    .card button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .card button:hover {
+        background-color: #0056b3;
+    }
+
+    .side-panel {
+        position: fixed;
+        top: 0;
+        left: -300px; /* Position the panel off-screen to the left */
+        width: 300px;
+        height: 100%;
+        background-color: #fff;
+        color: #333;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Shadow on the right side */
+        overflow-y: auto;
+        transition: left 0.3s;
+        padding: 20px;
+    }
+
+    .side-panel.show {
+        left: 0; /* Slide the panel into view from the left */
+    }
+
+    .side-panel h2 {
+        margin-top: 0;
+    }
+
+    .side-panel button {
+        display: block;
+        margin: 10px 0;
+        padding: 5px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .side-panel button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 </head>
 <body>
-    <h1>Welcome, <%= student.student_name %>!</h1>
+    <div class="container">
+        <h1 class="course-header">Welcome, <%= student.student_name %>!</h1>
 
-    <% if (enrolledCourses && enrolledCourses.length > 0) { %>
-        <h2>Your Enrolled Courses</h2>
-        <ul>
+        <% if (enrolledCourses && enrolledCourses.length > 0) { %>
             <% enrolledCourses.forEach(course => { %>
-                <li>
-                    <strong><%= course.course_name %></strong><br>
-                    <%= course.description %>
-                </li>
+                <div>
+                    <h2 class="course-header"><%= course.course_name %> (Aligned with <%= course.alignment %>)</h2>
+                    <div class="module-container">
+                        <% modulesByCourse[course.course_id].forEach(module => { %>
+                            <div class="module" onclick="showModuleDetails(<%= module.module_id %>)">
+                                <h4><%= module.module_name %></h4>
+                                <p>Study Resources</p>
+                                <p>Quiz: <%= module.quiz_score ? module.quiz_score + '%' : '-' %></p>
+                                <p>Test: <%= module.test_score ? module.test_score + '%' : '-' %></p>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
             <% }); %>
-        </ul>
-
-        <h2>Course Modules</h2>
-        <% Object.keys(modulesByCourse).forEach(courseId => { %>
-            <h3>Modules for <%= enrolledCourses.find(course => course.course_id == courseId).course_name %></h3>
-            <div class="modules-container">
-                <% modulesByCourse[courseId].forEach(module => { %>
-                    <div class="module">
-                        <h4><%= module.module_name %></h4>
-                        <button onclick="showMaterialsAndQuizzes(<%= module.module_id %>)">Show Materials & Quizzes</button>
-                    </div>
-                <% }); %>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <h2>Available Courses</h2>
-        <% if (courses && courses.length > 0) { %>
-            <div class="course-cards">
-                <% courses.forEach(course => { %>
-                    <div class="card">
-                        <h3><%= course.course_name %></h3>
-                        <p><%= course.description %></p>
-                        <button onclick="showEnrollForm(<%= course.course_id %>)">Enroll</button>
-                    </div>
-                <% }); %>
-            </div>
         <% } else { %>
-            <p>No courses available.</p>
+            <h2>Available Courses</h2>
+            <% if (courses && courses.length > 0) { %>
+                <div class="course-cards">
+                    <% courses.forEach(course => { %>
+                        <div class="card">
+                            <h3><%= course.course_name %></h3>
+                            <p><%= course.description %></p>
+                            <button onclick="showEnrollForm(<%= course.course_id %>)">Enroll</button>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p>No courses available.</p>
+            <% } %>
         <% } %>
-    <% } %>
 
-    <!-- Enrollment Form -->
-    <div id="enroll-form" class="hidden">
-        <form action="/enroll" method="POST">
-            <input type="hidden" id="course_id" name="course_id">
-            <button type="submit">Enroll</button>
+        <!-- Enrollment Form -->
+        <form id="enroll-form" action="/enroll" method="post" class="hidden">
+            <input type="hidden" name="course_id" id="course_id">
+            <button type="submit">Confirm Enrollment</button>
             <button type="button" onclick="hideEnrollForm()">Cancel</button>
         </form>
-    </div>
 
-    <!-- Materials and Quizzes Display -->
-    <div id="materials-quizzes-container" class="hidden">
-        <h2>Materials</h2>
-        <div id="materials"></div>
-        <h2>Quizzes</h2>
-        <div id="quizzes"></div>
-        <button onclick="hideMaterialsAndQuizzes()">Close</button>
+        <!-- Side Panel for Module Details -->
+        <div id="side-panel" class="side-panel">
+            <h2>Module Details</h2>
+            <div id="module-details"></div>
+            <button onclick="hideSidePanel()">Close</button>
+        </div>
+
     </div>
 
     <script>
         function showEnrollForm(courseId) {
-            console.log('Enroll button clicked. Course ID:', courseId);
             document.getElementById('course_id').value = courseId;
-            document.getElementById('enroll-form').classList.remove('hidden');
+            document.getElementById('enroll-form').style.display = 'block';
         }
 
         function hideEnrollForm() {
-            document.getElementById('enroll-form').classList.add('hidden');
+            document.getElementById('enroll-form').style.display = 'none';
         }
 
-        function showMaterialsAndQuizzes(moduleId) {
+        function showSidePanel() {
+            document.getElementById('side-panel').classList.add('show');
+        }
+
+        function hideSidePanel() {
+            document.getElementById('side-panel').classList.remove('show');
+        }
+
+        function showModuleDetails(moduleId) {
             if (!moduleId) {
                 console.error('Module ID is undefined');
                 return;
@@ -139,33 +237,38 @@
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    const materialsContainer = document.getElementById('materials');
-                    const quizzesContainer = document.getElementById('quizzes');
+                    const moduleDetailsContainer = document.getElementById('module-details');
 
-                    materialsContainer.innerHTML = data.materials.map(material => `
-                        <div class="material">
-                            <h5>${material.title}</h5>
-                            <p>${material.description}</p>
-                            <a href="${material.link}">Access Material</a>
-                        </div>
-                    `).join('');
+                    // Clear previous content
+                    moduleDetailsContainer.innerHTML = '';
 
-                    quizzesContainer.innerHTML = data.quizzes.map(quiz => `
-                        <div class="quiz">
-                            <h4>${quiz.quiz_title}</h4>
-                            <p>Total Marks: ${quiz.total_marks}</p>
-                        </div>
-                    `).join('');
+                    moduleDetailsContainer.innerHTML += `<h3>Materials</h3>`;
+                    data.materials.forEach(material => {
+                        moduleDetailsContainer.innerHTML += `
+                            <div class="material">
+                                <h4>${material.title}</h4>
+                                <p>Type: ${material.type}</p>
+                                <p>Description: ${material.description}</p>
+                                <a href="${material.link}" target="_blank">Link</a>
+                            </div>
+                        `;
+                    });
 
-                    document.getElementById('materials-quizzes-container').classList.remove('hidden');
+                    moduleDetailsContainer.innerHTML += `<h3>Quizzes</h3>`;
+                    data.quizzes.forEach(quiz => {
+                        moduleDetailsContainer.innerHTML += `
+                            <div class="quiz">
+                                <h4>${quiz.quiz_title}</h4>
+                                <p>Total Marks: ${quiz.total_marks}</p>
+                            </div>
+                        `;
+                    });
+
+                    showSidePanel();
                 })
                 .catch(error => {
                     console.error('Error fetching module details:', error);
                 });
-        }
-
-        function hideMaterialsAndQuizzes() {
-            document.getElementById('materials-quizzes-container').classList.add('hidden');
         }
     </script>
 </body>

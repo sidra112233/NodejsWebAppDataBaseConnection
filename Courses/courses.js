@@ -245,7 +245,9 @@ app.post('/login', async (req, res) => {
                 student: student,
                 enrolledCourses: coursesResult.recordset || [],
                 courses: allCoursesResult.recordset || [],
-                modulesByCourse: modulesByCourse
+                modulesByCourse: modulesByCourse,
+                showSidePanel: false // Hide side panel when viewing a specific module
+
             });
         } else {
             res.send('Incorrect Student Name or Password');
@@ -354,15 +356,14 @@ app.get('/dashboard', async (req, res) => {
             student: { student_id: student_id }, // Replace with actual student data if needed
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
-            modulesByCourse: modulesByCourse
+            modulesByCourse: modulesByCourse,
+            showSidePanel: true // Show side panel on dashboard
         });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
         res.send('An error occurred while processing your request.');
     }
 });
-
-
 app.get('/module-details/:moduleId', async (req, res) => {
     const moduleId = parseInt(req.params.moduleId);
     if (isNaN(moduleId)) {
@@ -394,7 +395,8 @@ app.get('/module-details/:moduleId', async (req, res) => {
 
         res.json({
             materials: materialsResult.recordset,
-            quizzes: quizzesResult.recordset
+            quizzes: quizzesResult.recordset,
+            showSidePanel: false // Hide side panel when viewing a specific module
         });
     } catch (err) {
         console.error('Error fetching module details:', err);
