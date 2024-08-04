@@ -326,10 +326,12 @@ app.get('/dashboard', async (req, res) => {
         const coursesResult = await pool.request()
             .input('student_id', sql.Int, student_id)
             .query(coursesQuery);
+        console.log('Enrolled courses:', coursesResult.recordset);
 
         // Fetch available courses
         const allCoursesQuery = 'SELECT * FROM Courses';
         const allCoursesResult = await pool.request().query(allCoursesQuery);
+        console.log('All courses:', allCoursesResult.recordset);
 
         // Fetch modules for enrolled courses
         const modulesQuery = `
@@ -341,6 +343,7 @@ app.get('/dashboard', async (req, res) => {
         const modulesResult = await pool.request()
             .input('student_id', sql.Int, student_id)
             .query(modulesQuery);
+        console.log('Modules by course:', modulesResult.recordset);
 
         // Organize modules by course
         const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
@@ -365,42 +368,55 @@ app.get('/dashboard', async (req, res) => {
     }
 });
 app.get('/module-details/:moduleId', async (req, res) => {
-    const moduleId = parseInt(req.params.moduleId);
-    if (isNaN(moduleId)) {
-        return res.status(400).send('Invalid module ID');
-    }
+    const moduleId = req.params.moduleId;
 
     try {
         const pool = await sql.connect(config);
 
+        // Fetch module details
+        const moduleQuery = `
+            SELECT module_name
+            FROM Modules
+            WHERE module_id = @module_id
+        `;
+        const moduleResult = await pool.request()
+            .input('module_id', sql.Int, moduleId)
+            .query(moduleQuery);
+
+        if (moduleResult.recordset.length === 0) {
+            return res.status(404).send({ error: 'Module not found' });
+        }
+
+        const moduleName = moduleResult.recordset[0].module_name;
+
         // Fetch materials for the module
         const materialsQuery = `
-            SELECT material_id, type, title, link, description
+            SELECT title, type, description, link
             FROM Materials
-            WHERE module_id = @moduleId
+            WHERE module_id = @module_id
         `;
         const materialsResult = await pool.request()
-            .input('moduleId', sql.Int, moduleId)
+            .input('module_id', sql.Int, moduleId)
             .query(materialsQuery);
 
         // Fetch quizzes for the module
         const quizzesQuery = `
-            SELECT quiz_id, quiz_title, total_marks
+            SELECT quiz_title, total_marks
             FROM Quizzes
-            WHERE module_id = @moduleId
+            WHERE module_id = @module_id
         `;
         const quizzesResult = await pool.request()
-            .input('moduleId', sql.Int, moduleId)
+            .input('module_id', sql.Int, moduleId)
             .query(quizzesQuery);
 
         res.json({
+            module_name: moduleName,
             materials: materialsResult.recordset,
-            quizzes: quizzesResult.recordset,
-            showSidePanel: false // Hide side panel when viewing a specific module
+            quizzes: quizzesResult.recordset
         });
     } catch (err) {
         console.error('Error fetching module details:', err);
-        res.status(500).send('An error occurred while fetching module details.');
+        res.status(500).send({ error: 'An error occurred while processing your request.' });
     }
 });
 
@@ -456,10 +472,13 @@ app.get('/modules/:moduleId/quizzes', async (req, res) => {
         res.status(500).send('Error fetching quizzes');
     }
 });
-
-// Route to start a quiz
 app.get('/quiz/start/:id', async (req, res) => {
     const quizId = parseInt(req.params.id, 10);
+
+    if (isNaN(quizId)) {
+        return res.status(400).send('Invalid quiz ID');
+    }
+
     try {
         const pool = await sql.connect(config);
         const quizResult = await pool.request()
@@ -471,28 +490,56 @@ app.get('/quiz/start/:id', async (req, res) => {
         }
 
         const quiz = quizResult.recordset[0];
-        const quizParams = {
-            timeLimit: quiz.time_limit || 30,
-            numberOfQuestions: quiz.number_of_questions || 10,
-            pointsToScore: quiz.points_to_score || 100,
-            passingScore: quiz.passing_score || 50,
-            quizTitle: quiz.quiz_title || 'Untitled Quiz'
-        };
+        req.session.quiz_id = quiz.quiz_id;
+        req.session.currentQuestionIndex = 0;
+        req.session.startTime = new Date().getTime();
+
+        // Fetch quiz questions
+        const questionsResult = await pool.request()
+            .input('quizId', sql.Int, quizId)
+            .query(`
+                SELECT question_id, question_text, option1, option2, option3, option4
+                FROM QuizQuestions
+                WHERE quiz_id = @quizId
+            `);
 
         res.render('quizStart', {
-            timeLimit: quizParams.timeLimit,
-            numberOfQuestions: quizParams.numberOfQuestions,
-            pointsToScore: quizParams.pointsToScore,
-            passingScore: quizParams.passingScore,
-            quizTitle: quizParams.quizTitle,
-            quiz
+            quiz,
+            questions: questionsResult.recordset
         });
-
     } catch (err) {
-        console.error('Error fetching quiz:', err.message);
-        res.status(500).send('Error fetching quiz');
+        console.error('Error starting quiz:', err.message);
+        res.status(500).send('Error starting quiz');
     }
 });
+app.get('/quiz/questions/:quizId', async (req, res) => {
+    const quizId = parseInt(req.params.quizId, 10);
+
+    if (isNaN(quizId)) {
+        return res.status(400).send('Invalid quiz ID');
+    }
+
+    try {
+        const pool = await sql.connect(config);
+        const questionsResult = await pool.request()
+            .input('quizId', sql.Int, quizId)
+            .query(`
+                SELECT question_id, question_text, option1, option2, option3, option4, correct_option
+                FROM QuizQuestions
+                WHERE quiz_id = @quizId
+            `);
+
+        if (questionsResult.recordset.length === 0) {
+            return res.status(404).send('No questions found for this quiz');
+        }
+
+        res.json(questionsResult.recordset);
+    } catch (err) {
+        console.error('Error fetching quiz questions:', err.message);
+        res.status(500).send('Error fetching quiz questions');
+    }
+});
+
 
 // Route to start the quiz
 app.post('/quiz/start', async (req, res) => {
