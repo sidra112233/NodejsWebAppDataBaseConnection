@@ -141,6 +141,20 @@
         .details-container h2 {
             margin-top: 0;
         }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        form input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -187,6 +201,14 @@
         <!-- Enrollment Form -->
         <form id="enroll-form" action="/enroll" method="post" class="hidden">
             <input type="hidden" name="course_id" id="course_id">
+            
+            <!-- New fields for email and password -->
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            
             <button type="submit">Confirm Enrollment</button>
             <button type="button" onclick="hideEnrollForm()">Cancel</button>
         </form>
@@ -231,43 +253,42 @@
             });
         }
         function showModuleDetails(moduleId, moduleName) {
-    fetch(`/module-details/${moduleId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('details-container').classList.remove('hidden');
+            fetch(`/module-details/${moduleId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('details-container').classList.remove('hidden');
 
-            document.getElementById('module-details-title').innerText = moduleName;
-            const moduleDetailsContent = document.getElementById('module-details-content');
-            moduleDetailsContent.innerHTML = '';
+                    document.getElementById('module-details-title').innerText = moduleName;
+                    const moduleDetailsContent = document.getElementById('module-details-content');
+                    moduleDetailsContent.innerHTML = '';
 
-            moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
-            data.materials.forEach(material => {
-                moduleDetailsContent.innerHTML += `
-                    <div class="material">
-                        <h4>${material.title}</h4>
-                        <p>Type: ${material.type}</p>
-                        <p>Description: ${material.description}</p>
-                        <a href="${material.link}" target="_blank">Link</a>
-                    </div>
-                `;
-            });
+                    moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
+                    data.materials.forEach(material => {
+                        moduleDetailsContent.innerHTML += `
+                            <div class="material">
+                                <h4>${material.title}</h4>
+                                <p>Type: ${material.type}</p>
+                                <p>Description: ${material.description}</p>
+                                <a href="${material.link}" target="_blank">Link</a>
+                            </div>
+                        `;
+                    });
 
-            moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
-            data.quizzes.forEach(quiz => {
-                moduleDetailsContent.innerHTML += `
-                    <div class="quiz">
-                        <h4>${quiz.quiz_title}</h4>
-                        <p>Total Marks: ${quiz.total_marks}</p>
-                        <a href="/quiz/start/${quiz.quiz_id}">Take Quiz</a>
-                    </div>
-                `;
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching module details:', error);
-        });
-}
-
+                    moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
+                    data.quizzes.forEach(quiz => {
+                        moduleDetailsContent.innerHTML += `
+                            <div class="quiz">
+                                <h4>${quiz.quiz_title}</h4>
+                                <p>Total Marks: ${quiz.total_marks}</p>
+                                <a href="/quiz/start/${quiz.quiz_id}">Take Quiz</a>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching module details:', error);
+                });
+        }
 
         function showDashboard() {
             document.getElementById('details-container').classList.add('hidden');
