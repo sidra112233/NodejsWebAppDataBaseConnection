@@ -33,15 +33,13 @@ app.use('/modules/:moduleId/quizzes', ensureAuthenticated);
 app.use('/quiz', ensureAuthenticated);
 app.use('/quiz/start', ensureAuthenticated);
 app.use('/next', ensureAuthenticated);
-
-// Define quiz parameters
+// Define fixed quiz parameters
 const quizParams = {
     timeLimit: 30, // in minutes
     numberOfQuestions: 10,
     pointsToScore: 100,
     passingScore: 50
 };
-
 // Route for home page
 app.get('/', async (req, res) => {
     try {
@@ -345,6 +343,19 @@ app.get('/dashboard', async (req, res) => {
             .query(modulesQuery);
         console.log('Modules by course:', modulesResult.recordset);
 
+        // Fetch quizzes for each module
+        const quizzesQuery = `
+            SELECT q.quiz_id, q.module_id, q.quiz_title, q.total_marks
+            FROM Quizzes q
+            JOIN Modules m ON q.module_id = m.module_id
+            JOIN Enrollments e ON m.course_id = e.course_id
+            WHERE e.student_id = @student_id
+        `;
+        const quizzesResult = await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .query(quizzesQuery);
+        console.log('Quizzes by module:', quizzesResult.recordset);
+
         // Organize modules by course
         const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
             if (!acc[module.course_id]) {
@@ -354,19 +365,29 @@ app.get('/dashboard', async (req, res) => {
             return acc;
         }, {});
 
+        // Organize quizzes by module
+        const quizzesByModule = quizzesResult.recordset.reduce((acc, quiz) => {
+            if (!acc[quiz.module_id]) {
+                acc[quiz.module_id] = [];
+            }
+            acc[quiz.module_id].push(quiz);
+            return acc;
+        }, {});
+
         // Render dashboard with all necessary data
         res.render('dashboard', {
             student: { student_id: student_id }, // Replace with actual student data if needed
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
-            showSidePanel: true // Show side panel on dashboard
+            quizzesByModule: quizzesByModule
         });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
         res.send('An error occurred while processing your request.');
     }
 });
+
 app.get('/module-details/:moduleId', async (req, res) => {
     const moduleId = req.params.moduleId;
 
@@ -472,73 +493,7 @@ app.get('/modules/:moduleId/quizzes', async (req, res) => {
         res.status(500).send('Error fetching quizzes');
     }
 });
-app.get('/quiz/start/:id', async (req, res) => {
-    const quizId = parseInt(req.params.id, 10);
 
-    if (isNaN(quizId)) {
-        return res.status(400).send('Invalid quiz ID');
-    }
-
-    try {
-        const pool = await sql.connect(config);
-        const quizResult = await pool.request()
-            .input('quizId', sql.Int, quizId)
-            .query('SELECT * FROM Quizzes WHERE quiz_id = @quizId');
-
-        if (quizResult.recordset.length === 0) {
-            return res.status(404).send('Quiz not found');
-        }
-
-        const quiz = quizResult.recordset[0];
-        req.session.quiz_id = quiz.quiz_id;
-        req.session.currentQuestionIndex = 0;
-        req.session.startTime = new Date().getTime();
-
-        // Fetch quiz questions
-        const questionsResult = await pool.request()
-            .input('quizId', sql.Int, quizId)
-            .query(`
-                SELECT question_id, question_text, option1, option2, option3, option4
-                FROM QuizQuestions
-                WHERE quiz_id = @quizId
-            `);
-
-        res.render('quizStart', {
-            quiz,
-            questions: questionsResult.recordset
-        });
-    } catch (err) {
-        console.error('Error starting quiz:', err.message);
-        res.status(500).send('Error starting quiz');
-    }
-});
-app.get('/quiz/questions/:quizId', async (req, res) => {
-    const quizId = parseInt(req.params.quizId, 10);
-
-    if (isNaN(quizId)) {
-        return res.status(400).send('Invalid quiz ID');
-    }
-
-    try {
-        const pool = await sql.connect(config);
-        const questionsResult = await pool.request()
-            .input('quizId', sql.Int, quizId)
-            .query(`
-                SELECT question_id, question_text, option1, option2, option3, option4, correct_option
-                FROM QuizQuestions
-                WHERE quiz_id = @quizId
-            `);
-
-        if (questionsResult.recordset.length === 0) {
-            return res.status(404).send('No questions found for this quiz');
-        }
-
-        res.json(questionsResult.recordset);
-    } catch (err) {
-        console.error('Error fetching quiz questions:', err.message);
-        res.status(500).send('Error fetching quiz questions');
-    }
-});
 
 
 // Route to start the quiz
@@ -571,20 +526,119 @@ app.post('/quiz/start', async (req, res) => {
         res.status(500).send('Error starting quiz');
     }
 });
+// Helper function to fetch questions from the database
+async function getQuestionsFromDatabase(quizId) {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+        .input('quizId', sql.Int, quizId)
+        .query('SELECT * FROM QuizQuestions WHERE quiz_id = @quizId');
+    return result.recordset.map(question => ({
+        question_id: question.question_id,
+        question_text: question.question_text,
+        options: [question.option1, question.option2, question.option3, question.option4],
+        correct_option: question.correct_option
+    }));
+}
 
-// Route to render the quiz page
+// Helper function to fetch the next student ID
+async function getNextStudentId() {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+        .query('SELECT ISNULL(MAX(student_id), 0) + 1 as nextStudentId FROM QuizSubmissions');
+    return result.recordset[0].nextStudentId;
+}
+
+// Helper function to save quiz submission
+async function saveQuizSubmission(student_id, quiz_id, totalScore) {
+    const pool = await sql.connect(config);
+    await pool.request()
+        .input('student_id', sql.Int, student_id)
+        .input('quiz_id', sql.Int, quiz_id)
+        .input('score', sql.Int, totalScore)
+        .query('INSERT INTO QuizSubmissions (student_id, quiz_id,score) VALUES (@student_id, @quiz_id, @score)');
+}
+app.get('/quiz/start/:id', async (req, res) => {
+    const quizId = req.params.id;
+
+    console.log('Received quiz ID:', quizId);
+
+    if (!quizId || isNaN(quizId)) {
+        console.log('Invalid quiz ID:', quizId);
+        return res.status(400).send('Invalid quiz ID');
+    }
+
+    try {
+        const pool = await sql.connect(config);
+
+        // Fetch quiz details
+        const quizResult = await pool.request()
+            .input('quizId', sql.Int, quizId)
+            .query('SELECT * FROM Quizzes WHERE quiz_id = @quizId');
+
+        console.log('Quiz query result:', quizResult);
+
+        if (quizResult.recordset.length === 0) {
+            console.log('Quiz not found for ID:', quizId);
+            return res.status(404).send('Quiz not found');
+        }
+
+        const quiz = quizResult.recordset[0];
+        req.session.quiz_id = quiz.quiz_id;
+        req.session.currentQuestionIndex = 0;
+        req.session.startTime = new Date().getTime();
+
+        // Fetch quiz questions
+        const questionsResult = await pool.request()
+            .input('quizId', sql.Int, quizId)
+            .query(`
+            SELECT question_id, question_text, option1, option2, option3, option4
+            FROM QuizQuestions
+            WHERE quiz_id = @quizId
+        `);
+
+        console.log('Questions query result:', questionsResult);
+
+        if (questionsResult.recordset.length === 0) {
+            console.log('No questions found for quiz ID:', quizId);
+            return res.status(404).send('No questions found for this quiz');
+        }
+
+        // Define fixed quiz parameters
+        const quizParams = {
+            timeLimit: 30, // in minutes
+            numberOfQuestions: 10,
+            pointsToScore: 100,
+            passingScore: 50
+        };
+
+        // Render the quiz start page with fixed parameters
+        res.render('quizStart', {
+            quizTitle: quiz.quiz_title,
+            timeLimit: quizParams.timeLimit,
+            numberOfQuestions: quizParams.numberOfQuestions,
+            pointsToScore: quizParams.pointsToScore,
+            passingScore: quizParams.passingScore,
+            quiz_id: quiz.quiz_id, // Pass quiz_id to the template
+            questions: questionsResult.recordset
+        });
+    } catch (err) {
+        console.error('Error starting quiz:', err.message);
+        res.status(500).send('Error starting quiz');
+    }
+});
+
+
+// Route to serve quiz page
 app.get('/quiz', async (req, res) => {
     try {
-        const questions = await getQuestionsFromDatabase();
+        const questions = await getQuestionsFromDatabase(req.session.quiz_id);
         const totalQuestions = questions.length;
         const currentQuestionIndex = req.session.currentQuestionIndex || 0;
 
         if (!req.session.student_id) {
             req.session.student_id = await getNextStudentId();
         }
-        if (!req.session.quiz_id) {
-            req.session.quiz_id = await getNextQuizId();
-        }
+
         if (!req.session.startTime) {
             req.session.startTime = new Date().getTime();
         }
@@ -609,12 +663,13 @@ app.get('/quiz', async (req, res) => {
     }
 });
 
+
 // Handle quiz navigation and submission
 app.post('/next', async (req, res) => {
     const { action, answers, currentQuestionId } = req.body;
     const student_id = req.session.student_id;
     const quiz_id = req.session.quiz_id;
-    const questions = await getQuestionsFromDatabase();
+    const questions = await getQuestionsFromDatabase(quiz_id);
     const totalQuestions = questions.length;
     let currentQuestionIndex = req.session.currentQuestionIndex || 0;
 
@@ -672,50 +727,6 @@ app.post('/next', async (req, res) => {
         timeLeft: Math.max(0, Math.round(timeLimitInSeconds - elapsedTime)) // Time left in seconds
     });
 });
-
-// Helper functions
-async function getQuestionsFromDatabase() {
-    const pool = await sql.connect(config);
-    const result = await pool.request().query('SELECT * FROM QuizQuestions');
-    return result.recordset.map(question => ({
-        question_id: question.question_id,
-        question_text: question.question_text,
-        options: [question.option1, question.option2, question.option3, question.option4],
-        correct_option: question.correct_option
-    }));
-}
-
-async function getNextStudentId() {
-    const pool = await sql.connect(config);
-    const result = await pool.request().query('SELECT ISNULL(MAX(student_id), 0) + 1 as nextStudentId FROM QuizSubmissions');
-    return result.recordset[0].nextStudentId;
-}
-
-async function getNextQuizId() {
-    const pool = await sql.connect(config);
-    const result = await pool.request().query('SELECT ISNULL(MAX(quiz_id), 0) + 1 as nextQuizId FROM QuizSubmissions');
-    return result.recordset[0].nextQuizId;
-}
-
-async function saveQuizSubmission(student_id, quiz_id, totalScore) {
-    try {
-        const pool = await sql.connect(config);
-        const query = `
-            INSERT INTO QuizSubmissions (student_id, quiz_id, score)
-            VALUES (@student_id, @quiz_id, @score);
-        `;
-
-        await pool.request()
-            .input('student_id', sql.Int, student_id)
-            .input('quiz_id', sql.Int, quiz_id)
-            .input('score', sql.Float, totalScore)
-            .query(query);
-
-        console.log('Score saved successfully.');
-    } catch (err) {
-        console.error('Error saving score:', err.message);
-    }
-}
 
 // Start the server
 const PORT = 2000;

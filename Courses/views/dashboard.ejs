@@ -248,47 +248,56 @@
                         <p>Study Resources</p>
                         <p>Quiz: ${module.quiz_score ? module.quiz_score + '%' : '-'}</p>
                         <p>Test: ${module.test_score ? module.test_score + '%' : '-'}</p>
+                         ${module.quiz_id ? `
+                <form action="/quiz/start" method="post">
+                    <input type="hidden" name="quiz_id" value="${module.quiz_id}">
+                    <button type="submit">Start Quiz</button>
+                </form>` : ''}
                     </div>
                 `;
             });
         }
-        function showModuleDetails(moduleId, moduleName) {
-            fetch(`/module-details/${moduleId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('details-container').classList.remove('hidden');
+    function showModuleDetails(moduleId, moduleName) {
+        fetch(`/module-details/${moduleId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('details-container').classList.remove('hidden');
 
-                    document.getElementById('module-details-title').innerText = moduleName;
-                    const moduleDetailsContent = document.getElementById('module-details-content');
-                    moduleDetailsContent.innerHTML = '';
+                document.getElementById('module-details-title').innerText = moduleName;
+                const moduleDetailsContent = document.getElementById('module-details-content');
+                moduleDetailsContent.innerHTML = '';
 
-                    moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
-                    data.materials.forEach(material => {
-                        moduleDetailsContent.innerHTML += `
-                            <div class="material">
-                                <h4>${material.title}</h4>
-                                <p>Type: ${material.type}</p>
-                                <p>Description: ${material.description}</p>
-                                <a href="${material.link}" target="_blank">Link</a>
-                            </div>
-                        `;
-                    });
+                moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
+                data.materials.forEach(material => {
+                    moduleDetailsContent.innerHTML += `
+                        <div class="material">
+                            <h4>${material.title}</h4>
+                            <p>Type: ${material.type}</p>
+                            <p>Description: ${material.description}</p>
+                            <a href="${material.link}" target="_blank">Link</a>
+                        </div>
+                    `;
+                });
 
-                    moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
+                moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
+                if (data.quizzes && data.quizzes.length > 0) {
                     data.quizzes.forEach(quiz => {
                         moduleDetailsContent.innerHTML += `
                             <div class="quiz">
                                 <h4>${quiz.quiz_title}</h4>
                                 <p>Total Marks: ${quiz.total_marks}</p>
-                                <a href="/quiz/start/${quiz.quiz_id}">Take Quiz</a>
+                                <a href="/quiz/start/${quiz.quiz_id}">Start Quiz</a>
                             </div>
                         `;
                     });
-                })
-                .catch(error => {
-                    console.error('Error fetching module details:', error);
-                });
-        }
+                } else {
+                    moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching module details:', error);
+            });
+    }
 
         function showDashboard() {
             document.getElementById('details-container').classList.add('hidden');
@@ -298,3 +307,4 @@
     </script>
 </body>
 </html>
+
