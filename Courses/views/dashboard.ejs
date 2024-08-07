@@ -10,8 +10,8 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #001f3f; /* Navy blue background color */
-            color: #fff; /* Light text color */
+            background-color: #001f3f;
+            color: #fff;
         }
 
         .container {
@@ -19,9 +19,9 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            background-color: #f9f9f9; /* Light container color */
+            background-color: #f9f9f9;
             margin-top: 20px;
-            color: #333; /* Dark text color inside the container */
+            color: #333;
             overflow-y: auto;
             height: 100%;
         }
@@ -78,8 +78,8 @@
             width: calc(33.333% - 20px);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            background-color: #fff; /* Light card color */
-            color: #333; /* Dark text color inside the card */
+            background-color: #fff;
+            color: #333;
         }
 
         .card h3 {
@@ -102,12 +102,12 @@
         .sidebar {
             width: 300px;
             height: 100%;
-            background-color: #f9f9f9; /* Light container color */
-            color: #333; /* Dark text color inside the container */
+            background-color: #f9f9f9;
+            color: #333;
             padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Shadow on the right side */
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             overflow-y: auto;
-            display: none; /* Hide sidebar by default */
+            display: none;
             flex-direction: column;
         }
 
@@ -131,29 +131,15 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            background-color: #f9f9f9; /* Light container color */
+            background-color: #f9f9f9;
             margin-top: 20px;
-            color: #333; /* Dark text color inside the container */
+            color: #333;
             overflow-y: auto;
             height: 100%;
         }
 
         .details-container h2 {
             margin-top: 0;
-        }
-
-        form label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        form input {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
         }
     </style>
 </head>
@@ -168,11 +154,17 @@
                     <div class="module-container">
                         <% if (modulesByCourse[course.course_id]) { %>
                             <% modulesByCourse[course.course_id].forEach(module => { %>
-                                <div class="module" onclick="showModulesSidebar('<%= course.course_name %>', <%= JSON.stringify(modulesByCourse[course.course_id]) %>)">
+                                <div class="module" onclick="showModuleInSidebar('<%= course.course_name %>', <%= JSON.stringify(modulesByCourse[course.course_id]) %>, <%= module.module_id %>)">
                                     <h4><%= module.module_name %></h4>
                                     <p>Study Resources</p>
                                     <p>Quiz: <%= module.quiz_score ? module.quiz_score + '%' : '-' %></p>
                                     <p>Test: <%= module.test_score ? module.test_score + '%' : '-' %></p>
+                                    <% if (module.quiz_id) { %>
+                                        <form action="/quiz/start" method="post">
+                                            <input type="hidden" name="quiz_id" value="<%= module.quiz_id %>">
+                                            <button type="submit">Start Quiz</button>
+                                        </form>
+                                    <% } %>
                                 </div>
                             <% }); %>
                         <% } else { %>
@@ -197,21 +189,6 @@
                 <p>No courses available.</p>
             <% } %>
         <% } %>
-
-        <!-- Enrollment Form -->
-        <form id="enroll-form" action="/enroll" method="post" class="hidden">
-            <input type="hidden" name="course_id" id="course_id">
-            
-            <!-- New fields for email and password -->
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required>
-            
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
-            
-            <button type="submit">Confirm Enrollment</button>
-            <button type="button" onclick="hideEnrollForm()">Cancel</button>
-        </form>
     </div>
 
     <div id="sidebar" class="sidebar">
@@ -225,79 +202,83 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            console.log('DOM fully loaded and parsed');
+        });
+
         function showEnrollForm(courseId) {
-            document.getElementById('course_id').value = courseId;
-            document.getElementById('enroll-form').style.display = 'block';
+            console.log('Showing enroll form'); // Debugging statement
+            window.location.href = `/enroll?course_id=${courseId}`;
         }
 
-        function hideEnrollForm() {
-            document.getElementById('enroll-form').style.display = 'none';
-        }
+        function showModuleInSidebar(courseName, modules, selectedModuleId) {
+            console.log('Showing module in sidebar', courseName, modules, selectedModuleId); // Debugging statement
 
-        function showModulesSidebar(courseName, modules) {
             document.getElementById('dashboard').classList.add('hidden');
             const sidebar = document.getElementById('sidebar');
             sidebar.style.display = 'flex';
             document.getElementById('sidebar-course-name').innerText = courseName;
+            
             const sidebarModules = document.getElementById('sidebar-modules');
             sidebarModules.innerHTML = '';
             modules.forEach(module => {
                 sidebarModules.innerHTML += `
-                    <div class="module" onclick="showModuleDetails(${module.module_id}, '${module.module_name}')">
+                    <div class="module ${module.module_id === selectedModuleId ? 'selected' : ''}" onclick="showModuleDetails(${module.module_id}, '${module.module_name}')">
                         <h4>${module.module_name}</h4>
                         <p>Study Resources</p>
                         <p>Quiz: ${module.quiz_score ? module.quiz_score + '%' : '-'}</p>
-                        <p>Test: ${module.test_score ? module.test_score + '%' : '-'}</p>
-                         ${module.quiz_id ? `
-                <form action="/quiz/start" method="post">
-                    <input type="hidden" name="quiz_id" value="${module.quiz_id}">
-                    <button type="submit">Start Quiz</button>
-                </form>` : ''}
                     </div>
                 `;
             });
+
+            // Automatically show the details of the selected module
+            showModuleDetails(selectedModuleId, modules.find(m => m.module_id === selectedModuleId).module_name);
         }
-    function showModuleDetails(moduleId, moduleName) {
-        fetch(`/module-details/${moduleId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('details-container').classList.remove('hidden');
 
-                document.getElementById('module-details-title').innerText = moduleName;
-                const moduleDetailsContent = document.getElementById('module-details-content');
-                moduleDetailsContent.innerHTML = '';
+        function showModuleDetails(moduleId, moduleName) {
+            console.log('Showing module details', moduleId, moduleName); // Debugging statement
+            fetch(`/module-details/${moduleId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched module details:', data);
 
-                moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
-                data.materials.forEach(material => {
-                    moduleDetailsContent.innerHTML += `
-                        <div class="material">
-                            <h4>${material.title}</h4>
-                            <p>Type: ${material.type}</p>
-                            <p>Description: ${material.description}</p>
-                            <a href="${material.link}" target="_blank">Link</a>
-                        </div>
-                    `;
-                });
+                    document.getElementById('details-container').classList.remove('hidden');
 
-                moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
-                if (data.quizzes && data.quizzes.length > 0) {
-                    data.quizzes.forEach(quiz => {
+                    document.getElementById('module-details-title').innerText = moduleName;
+                    const moduleDetailsContent = document.getElementById('module-details-content');
+                    moduleDetailsContent.innerHTML = '';
+
+                    moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
+                    data.materials.forEach(material => {
                         moduleDetailsContent.innerHTML += `
-                            <div class="quiz">
-                                <h4>${quiz.quiz_title}</h4>
-                                <p>Total Marks: ${quiz.total_marks}</p>
-                                <a href="/quiz/start/${quiz.quiz_id}">Start Quiz</a>
+                            <div class="material">
+                                <h4>${material.title}</h4>
+                                <p>Type: ${material.type}</p>
+                                <p>Description: ${material.description}</p>
+                                <a href="${material.link}" target="_blank">Link</a>
                             </div>
                         `;
                     });
-                } else {
-                    moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching module details:', error);
-            });
-    }
+
+                    moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
+                    if (data.quizzes && data.quizzes.length > 0) {
+                        data.quizzes.forEach(quiz => {
+                            moduleDetailsContent.innerHTML += `
+                                <div class="quiz">
+                                    <h4>${quiz.quiz_title}</h4>
+                                    <p>Total Marks: ${quiz.total_marks}</p>
+                                    <a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching module details:', error);
+                });
+        }
 
         function showDashboard() {
             document.getElementById('details-container').classList.add('hidden');
@@ -307,4 +288,3 @@
     </script>
 </body>
 </html>
-

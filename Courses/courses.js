@@ -218,10 +218,11 @@ app.post('/login', async (req, res) => {
             const allCoursesQuery = 'SELECT * FROM Courses';
             const allCoursesResult = await pool.request().query(allCoursesQuery);
 
-            // Fetch modules for enrolled courses
+            // Fetch modules for enrolled courses with quiz info
             const modulesQuery = `
-                SELECT m.module_id, m.course_id, m.module_name
+                SELECT m.module_id, m.course_id, m.module_name, q.quiz_id
                 FROM Modules m
+                LEFT JOIN Quizzes q ON m.module_id = q.module_id
                 JOIN Enrollments e ON m.course_id = e.course_id
                 WHERE e.student_id = @student_id
             `;
@@ -243,9 +244,7 @@ app.post('/login', async (req, res) => {
                 student: student,
                 enrolledCourses: coursesResult.recordset || [],
                 courses: allCoursesResult.recordset || [],
-                modulesByCourse: modulesByCourse,
-                showSidePanel: false // Hide side panel when viewing a specific module
-
+                modulesByCourse: modulesByCourse
             });
         } else {
             res.send('Incorrect Student Name or Password');
@@ -255,7 +254,6 @@ app.post('/login', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
-
 
 app.get('/signup', (req, res) => {
     res.render('signup'); // Render the signup page
@@ -271,12 +269,15 @@ app.post('/signup', async (req, res) => {
             .input('password_hash', sql.VarChar, password_hash)
             .input('email', sql.VarChar, email)
             .query(sqlQuery);
-
         res.send('Signup successful! You can now log in.');
     } catch (err) {
         console.error('Error executing query:', err);
         res.send('An error occurred while processing your request.');
     }
+});
+app.get('/enroll', (req, res) => {
+    const courseId = req.query.course_id;
+    res.render('enroll', { courseId });
 });
 // Add this route to your `courses.js` or relevant file
 app.post('/enroll', async (req, res) => {
@@ -376,7 +377,7 @@ app.get('/dashboard', async (req, res) => {
 
         // Render dashboard with all necessary data
         res.render('dashboard', {
-            student: { student_id: student_id }, // Replace with actual student data if needed
+            student, // Replace with actual student data if needed
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
@@ -387,70 +388,35 @@ app.get('/dashboard', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
-
 app.get('/module-details/:moduleId', async (req, res) => {
-    const moduleId = req.params.moduleId;
+    const { moduleId } = req.params;
 
     try {
         const pool = await sql.connect(config);
 
-        // Fetch module details
-        const moduleQuery = `
-            SELECT module_name
-            FROM Modules
-            WHERE module_id = @module_id
-        `;
-        const moduleResult = await pool.request()
-            .input('module_id', sql.Int, moduleId)
-            .query(moduleQuery);
-
-        if (moduleResult.recordset.length === 0) {
-            return res.status(404).send({ error: 'Module not found' });
-        }
-
-        const moduleName = moduleResult.recordset[0].module_name;
-
-        // Fetch materials for the module
-        const materialsQuery = `
-            SELECT title, type, description, link
-            FROM Materials
-            WHERE module_id = @module_id
-        `;
+        // Fetch module materials
+        const materialsQuery = 'SELECT * FROM Materials WHERE module_id = @module_id';
         const materialsResult = await pool.request()
             .input('module_id', sql.Int, moduleId)
             .query(materialsQuery);
 
         // Fetch quizzes for the module
-        const quizzesQuery = `
-            SELECT quiz_title, total_marks
-            FROM Quizzes
-            WHERE module_id = @module_id
-        `;
+        const quizzesQuery = 'SELECT quiz_id, quiz_title, total_marks FROM Quizzes WHERE module_id = @module_id';
         const quizzesResult = await pool.request()
             .input('module_id', sql.Int, moduleId)
             .query(quizzesQuery);
 
         res.json({
-            module_name: moduleName,
             materials: materialsResult.recordset,
             quizzes: quizzesResult.recordset
         });
     } catch (err) {
-        console.error('Error fetching module details:', err);
-        res.status(500).send({ error: 'An error occurred while processing your request.' });
+        console.error('Error executing query:', err);
+        res.status(500).send('An error occurred while fetching module details.');
     }
 });
 
 
-app.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            console.error('Error destroying session:', err);
-            return res.redirect('/');
-        }
-        res.redirect('/');
-    });
-});
 // Serve the material link if authenticated
 app.get('/materials/:materialId', ensureAuthenticated, async (req, res) => {
     try {
