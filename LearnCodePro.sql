@@ -3,6 +3,7 @@ CREATE TABLE Student(
     student_name VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+ADD CONSTRAINT UQ_Student_Email UNIQUE (email),
     created_at DATETIME DEFAULT GETDATE()
 );
 
@@ -20,7 +21,7 @@ CREATE TABLE Courses(
     duration INT
 );
 CREATE TABLE Enrollments (
-    enrollment_id INT PRIMARY KEY,
+    enrollment_id INT IDENTITY(1,1) PRIMARY KEY,
     student_id INT,
     course_id INT,
     enrollment_date DATE,
@@ -37,7 +38,7 @@ CREATE TABLE Modules (
 );
 CREATE TABLE Materials (
     material_id INT PRIMARY KEY IDENTITY(1,1),
-    module_id INT,  -- Foreign key referencing Modules table
+    module_id INT NOT NULL,  -- Foreign key referencing Modules table
     type VARCHAR(50),  -- Type of material (e.g., 'PDF', 'Video', 'LRO')
     title VARCHAR(255),  -- Title of the material
     link VARCHAR(MAX), -- Link to the material (URL or path)
@@ -45,10 +46,9 @@ CREATE TABLE Materials (
 	FOREIGN KEY (module_id) REFERENCES Modules(module_id)
     -- Add additional columns as needed (e.g., description, date uploaded, etc.)
 );
-
 CREATE TABLE Quizzes (
     quiz_id INT PRIMARY KEY IDENTITY(1,1) ,
-    module_id INT,
+    module_id INT NOT NULL,
     quiz_title TEXT,
 	total_marks FLOAT,
     FOREIGN KEY (module_id) REFERENCES Modules(module_id)
@@ -64,7 +64,7 @@ CREATE TABLE QuizSubmissions (
 );
 CREATE TABLE QuizQuestions (
     question_id INT PRIMARY KEY IDENTITY(1,1),
-    quiz_id INT ,
+    quiz_id INT NOT NULL ,
     question_text VARCHAR(MAX) NOT NULL,
     option1 VARCHAR(MAX) NOT NULL,
     option2 VARCHAR(MAX) NOT NULL,
@@ -85,4 +85,4 @@ CREATE TABLE QuizAnswers (
     FOREIGN KEY (question_id) REFERENCES QuizQuestions(question_id),
     FOREIGN KEY (student_id) REFERENCES Student(student_id)
 );
-SELECT * FROM Courses;
+SELECT * FROM QuizQuestions;
