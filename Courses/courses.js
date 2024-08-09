@@ -298,11 +298,14 @@ app.post('/enroll', async (req, res) => {
             .input('student_id', sql.Int, student_id)
             .input('course_id', sql.Int, course_id)
             .query(query);
-
-        res.redirect('/dashboard'); // Redirect to the dashboard or another page after enrollment
-    } catch (err) {
-        console.error('Error enrolling in course:', err);
-        res.status(500).send('An error occurred while enrolling in the course.');
+        res.redirect('/dashboard');
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            res.status(400).send('You are already enrolled in this course.');
+        } else {
+            console.error('Enrollment Error:', error);
+            res.status(500).send('An error occurred while processing your request.');
+        }
     }
 });
 app.get('/dashboard', async (req, res) => {
@@ -315,6 +318,19 @@ app.get('/dashboard', async (req, res) => {
     try {
         const pool = await sql.connect(config);
 
+        // Fetch the student information
+        const studentQuery = 'SELECT * FROM Student WHERE student_id = @student_id';
+        const studentResult = await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .query(studentQuery);
+
+        // Ensure the student is found
+        if (studentResult.recordset.length === 0) {
+            return res.status(404).send('Student not found.');
+        }
+
+        const student = studentResult.recordset[0];
+
         // Fetch enrolled courses
         const coursesQuery = `
             SELECT c.course_id, c.course_name, c.description
@@ -325,12 +341,10 @@ app.get('/dashboard', async (req, res) => {
         const coursesResult = await pool.request()
             .input('student_id', sql.Int, student_id)
             .query(coursesQuery);
-        console.log('Enrolled courses:', coursesResult.recordset);
 
         // Fetch available courses
         const allCoursesQuery = 'SELECT * FROM Courses';
         const allCoursesResult = await pool.request().query(allCoursesQuery);
-        console.log('All courses:', allCoursesResult.recordset);
 
         // Fetch modules for enrolled courses
         const modulesQuery = `
@@ -342,7 +356,6 @@ app.get('/dashboard', async (req, res) => {
         const modulesResult = await pool.request()
             .input('student_id', sql.Int, student_id)
             .query(modulesQuery);
-        console.log('Modules by course:', modulesResult.recordset);
 
         // Fetch quizzes for each module
         const quizzesQuery = `
@@ -355,7 +368,6 @@ app.get('/dashboard', async (req, res) => {
         const quizzesResult = await pool.request()
             .input('student_id', sql.Int, student_id)
             .query(quizzesQuery);
-        console.log('Quizzes by module:', quizzesResult.recordset);
 
         // Organize modules by course
         const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
@@ -377,7 +389,7 @@ app.get('/dashboard', async (req, res) => {
 
         // Render dashboard with all necessary data
         res.render('dashboard', {
-            student, // Replace with actual student data if needed
+            student: student, // Pass the student data here
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
@@ -388,6 +400,7 @@ app.get('/dashboard', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
+
 app.get('/module-details/:moduleId', async (req, res) => {
     const { moduleId } = req.params;
 
