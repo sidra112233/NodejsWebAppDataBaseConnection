@@ -4,158 +4,218 @@
     <title>Dashboard</title>
     <style>
         body {
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #001f3f;
-            color: #fff;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #001f3f;
+    color: #ffffff;
+}
+
+.container {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin-top: 20px;
+    color: #ffffff;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%; /* Set width as a percentage of the parent or use a fixed width */
+    max-width: 1200px; /* Optional: Set a maximum width if needed */
+    height: auto; /* Adjust height as needed */
+    box-sizing: border-box;
+}
+
+.course-header {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.module-container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 10px 0;
+    background-color: #002b5f;
+    width: 80%; /* Set width as a percentage of the parent or use a fixed width */
+    max-width: 1200px; /* Optional: Set a maximum width if needed */
+    height: auto; /* Adjust height as needed */
+    box-sizing: border-box;
+}
+
+.module {
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #555;
+    cursor: pointer;
+    background-color: #003366;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.module h4 {
+    margin-bottom: 5px;
+    font-size: 1.2em;
+    color: #ffd700;
+}
+
+.module p {
+    margin: 3px 0;
+    font-size: 0.9em;
+}
+.hidden {
+       display: none;
         }
 
-        .container {
-            flex-grow: 1;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            margin-top: 20px;
-            color: #333;
-            overflow-y: auto;
-            height: 100%;
-        }
+.module:last-child {
+    border-bottom: none;
+}
 
-        .course-header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
+.course-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-        .module-container {
-            display: flex;
-            justify-content: space-between;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 10px 0;
-        }
+.card {
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: calc(33.333% - 20px);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    background-color: #003366;
+    color: #ffffff;
+}
 
-        .module {
-            flex: 1;
-            text-align: center;
-            padding: 5px;
-            border-right: 1px solid #ddd;
-            cursor: pointer;
-        }
+.card h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #ffd700;
+}
 
-        .module:last-child {
-            border-right: none;
-        }
+.card button {
+    background-color: #ffd700;
+    color: #003366;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+}
 
-        .module h4 {
-            margin-bottom: 5px;
-        }
+.card button:hover {
+    background-color: #ffc107;
+}
 
-        .module p {
-            margin: 3px 0;
-        }
+.sidebar {
+    width: 200px;
+    height: 100%;
+    background-color: #003366;
+    color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    font-size: 1em;
+}
 
-        .hidden {
-            display: none;
-        }
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #ffd700;
+}
 
-        .course-cards {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+.sidebar .module {
+    border: none;
+    border-bottom: 1px solid #444;
+    padding: 10px 0;
+    cursor: pointer;
+    background-color: transparent;
+}
 
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 10px;
-            width: calc(33.333% - 20px);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            background-color: #fff;
-            color: #333;
-        }
+.sidebar .module h4 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #ffd700;
+}
 
-        .card h3 {
-            margin-top: 0;
-        }
+.sidebar .module:last-child {
+    border-bottom: none;
+}
 
-        .card button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.compiler-container {
+    margin: 20px;
+    background-color: #002b5f;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
 
-        .card button:hover {
-            background-color: #0056b3;
-        }
+.compiler-container h1 {
+    font-size: 1.5em;
+    color: #ffd700;
+    margin-bottom: 20px;
+}
 
-        .sidebar {
-            width: 300px;
-            height: 100%;
-            background-color: #f9f9f9;
-            color: #333;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-            display: none;
-            flex-direction: column;
-        }
+.compiler-container textarea {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
 
-        .sidebar h2 {
-            margin-top: 0;
-        }
+.compiler-container select,
+.compiler-container input[type="checkbox"],
+.compiler-container button {
+    margin-bottom: 10px;
+}
 
-        .sidebar .module {
-            border: none;
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-            cursor: pointer;
-        }
+.compiler-container button {
+    background-color: #ffd700;
+    color: #003366;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+}
 
-        .sidebar .module:last-child {
-            border-bottom: none;
-        }
+.compiler-container button:hover {
+    background-color: #ffc107;
+}
 
-        .compiler-container {
-            margin: 20px;
-            background-color: #e9ecef;
-            padding: 10px;
-            border-radius: 5px;
-            width: 300px;
-            max-width: 100%;
-            position: fixed;
-            right: 0;
-            top: 0;
-            height: 100%;
-            overflow-y: auto;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .compiler-container textarea {
-            width: 100%;
-            height: 200px;
-            margin-bottom: 10px;
-            font-family: monospace;
-            border-radius: 5px;
-            padding: 5px;
-            resize: vertical;
-        }
     </style>
 </head>
 <body>
     <div id="dashboard" class="container">
         <h1 class="course-header">Welcome, <%= student.student_name %>!</h1>
-
         <% if (enrolledCourses && enrolledCourses.length > 0) { %>
             <% enrolledCourses.forEach(course => { %>
                 <div>

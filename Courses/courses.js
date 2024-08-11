@@ -237,13 +237,19 @@ app.post('/login', async (req, res) => {
                 acc[module.course_id].push(module);
                 return acc;
             }, {});
+            // Calculate average progress
+            const progressResult = await pool.request()
+                .input('student_id', sql.Int, student.student_id)
+                .query('SELECT AVG(progress) as avgProgress FROM QuizSubmissions WHERE student_id = @student_id');
+            const avgProgress = progressResult.recordset[0].avgProgress || 0;
 
             // Render dashboard with all necessary data
             res.render('dashboard', {
                 student: student,
                 enrolledCourses: coursesResult.recordset || [],
                 courses: allCoursesResult.recordset || [],
-                modulesByCourse: modulesByCourse
+                modulesByCourse: modulesByCourse,
+                avgProgress
             });
         } else {
             res.send('Incorrect Student Name or Password');
@@ -385,6 +391,11 @@ app.get('/dashboard', async (req, res) => {
             acc[quiz.module_id].push(quiz);
             return acc;
         }, {});
+        // Calculate average progress
+        const progressResult = await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .query('SELECT AVG(progress) as avgProgress FROM QuizSubmissions WHERE student_id = @student_id');
+        const avgProgress = progressResult.recordset[0].avgProgress || 0;
 
         // Render dashboard with all necessary data
         res.render('dashboard', {
@@ -392,7 +403,8 @@ app.get('/dashboard', async (req, res) => {
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
-            quizzesByModule: quizzesByModule
+            quizzesByModule: quizzesByModule,
+            avgProgress
         });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
@@ -528,13 +540,16 @@ async function getNextStudentId() {
 
 // Helper function to save quiz submission
 async function saveQuizSubmission(student_id, quiz_id, totalScore) {
+    const progress = Math.round((totalScore / 100) * 100); // Assuming 100 is the max score
     const pool = await sql.connect(config);
     await pool.request()
         .input('student_id', sql.Int, student_id)
         .input('quiz_id', sql.Int, quiz_id)
         .input('score', sql.Int, totalScore)
-        .query('INSERT INTO QuizSubmissions (student_id, quiz_id,score) VALUES (@student_id, @quiz_id, @score)');
+        .input('progress', sql.Int, progress)
+        .query('INSERT INTO QuizSubmissions (student_id, quiz_id, score, progress) VALUES (@student_id, @quiz_id, @score, @progress)');
 }
+
 app.get('/quiz/start/:id', async (req, res) => {
     const quizId = req.params.id;
 
@@ -625,7 +640,7 @@ app.get('/quiz', async (req, res) => {
         const elapsedTime = (currentTime - req.session.startTime) / 1000;
         const timeLimitInSeconds = quizParams.timeLimit * 60;
         const timeLeft = Math.max(0, timeLimitInSeconds - elapsedTime);
-
+        const progressPercentage = (currentQuestionIndex / totalQuestions) * 100;
         res.render('quiz', {
             student_id: req.session.student_id,
             quiz_id: req.session.quiz_id,
@@ -633,7 +648,8 @@ app.get('/quiz', async (req, res) => {
             currentQuestionIndex,
             totalQuestions,
             timeLimit: quizParams.timeLimit,
-            timeLeft
+            timeLeft,
+            progressPercentage // Pass progress to the template
         });
     } catch (err) {
         console.error('Error serving quiz:', err.message);
@@ -682,6 +698,7 @@ app.post('/next', async (req, res) => {
     if (action === 'next') {
         currentQuestionIndex++;
         req.session.currentQuestionIndex = currentQuestionIndex;
+
     }
 
     if (action === 'submit' || currentQuestionIndex >= totalQuestions) {
@@ -689,11 +706,12 @@ app.post('/next', async (req, res) => {
         const totalScore = req.session.scores.reduce((acc, cur) => acc + cur, 0);
 
         await saveQuizSubmission(student_id, quiz_id, totalScore);
+        const progress = Math.round((totalScore / 100) * 100); // Assuming 100 is the max score
 
         req.session.destroy(); // Clear session data
-        return res.render('result', { totalScore });
+        return res.render('result', { totalScore,progress });
     }
-
+    const progressPercentage = Math.round((currentQuestionIndex / totalQuestions) * 100);
     // Render the next question
     res.render('quiz', {
         student_id,
@@ -702,7 +720,9 @@ app.post('/next', async (req, res) => {
         currentQuestionIndex,
         totalQuestions,
         timeLimit: quizParams.timeLimit,
-        timeLeft: Math.max(0, Math.round(timeLimitInSeconds - elapsedTime)) // Time left in seconds
+        timeLeft: Math.max(0, Math.round(timeLimitInSeconds - elapsedTime)), // Time left in seconds
+        progressPercentage // Pass the progress percentage to the template
+
     });
 });
 app.get("/dashboard", function (req, res) {
