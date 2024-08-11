@@ -28,12 +28,14 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="compiler.js" />
     <Content Include="config.js" />
     <Content Include="courses.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="views\dashboard.ejs" />
     <Content Include="views\enroll.ejs" />
+    <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
     <Content Include="views\login.ejs" />
     <Content Include="views\quiz.ejs" />

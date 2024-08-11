@@ -3,11 +3,13 @@ const sql = require('mssql');
 const session = require('express-session');
 const config = require('./config'); // Ensure the correct path to your config
 const path = require('path');
+const compiler = require("compilex");
 
 const app = express();
 app.set('views', path.join(__dirname, 'views')); // Ensure this points to your views directory
 app.set('view engine', 'ejs'); // Configure Express to use EJS as the view engine
-
+const option = { stats: true };
+compiler.init(option);
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // To handle form data
@@ -16,9 +18,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }));
-
-
-
 // Middleware to check if the user is authenticated
 function ensureAuthenticated(req, res, next) {
     if (req.session && req.session.student_id) {
@@ -706,7 +705,80 @@ app.post('/next', async (req, res) => {
         timeLeft: Math.max(0, Math.round(timeLimitInSeconds - elapsedTime)) // Time left in seconds
     });
 });
+app.get("/dashboard", function (req, res) {
+    res.render("dashboard", {
+        languages: [
+            { value: "c", label: "C" },
+            { value: "cpp", label: "C++" },
+            { value: "python", label: "Python" }
+        ],
+        themes: [
+            { value: "vs-dark", label: "Dark" },
+            { value: "light", label: "Light" }
+        ],
+        userLang: "python",
+        userTheme: "vs-dark",
+        fontSize: 20
+    });
+});
+app.post("/compilecode", function (req, res) {
+    var code = req.body.code;
+    var input = req.body.input;
+    var inputRadio = req.body.inputRadio;
+    var lang = req.body.lang;
 
+    if (lang === "C" || lang === "C++") {
+        var envData = { OS: "windows", cmd: "g++", options: { timeout: 10000 } };
+        if (inputRadio === "true") {
+            compiler.compileCPPWithInput(envData, code, input, function (data) {
+                if (data.error) {
+                    res.send(data.error);
+                } else {
+                    res.send(data.output);
+                }
+            });
+        } else {
+            compiler.compileCPP(envData, code, function (data) {
+                if (data.error) {
+                    res.send(data.error);
+                } else {
+                    res.send(data.output);
+                }
+            });
+        }
+    } else if (lang === "Python") {
+        var envData = { OS: "windows" };
+        if (inputRadio === "true") {
+            compiler.compilePythonWithInput(envData, code, input, function (data) {
+                if (data.error) {
+                    res.send(data.error);
+                } else {
+                    res.send(data.output);
+                }
+            });
+        } else {
+            compiler.compilePython(envData, code, function (data) {
+                if (data.error) {
+                    res.send(data.error);
+                } else {
+                    res.send(data.output);
+                }
+            });
+        }
+    } else {
+        res.send("Unsupported language");
+    }
+});
+
+app.get("/fullStat", function (req, res) {
+    compiler.fullStat(function (data) {
+        res.send(data);
+    });
+});
+
+compiler.flush(function () {
+    console.log("All temporary files flushed!");
+});
 // Start the server
 const PORT = 2000;
 app.listen(PORT, () => {

@@ -126,20 +126,29 @@
             border-bottom: none;
         }
 
-        .details-container {
-            flex-grow: 1;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            margin-top: 20px;
-            color: #333;
-            overflow-y: auto;
+        .compiler-container {
+            margin: 20px;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            width: 300px;
+            max-width: 100%;
+            position: fixed;
+            right: 0;
+            top: 0;
             height: 100%;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
         }
 
-        .details-container h2 {
-            margin-top: 0;
+        .compiler-container textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            border-radius: 5px;
+            padding: 5px;
+            resize: vertical;
         }
     </style>
 </head>
@@ -201,6 +210,28 @@
         <div id="module-details-content"></div>
     </div>
 
+    <div id="compiler-container" class="compiler-container hidden">
+       <h1>Online Code Compiler</h1>
+    <form action="/compilecode" method="POST">
+        <label for="code">Enter Code:</label><br>
+        <textarea name="code" id="code" rows="10" cols="50"></textarea><br><br>
+
+        <label for="input">Input (Optional):</label><br>
+        <textarea name="input" id="input" rows="5" cols="50"></textarea><br><br>
+
+        <label for="lang">Select Language:</label>
+        <select name="lang" id="lang">
+            <option value="C">C</option>
+            <option value="C++">C++</option>
+            <option value="Python">Python</option>
+        </select><br><br>
+
+        <input type="checkbox" id="inputRadio" name="inputRadio" value="true">
+        <label for="inputRadio">Provide input</label><br><br>
+
+        <button type="submit">Compile</button>
+    </form>
+
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             console.log('DOM fully loaded and parsed');
@@ -233,6 +264,9 @@
 
             // Automatically show the details of the selected module
             showModuleDetails(selectedModuleId, modules.find(m => m.module_id === selectedModuleId).module_name);
+
+            // Show the compiler when a module is selected
+            document.getElementById('compiler-container').classList.remove('hidden');
         }
 
         function showModuleDetails(moduleId, moduleName) {
@@ -274,6 +308,9 @@
                     } else {
                         moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
                     }
+
+                    // Ensure the compiler is visible
+                    document.getElementById('compiler-container').classList.remove('hidden');
                 })
                 .catch(error => {
                     console.error('Error fetching module details:', error);
@@ -284,7 +321,9 @@
             document.getElementById('details-container').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
             document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('compiler-container').classList.add('hidden');
         }
+
     </script>
 </body>
 </html>
