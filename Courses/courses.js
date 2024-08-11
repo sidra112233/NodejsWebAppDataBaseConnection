@@ -509,7 +509,7 @@ async function getQuestionsFromDatabase(quizId) {
     const pool = await sql.connect(config);
     const result = await pool.request()
         .input('quizId', sql.Int, quizId)
-        .query('SELECT * FROM QuizQuestions WHERE quiz_id = @quizId');
+        .query('SELECT * FROM QuizQuestions WHERE quiz_id = @quizId ORDER BY NEWID()');
     return result.recordset.map(question => ({
         question_id: question.question_id,
         question_text: question.question_text,
@@ -570,8 +570,8 @@ app.get('/quiz/start/:id', async (req, res) => {
             .input('quizId', sql.Int, quizId)
             .query(`
             SELECT question_id, question_text, option1, option2, option3, option4
-            FROM QuizQuestions
-            WHERE quiz_id = @quizId
+            FROM QuizQuestions 
+            WHERE quiz_id = @quizId  ORDER BY NEWID()
         `);
 
         console.log('Questions query result:', questionsResult);
