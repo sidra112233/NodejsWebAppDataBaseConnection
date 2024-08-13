@@ -6,6 +6,7 @@ const path = require('path');
 const compiler = require("compilex");
 
 const app = express();
+app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views')); // Ensure this points to your views directory
 app.set('view engine', 'ejs'); // Configure Express to use EJS as the view engine
 const option = { stats: true };
@@ -40,40 +41,74 @@ const quizParams = {
     passingScore: 50
 };
 // Define the route for your home page
-app.get('/', (req, res) => {
-    res.render('home'); // Render the 'home.ejs' file
+app.get('/', async (req, res) => {
+    try {
+        const pool = await sql.connect(config);
+
+        // Fetch all courses
+        const coursesResult = await pool.request().query(`
+            SELECT course_id, course_name, description
+            FROM Courses
+        `);
+
+        res.render('home', {
+            courses: coursesResult.recordset
+        });
+    } catch (err) {
+        console.error('Error fetching courses:', err.message);
+        res.status(500).send('Error fetching courses');
+    }
 });
-app.get('/course/:id', async (req, res) => {
-    const courseId = req.params.id;
+
+app.get('/course/:courseId', async (req, res) => {
+    const courseId = req.query.courseId; // Optional query parameter for specific course
 
     try {
         const pool = await sql.connect(config);
 
-        // Fetch course details
-        const courseResult = await pool.request()
-            .input('courseId', sql.Int, courseId)
-            .query(`
-                SELECT course_name, description
-                FROM Courses
-                WHERE course_id = @courseId
-            `);
+        // Fetch all courses for displaying on the homepage
+        const coursesResult = await pool.request().query(`
+            SELECT course_id, course_name, description
+            FROM Courses
+        `);
 
-        // Fetch modules for the course
-        const modulesResult = await pool.request()
-            .input('courseId', sql.Int, courseId)
-            .query(`
-                SELECT module_id, module_name, description
-                FROM Modules
-                WHERE course_id = @courseId
-            `);
+        let courseName = '';
+        let courseDescription = '';
+        let modulesResult = { recordset: [] };
 
-        // Render the view with course and modules data
+        if (courseId) {
+            // If a specific course is requested, fetch its details and modules
+            const courseResult = await pool.request()
+                .input('courseId', sql.Int, courseId)
+                .query(`
+                    SELECT course_name, description
+                    FROM Courses
+                    WHERE course_id = @courseId
+                `);
+
+            if (courseResult.recordset.length > 0) {
+                courseName = courseResult.recordset[0].course_name;
+                courseDescription = courseResult.recordset[0].description;
+
+                modulesResult = await pool.request()
+                    .input('courseId', sql.Int, courseId)
+                    .query(`
+                        SELECT module_id, module_name, description
+                        FROM Modules
+                        WHERE course_id = @courseId
+                    `);
+            } else {
+                console.error(`No course found with ID: ${courseId}`);
+            }
+        }
+
+        // Render the homepage with the list of courses and optional course details
         res.render('layout', {
-            courses: [], // Pass empty array if not needed
-            modules: modulesResult.recordset,
-            materials: [],
-            courseName: courseResult.recordset[0].course_name,
-            courseDescription: courseResult.recordset[0].description,
+            courses: coursesResult.recordset, // All courses for display
+            modules: modulesResult.recordset, // Modules for the selected course
+            materials: [], // Placeholder for materials if needed
+            courseName: courseName,
+            courseDescription: courseDescription,
             moduleName: '',
             moduleDescription: ''
         });
@@ -82,6 +117,7 @@ app.get('/course/:id', async (req, res) => {
         res.status(500).send('Error fetching course details');
     }
 });
+
 
 
 // Route to fetch modules and quizzes for a specific course
@@ -200,7 +236,7 @@ app.get('/modules/:moduleId', async (req, res) => {
 // Login and signup routes
 app.get('/login', (req, res) => {
     if (req.session && req.session.student_id) {
-        return res.redirect('/'); // Redirect logged in users to the homepage
+        return res.redirect('/login'); // Redirect logged in users to the homepage
     }
     res.render('login');
 });
@@ -258,19 +294,12 @@ app.post('/login', async (req, res) => {
                 acc[module.course_id].push(module);
                 return acc;
             }, {});
-            // Calculate average progress
-            const progressResult = await pool.request()
-                .input('student_id', sql.Int, student.student_id)
-                .query('SELECT AVG(progress) as avgProgress FROM QuizSubmissions WHERE student_id = @student_id');
-            const avgProgress = progressResult.recordset[0].avgProgress || 0;
-
             // Render dashboard with all necessary data
             res.render('dashboard', {
                 student: student,
                 enrolledCourses: coursesResult.recordset || [],
                 courses: allCoursesResult.recordset || [],
-                modulesByCourse: modulesByCourse,
-                avgProgress
+                modulesByCourse: modulesByCourse
             });
         } else {
             res.send('Incorrect Student Name or Password');
@@ -280,27 +309,44 @@ app.post('/login', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
-
-app.get('/signup', (req, res) => {
-    res.render('signup'); // Render the signup page
+app.get('/register', (req, res) => {
+    res.render('login'); // Make sure you have a login.ejs or equivalent file
 });
+// Route to handle registration
+app.post('/register', async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body;
 
-app.post('/signup', async (req, res) => {
-    const { student_name, password_hash, email } = req.body;
+    if (password !== confirmPassword) {
+        req.session.message = 'Passwords do not match';
+        return res.redirect('/login');
+    }
+
     try {
         const pool = await sql.connect(config);
-        const sqlQuery = 'INSERT INTO Student (student_name, password_hash, email) VALUES (@student_name, @password_hash, @email)';
+        const existingUser = await pool.request()
+            .input('student_name', sql.VarChar, username)
+            .query('SELECT * FROM Student WHERE student_name = @student_name');
+
+        if (existingUser.recordset.length > 0) {
+            req.session.message = 'Username already exists';
+            return res.redirect('/login');
+        }
+
         await pool.request()
-            .input('student_name', sql.VarChar, student_name)
-            .input('password_hash', sql.VarChar, password_hash)
+            .input('student_name', sql.VarChar, username)
+            .input('password_hash', sql.VarChar, password)
             .input('email', sql.VarChar, email)
-            .query(sqlQuery);
-        res.send('Signup successful! You can now log in.');
+            .query('INSERT INTO Student (student_name, password_hash, email) VALUES (@student_name, @password_hash, @email)');
+
+        req.session.message = 'Student signed up successfully';
+        res.redirect('/login');
     } catch (err) {
-        console.error('Error executing query:', err);
-        res.send('An error occurred while processing your request.');
+        console.error(err);
+        req.session.message = 'Error registering user';
+        res.redirect('/login');
     }
 });
+
 app.get('/enroll', (req, res) => {
     const courseId = req.query.course_id;
     res.render('enroll', { courseId });

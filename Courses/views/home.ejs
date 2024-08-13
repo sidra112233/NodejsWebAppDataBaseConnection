@@ -432,7 +432,7 @@ body {
             <a href="#">Home</a>
             <a href="#">About</a>
             <a href="file:///C:/Users/PC/OneDrive/Desktop/project%20folder/contact.html">Contact</a>
-            <a href="file:///C:/Users/PC/OneDrive/Desktop/project%20folder/logi.html" class="register-btn">Register</a>
+            <a href="/register" class="register-btn">Register</a>
         </div>
     </nav>
     <div class="slideshow-container">
@@ -520,14 +520,17 @@ function myFunction() {
             <div class="container">
                 <h1>Language Courses</h1>
                 <div class="gallery">
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\h.jfif" alt="HTML Course">
-                        <div class="course-details">
-                            <h2>HTML</h2>
-                            <p>Learn the basics of HTML, the essential language for creating webpages.</p>
-                            <p>Price: 500</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
+                    <% courses.forEach(course => { %>
+            <div class="course">
+                <img src="/images/<%= course.course_name.toLowerCase() %>-python.jpg" alt="<%= course.course_name %> Course">
+                <div class="course-details">
+                    <h2><%= course.course_name %></h2>
+                    <p><%= course.description %></p>
+                    <p>Price: <%= course.price %></p>
+                    <a href="/course/<%= course.course_id %>" class="enroll-btn">Enroll Now</a>
+                </div>
+            </div>
+            <% }); %>
                     </div>
                     <div class="course">
                         <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\CSS.jfif" alt="CSS Course">
@@ -549,24 +552,6 @@ function myFunction() {
 
                             </p>
                             <p>Price: 700</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\pyhton.jfif" alt="Python Course">
-                        <div class="course-details">
-                            <h2>Python</h2>
-                            <p>Discover Python, a powerful language for web development and data analysis.</p>
-                            <p>Price: 800</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\java.jfif" alt="Java Course">
-                        <div class="course-details">
-                            <h2>Java</h2>
-                            <p>Learn Java, one of the most popular programming languages.</p>
-                            <p>Price: 900</p>
                             <button class="enroll-btn">Enroll Now</button>
                         </div>
                     </div>
@@ -602,8 +587,6 @@ function myFunction() {
             </div>
             </div>
           </div>
-            <script src="script.js"></script>
-
   
   
   <div class ="container">
