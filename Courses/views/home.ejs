@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LEARN CODE PRO</title>
-    <link rel="stylesheet" href="HEA.css">
-    <link rel="stylesheet" href="3.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
 <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
   
-  <link rel="stylesheet" href="footer.css">
      </head>
    
 <style>
@@ -517,10 +514,10 @@ function myFunction() {
         
         
          <div class ="container1">
-            <div class="container">
-                <h1>Language Courses</h1>
-                <div class="gallery">
-                    <% courses.forEach(course => { %>
+         <div class="container">
+    <h1>Language Courses</h1>
+    <div class="gallery">
+        <% courses.forEach(course => { %>
             <div class="course">
                 <img src="/images/<%= course.course_name.toLowerCase() %>-python.jpg" alt="<%= course.course_name %> Course">
                 <div class="course-details">
@@ -530,63 +527,55 @@ function myFunction() {
                     <a href="/course/<%= course.course_id %>" class="enroll-btn">Enroll Now</a>
                 </div>
             </div>
-            <% }); %>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\CSS.jfif" alt="CSS Course">
-                        <div class="course-details">
-                            <h2>CSS</h2>
-                            <p>Master the art of styling web pages with CSS.
-                              provide interactive webpage.
-                            </p>
-                            <p>Price: 300</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\js.png" alt="JavaScript Course">
-                        <div class="course-details">
-                            <h2>JavaScript</h2>
-                            <p>Learn JavaScript to make your web pages interactive and dynamic.
-                              its provide responsive webpages.
+        <% }); %>
+        <div class="course">
+            <img src="/images/CSS.jfif" alt="CSS Course">
+            <div class="course-details">
+                <h2>CSS</h2>
+                <p>Master the art of styling web pages with CSS. Provide interactive webpage.</p>
+                <p>Price: 300</p>
+                <button class="enroll-btn">Enroll Now</button>
+            </div>
+        </div>
+        <div class="course">
+            <img src="/images/js.png" alt="JavaScript Course">
+            <div class="course-details">
+                <h2>JavaScript</h2>
+                <p>Learn JavaScript to make your web pages interactive and dynamic. It provides responsive webpages.</p>
+                <p>Price: 700</p>
+                <button class="enroll-btn">Enroll Now</button>
+            </div>
+        </div>
+        <div class="course">
+            <img src="/images/rubby.jfif" alt="Ruby Course">
+            <div class="course-details">
+                <h2>Ruby</h2>
+                <p>Get started with Ruby, known for its simplicity and productivity.</p>
+                <p>Price: 700</p>
+                <button class="enroll-btn">Enroll Now</button>
+            </div>
+        </div>
+        <div class="course">
+            <img src="/images/php.jfif" alt="PHP Course">
+            <div class="course-details">
+                <h2>PHP</h2>
+                <p>Learn PHP to create dynamic web pages and applications.</p>
+                <p>Price: 600</p>
+                <button class="enroll-btn">Enroll Now</button>
+            </div>
+        </div>
+        <div class="course">
+            <img src="/images/s-sharp.jfif" alt="C# Course">
+            <div class="course-details">
+                <h2>C#</h2>
+                <p>Master C#, a language widely used in enterprise applications.</p>
+                <p>Price: 800</p>
+                <button class="enroll-btn">Enroll Now</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-                            </p>
-                            <p>Price: 700</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\rubby.jfif" alt="Ruby Course">
-                        <div class="course-details">
-                            <h2>Ruby</h2>
-                            <p>Get started with Ruby, known for its simplicity and productivity.</p>
-                            <p>Price: 700</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\php.jfif" alt="PHP Course">
-                        <div class="course-details">
-                            <h2>PHP</h2>
-                            <p>Learn PHP to create dynamic web pages and applications.</p>
-                            <p>Price: 600</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\s sharp.jfif" alt="C# Course">
-                        <div class="course-details">
-                            <h2>C#</h2>
-                            <p>Master C#, a language widely used in enterprise applications.</p>
-                            <p>Price: 800</p>
-                            <button class="enroll-btn">Enroll Now</button>
-                        </div>
-                    </div>
-                   
-                </div>
-            </div>
-            </div>
-          </div>
   
   
   <div class ="container">
