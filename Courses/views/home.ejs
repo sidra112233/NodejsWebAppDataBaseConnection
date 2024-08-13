@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARN CODE PRO</title>
+    <link rel="stylesheet" href="HEA.css">
+    <link rel="stylesheet" href="3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+  
+  <link rel="stylesheet" href="footer.css">
+     </head>
+   
+<style>
+.container1
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: auto;
+    max-width: auto;
+    margin: auto;
+    text-align: center;
+    background-color: gray;
+    
+
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.course {
+    background-color: rgb(145, 133, 133);
+    border: 1px solid hsl(0, 0%, 87%);
+    border-radius: 5px;
+    overflow: hidden;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.course img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.course-details {
+    padding: 15px;
+}
+
+.course-details h2 {
+    margin: 10px 0;
+}
+
+.course-details p {
+    margin: 5px 0;
+}
+
+.enroll-btn {
+    background-color: #3a3c3a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.enroll-btn:hover {
+    background-color: #928be1;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    .mySlides {display: none}
+     img {vertical-align: middle;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    padding: 10px 20px;
+    
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.site-name {
+    color: white;
+    font-size: 1.5em;
+}
+
+.navbar-center {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    padding: 5px;
+    margin-left: 20px;
+}
+
+.dropbtn {
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: black;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: gray;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: gray;
+}
+
+.navbar-right a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.navbar-right a:hover {
+    background-color: gray;
+}
+
+.register-btn {
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+
+        * {box-sizing: border-box}
+        body {font-family: Verdana, sans-serif; margin:0}
+        .mySlides {display: none}
+        img {vertical-align: middle;}
+        
+        /* Slideshow container */
+        .slideshow-container {
+           max-width:  auto;
+        
+
+          position: relative;
+          margin: auto;
+        }
+        
+        /* Next & previous buttons */
+        .prev, .next {
+          cursor: pointer;
+          position: absolute;
+          top: 50%;
+          width: auto;
+        
+          padding: 16px;
+          margin-top: -22px;
+          color: white;
+          font-weight: bold;
+          font-size: 18px;
+          transition: 0.6s ease;
+          border-radius: 0 3px 3px 0;
+          user-select: none;
+        }
+        
+        /* Position the "next button" to the right */
+        .next {
+          right: 0;
+          border-radius: 3px 0 0 3px;
+        }
+        
+        /* On hover, add a black background color with a little bit see-through */
+        .prev:hover, .next:hover {
+          background-color: rgba(0,0,0,0.8);
+        }
+        
+        /* Caption text */
+        .text {
+          color: #f2f2f2;
+          font-size: 15px;
+          padding: 8px 12px;
+          position: absolute;
+          bottom: 8px;
+          width: 100%;
+          text-align: center;
+        }
+        
+        /* Number text (1/3 etc) */
+        .numbertext {
+          color: #f2f2f2;
+          font-size: 12px;
+          padding: 8px 12px;
+          position: absolute;
+          top: 0;
+        }
+        
+        /* The dots/bullets/indicators */
+        .dot {
+          cursor: pointer;
+          height: 15px;
+          width: 15px;
+          margin: 0 2px;
+          background-color: #bbb;
+          border-radius: 50%;
+          display: inline-block;
+          transition: background-color 0.6s ease;
+        }
+        
+        .active, .dot:hover {
+          background-color: #717171;
+        }
+        
+        /* Fading animation */
+        .fade {
+          animation-name: fade;
+          animation-duration: 1.5s;
+        }
+        
+        @keyframes fade {
+          from {opacity: .4} 
+          to {opacity: 1}
+        }
+        
+        /* On smaller screens, decrease text size */
+        @media only screen and (max-width: 300px) {
+          .prev, .next,.text {font-size: 11px}
+        }
+      /*  .container
+             {
+                
+                width:auto;
+                height:500px;
+                background-color: #bbb;
+                position:fixed;
+              }*/
+              @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
+.container {
+  
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+.footer {
+    margin-top: 2200px;;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: auto ;
+  width: 100%;
+  background: #10182F;
+  border-radius: 6px;
+}
+.footer .footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 3.5rem;
+  padding: 60px;
+}
+.footer-row .footer-col h4 {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+.footer-col .links {
+  margin-top: 20px;
+}
+.footer-col .links li {
+  list-style: none;
+  margin-bottom: 10px;
+}
+.footer-col .links li a {
+  text-decoration: none;
+  color: #bfbfbf;
+}
+.footer-col .links li a:hover {
+  color: #fff;
+}
+.footer-col p {
+  margin: 20px 0;
+  color: #bfbfbf;
+  max-width: 300px;
+}
+.footer-col form {
+  display: flex;
+  gap: 5px;
+}
+.footer-col input {
+  height: 40px;
+  border-radius: 6px;
+  background: none;
+  width: 100%;
+  outline: none;
+  border: 1px solid #7489C6 ;
+  caret-color: #fff;
+  color: #fff;
+  padding-left: 10px;
+}
+.footer-col input::placeholder {
+  color: #ccc;
+}
+ .footer-col form button {
+  background: #fff;
+  outline: none;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+.footer-col form button:hover {
+  background: #cecccc;
+}
+.footer-col .icons {
+  display: flex;
+  margin-top: 30px;
+  gap: 30px;
+  cursor: pointer;
+}
+.footer-col .icons i {
+  color: #afb6c7;
+}
+.footer-col .icons i:hover  {
+  color: #fff;
+}
+@media (max-width: 768px) {
+  .footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    border-radius: 0;
+  }
+  .footer .footer-row {
+    padding: 20px;
+    gap: 1rem;
+  }
+  .footer-col form {
+    display: block;
+  }
+  .footer-col form :where(input, button) {
+    width: 100%;
+  }
+  .footer-col form button {
+    margin: 10px 0 0 0;
+  }
+}
+            </style>
+        </head>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="C:\Users\PC\Downloads\icon-removebg-preview.png" alt="Logo" class="logo">
+            <span class="site-name">LEARN CODE PRO</span>
+        </div>
+        <div class="navbar-center">
+            <div class="dropdown">
+                <button class="dropbtn">LANGUAGES</button>
+                <div class="dropdown-content">
+                    <a href="#">HTML</a>
+                    <a href="#">CSS</a>
+                    <a href="#">JAVA</a>
+                    <a href="#">JAVASCRIPT</a>
+                    <a href="#">PHP</a>
+                    <a href="#">PYTHON</a>
+                    <a href="#">RUBBY</a>
+                    <a href="#">C#</a>
+                </div>
+            </div>
+            <input type="text" placeholder="Search.." class="search-bar">
+        </div>
+        <div class="navbar-right">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="file:///C:/Users/PC/OneDrive/Desktop/project%20folder/contact.html">Contact</a>
+            <a href="file:///C:/Users/PC/OneDrive/Desktop/project%20folder/logi.html" class="register-btn">Register</a>
+        </div>
+    </nav>
+    <div class="slideshow-container">
+
+        <div class="mySlides fade">
+          <div class="numbertext">1 / 3</div>
+          <img src="file:///C:/Users/PC/OneDrive/Desktop/project%20folder/project%20folder/image/istockphoto-1481370371-1024x1024.webp" style="width:100%" >
+          <div class="text">LEARN CODE PRO</div>
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">2 / 3</div>
+          <img src="C:\Users\PC\Downloads\WhatsApp Image 2024-07-08 at 5.55.49 AM.jpeg" style="width:100%">
+          <div class="text"><b>LEARN CODE PRO</b></div>
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">3 / 3</div>
+          <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\slide3.jfif" style="width:100%">
+          <div class="text">LEARN CODE PRO</div>
+        </div>
+        
+        <a class="prev" onclick="plusSlides(-1)">?</a>
+        <a class="next" onclick="plusSlides(1)">?</a>
+        
+        </div>
+        <br>
+        
+        <div style="text-align:center">
+          <span class="dot" onclick="currentSlide(1)"></span> 
+          <span class="dot" onclick="currentSlide(2)"></span> 
+          <span class="dot" onclick="currentSlide(3)"></span> 
+        </div>
+        
+        <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+        
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+        
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+        
+        function showSlides(n) {
+          let i;
+          let slides = document.getElementsByClassName("mySlides");
+          let dots = document.getElementsByClassName("dot");
+          if (n > slides.length) {slideIndex = 1}    
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";  
+          }
+          for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";  
+          dots[slideIndex-1].className += " active";
+        }
+        /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+  
+  // Close the dropdown menu if the user clicks outside of it
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+        </script>
+        
+        
+         <div class ="container1">
+            <div class="container">
+                <h1>Language Courses</h1>
+                <div class="gallery">
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\h.jfif" alt="HTML Course">
+                        <div class="course-details">
+                            <h2>HTML</h2>
+                            <p>Learn the basics of HTML, the essential language for creating webpages.</p>
+                            <p>Price: 500</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\CSS.jfif" alt="CSS Course">
+                        <div class="course-details">
+                            <h2>CSS</h2>
+                            <p>Master the art of styling web pages with CSS.
+                              provide interactive webpage.
+                            </p>
+                            <p>Price: 300</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\js.png" alt="JavaScript Course">
+                        <div class="course-details">
+                            <h2>JavaScript</h2>
+                            <p>Learn JavaScript to make your web pages interactive and dynamic.
+                              its provide responsive webpages.
+
+                            </p>
+                            <p>Price: 700</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\pyhton.jfif" alt="Python Course">
+                        <div class="course-details">
+                            <h2>Python</h2>
+                            <p>Discover Python, a powerful language for web development and data analysis.</p>
+                            <p>Price: 800</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\java.jfif" alt="Java Course">
+                        <div class="course-details">
+                            <h2>Java</h2>
+                            <p>Learn Java, one of the most popular programming languages.</p>
+                            <p>Price: 900</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\rubby.jfif" alt="Ruby Course">
+                        <div class="course-details">
+                            <h2>Ruby</h2>
+                            <p>Get started with Ruby, known for its simplicity and productivity.</p>
+                            <p>Price: 700</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\php.jfif" alt="PHP Course">
+                        <div class="course-details">
+                            <h2>PHP</h2>
+                            <p>Learn PHP to create dynamic web pages and applications.</p>
+                            <p>Price: 600</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                    <div class="course">
+                        <img src="C:\Users\PC\OneDrive\Desktop\project folder\project folder\image\s sharp.jfif" alt="C# Course">
+                        <div class="course-details">
+                            <h2>C#</h2>
+                            <p>Master C#, a language widely used in enterprise applications.</p>
+                            <p>Price: 800</p>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+            </div>
+          </div>
+            <script src="script.js"></script>
+
+  
+  
+  <div class ="container">
+
+  
+    <section class="footer">
+      <div class="footer-row">
+        <div class="footer-col">
+          <h4><b>Languages</b></h4>
+          <ul class="links">
+            <li><a href="#">Html</a></li>
+            <li><a href="#">CSS</a></li>
+            <li><a href="#">java</a></li>
+            <li><a href="#">Php</a></li>
+            <li><a href="#">Rubby </a></li>
+            <li><a href="#">Phython</a></li>
+            <li><a href="#">JavaScript</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4><b>  Quick Links</b></h4>
+          <ul class="links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Language</a></li>
+        
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4><b>Legal</b></h4>
+          <ul class="links">
+            <li><a href="#">Customer Agreement</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">GDPR</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Testimonials</a></li>
+            <li><a href="#">Media Kit</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4><b>Newsletter</b></h4>
+          <p>
+            Subscribe to our newsletter for a weekly dose
+            of news, updates, helpful tips, and
+            exclusive offers.
+          </p>
+          <form action="#">
+            <input type="text" placeholder="Your email" required>
+            <button type="submit">SUBSCRIBE</button>
+          </form>
+           <div class="icons">
+            <i class="fa-brands fa-facebook-f"></i>
+            <i class="fa-brands fa-twitter"></i>
+            <i class="fa-brands fa-linkedin"></i>
+            <i class="fa-brands fa-github"></i>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

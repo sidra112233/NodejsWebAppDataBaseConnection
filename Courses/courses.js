@@ -39,29 +39,50 @@ const quizParams = {
     pointsToScore: 100,
     passingScore: 50
 };
-// Route for home page
-app.get('/', async (req, res) => {
+// Define the route for your home page
+app.get('/', (req, res) => {
+    res.render('home'); // Render the 'home.ejs' file
+});
+app.get('/course/:id', async (req, res) => {
+    const courseId = req.params.id;
+
     try {
         const pool = await sql.connect(config);
-        const coursesResult = await pool.request().query(`
-            SELECT course_id, course_name, description
-            FROM Courses
-        `);
 
+        // Fetch course details
+        const courseResult = await pool.request()
+            .input('courseId', sql.Int, courseId)
+            .query(`
+                SELECT course_name, description
+                FROM Courses
+                WHERE course_id = @courseId
+            `);
+
+        // Fetch modules for the course
+        const modulesResult = await pool.request()
+            .input('courseId', sql.Int, courseId)
+            .query(`
+                SELECT module_id, module_name, description
+                FROM Modules
+                WHERE course_id = @courseId
+            `);
+
+        // Render the view with course and modules data
         res.render('layout', {
-            courses: coursesResult.recordset,
-            modules: [],
+            courses: [], // Pass empty array if not needed
+            modules: modulesResult.recordset,
             materials: [],
-            courseName: '',
-            courseDescription: '',
+            courseName: courseResult.recordset[0].course_name,
+            courseDescription: courseResult.recordset[0].description,
             moduleName: '',
             moduleDescription: ''
         });
     } catch (err) {
-        console.error('Error fetching courses:', err.message);
-        res.status(500).send('Error fetching courses');
+        console.error('Error fetching course details:', err.message);
+        res.status(500).send('Error fetching course details');
     }
 });
+
 
 // Route to fetch modules and quizzes for a specific course
 app.get('/courses/:courseId/modules', async (req, res) => {
@@ -112,7 +133,7 @@ app.get('/courses/:courseId/modules', async (req, res) => {
             }
             acc[quiz.module_id].push(quiz);
             return acc;
-        }, {});
+        });
 
         res.json({
             courseName,

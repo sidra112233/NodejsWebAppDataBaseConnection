@@ -4,211 +4,292 @@
     <title>Dashboard</title>
     <style>
         body {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    height: 100vh;
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #001f3f;
-    color: #ffffff;
-}
-
-.container {
-    flex-grow: 1;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    margin-top: 20px;
-    color: #ffffff;
-    overflow-y: auto;
-    height: 100%;
-    width: 100%; /* Set width as a percentage of the parent or use a fixed width */
-    max-width: 1200px; /* Optional: Set a maximum width if needed */
-    height: auto; /* Adjust height as needed */
-    box-sizing: border-box;
-}
-
-.course-header {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #ffd700;
-}
-
-.module-container {
-    display: flex;
-    flex-direction: row;
-    border: 1px solid #444;
-    border-radius: 5px;
-    padding: 20px;
-    margin: 10px 0;
-    background-color: #002b5f;
-    width: 80%; /* Set width as a percentage of the parent or use a fixed width */
-    max-width: 1200px; /* Optional: Set a maximum width if needed */
-    height: auto; /* Adjust height as needed */
-    box-sizing: border-box;
-}
-
-.module {
-    text-align: center;
-    padding: 10px;
-    border-bottom: 1px solid #555;
-    cursor: pointer;
-    background-color: #003366;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.module h4 {
-    margin-bottom: 5px;
-    font-size: 1.2em;
-    color: #ffd700;
-}
-
-.module p {
-    margin: 3px 0;
-    font-size: 0.9em;
-}
-.hidden {
-       display: none;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #001f3f;
+            color: #ffffff;
         }
 
-.module:last-child {
-    border-bottom: none;
-}
+        .container {
+            flex-grow: 1;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: #ffffff;
+            overflow-y: auto;
+            height: 100%;
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+            margin-left: 220px; /* Add this to push the entire container away from the sidebar */
 
-.course-cards {
+        }
+
+        .course-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .module-container {
+            display: flex;
+            flex-direction: row;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px 0;
+            background-color: #002b5f;
+            width: 80%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+        /* Update for Module Details Section */
+.details-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.card {
-    border: 1px solid #444;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 10px;
-    width: calc(33.333% - 20px);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    background-color: #003366;
-    color: #ffffff;
-}
-
-.card h3 {
-    margin-top: 0;
-    font-size: 1.5em;
-    color: #ffd700;
-}
-
-.card button {
-    background-color: #ffd700;
-    color: #003366;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1em;
-}
-
-.card button:hover {
-    background-color: #ffc107;
-}
-
-.sidebar {
-    width: 200px;
-    height: 100%;
-    background-color: #003366;
-    color: #ffffff;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-    overflow-y: auto;
-    display: none;
     flex-direction: column;
-    font-size: 1em;
+    align-items: center; /* Center contents horizontally */
 }
 
-.sidebar h2 {
-    margin-top: 0;
+.details-container h2#module-details-title {
     font-size: 1.5em;
     color: #ffd700;
+    margin: 20px 0; /* Margin to provide space around the module name */
+    text-align: center; /* Center text horizontally */
+}
+        .module {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+            background-color: #003366;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        /* Styling for section headings in the module details */
+.module-details-heading {
+    margin: 20px 0; /* Space around the heading */
+    font-size: 1.5em; /* Font size for headings */
+    color: #ffd700; /* Gold color for headings */
+    text-align: center; /* Center the text horizontally */
+    font-weight: bold; /* Make the text bold */
+}
+        .module h4 {
+            margin-bottom: 5px;
+            font-size: 1.2em;
+            color: #ffd700;
+        }
+        .module h4, .material h4, .quiz h4 {
+    margin-bottom: 5px;
+    font-size: 1.2em;
+    color: #ffd700; 
 }
 
-.sidebar .module {
-    border: none;
-    border-bottom: 1px solid #444;
-    padding: 10px 0;
-    cursor: pointer;
-    background-color: transparent;
+        .module p {
+            margin: 3px 0;
+            font-size: 0.9em;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .module:last-child {
+            border-bottom: none;
+        }
+
+        .course-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            width: calc(33.333% - 20px);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            background-color: #003366;
+            color: #ffffff;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+
+        .card button {
+            background-color: #ffd700;
+            color: #003366;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .card button:hover {
+            background-color: #ffc107;
+        }
+
+        .sidebar {
+            width: 200px;
+            height: 90%;
+            background-color: #003366;
+            color: #ffffff;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+            font-size: 1em;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+
+        .sidebar .module {
+            border: none;
+            border-bottom: 1px solid #444;
+            padding: 10px 0;
+            cursor: pointer;
+            background-color: transparent;
+        }
+
+        .sidebar .module h4 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #ffd700;
+        }
+
+        .sidebar .module:last-child {
+            border-bottom: none;
+        }
+
+        .compiler-container {
+            width: 400px;
+            max-width: 100%;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            background-color: #002b5f;
+        }
+
+        .compiler-container h1 {
+            font-size: 1.5em;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .compiler-container textarea#code {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        .compiler-container textarea#input {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        .compiler-container select,
+        .compiler-container button {
+            margin-bottom: 10px;
+        }
+
+        .compiler-container button {
+            background-color: #ffd700;
+            color: #003366;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .compiler-container button:hover {
+            background-color: #ffc107;
+        }
+        textarea::placeholder {
+    color: #888; /* Light gray color for the placeholder text */
+    font-style: italic; /* Italic style for placeholder text */
 }
 
-.sidebar .module h4 {
-    margin: 0;
+/* Container for both Materials and Quizzes */
+.material-and-quizzes {
+    background-color: #ffffff;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left: 100px; /* Add this to give space from the sidebar */
+}
+
+.material {
+    margin-bottom: 50px; /* Add spacing between Materials and Quizzes */
+    margin-left: 100px; /* Add this to give space from the sidebar */
+
+}
+
+.material h4, .quiz h4 {
     font-size: 1.2em;
     color: #ffd700;
 }
 
-.sidebar .module:last-child {
-    border-bottom: none;
-}
+/* Ensure Quizzes inherit the same style */
+.quiz {
+    margin-bottom: 50px;
+    margin-left: 100px; /* Add this to give space from the sidebar */
 
-.compiler-container {
-    margin: 20px;
-    background-color: #002b5f;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 100%;
-    position: fixed;
-    right: 0;
-    top: 0;
-    height: 100%;
-    overflow-y: auto;
-    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
-    color: #ffffff;
 }
-
-.compiler-container h1 {
-    font-size: 1.5em;
-    color: #ffd700;
-    margin-bottom: 20px;
-}
-
-.compiler-container textarea {
-    width: 100%;
-    height: 150px;
-    margin-bottom: 10px;
-    font-family: 'Courier New', Courier, monospace;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #ffffff;
-    color: #000000;
-    border: 1px solid #ccc;
-    resize: vertical;
-}
-
-.compiler-container select,
-.compiler-container input[type="checkbox"],
-.compiler-container button {
-    margin-bottom: 10px;
-}
-
-.compiler-container button {
-    background-color: #ffd700;
-    color: #003366;
+#sidebar button {
+    background-color: #ffd700; /* Gold color for the button */
+    color: #003366; /* Dark blue color for the text */
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
     font-size: 1em;
+    margin-top: 20px; /* Add space above the button */
 }
 
-.compiler-container button:hover {
-    background-color: #ffc107;
+#sidebar button:hover {
+    background-color: #ffc107; /* Lighter gold color on hover */
 }
 
     </style>
@@ -263,21 +344,23 @@
     <div id="sidebar" class="sidebar">
         <h2 id="sidebar-course-name"></h2>
         <div id="sidebar-modules"></div>
+        <button id="toggle-compiler" onclick="toggleCompiler()">Open Compiler</button>
+
     </div>
 
     <div id="details-container" class="details-container hidden">
         <h2 id="module-details-title"></h2>
         <div id="module-details-content"></div>
+
     </div>
 
     <div id="compiler-container" class="compiler-container hidden">
        <h1>Online Code Compiler</h1>
     <form action="/compilecode" method="POST">
         <label for="code">Enter Code:</label><br>
-        <textarea name="code" id="code" rows="10" cols="50"></textarea><br><br>
-
+        <textarea name="code" id="code" rows="10" cols="50" placeholder="Enter your code here..."></textarea><br><br>
         <label for="input">Input (Optional):</label><br>
-        <textarea name="input" id="input" rows="5" cols="50"></textarea><br><br>
+<textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
 
         <label for="lang">Select Language:</label>
         <select name="lang" id="lang">
@@ -285,10 +368,6 @@
             <option value="C++">C++</option>
             <option value="Python">Python</option>
         </select><br><br>
-
-        <input type="checkbox" id="inputRadio" name="inputRadio" value="true">
-        <label for="inputRadio">Provide input</label><br><br>
-
         <button type="submit">Compile</button>
     </form>
 
@@ -342,7 +421,7 @@
                     const moduleDetailsContent = document.getElementById('module-details-content');
                     moduleDetailsContent.innerHTML = '';
 
-                    moduleDetailsContent.innerHTML += `<h3>Materials</h3>`;
+                    moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Materials</h3>`;
                     data.materials.forEach(material => {
                         moduleDetailsContent.innerHTML += `
                             <div class="material">
@@ -354,7 +433,7 @@
                         `;
                     });
 
-                    moduleDetailsContent.innerHTML += `<h3>Quizzes</h3>`;
+                    moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Quizzes</h3>`;
                     if (data.quizzes && data.quizzes.length > 0) {
                         data.quizzes.forEach(quiz => {
                             moduleDetailsContent.innerHTML += `
@@ -376,6 +455,14 @@
                     console.error('Error fetching module details:', error);
                 });
         }
+        function toggleCompiler() {
+    const compilerContainer = document.getElementById('compiler-container');
+    if (compilerContainer.classList.contains('hidden')) {
+        compilerContainer.classList.remove('hidden');
+    } else {
+        compilerContainer.classList.add('hidden');
+    }
+}
 
         function showDashboard() {
             document.getElementById('details-container').classList.add('hidden');
