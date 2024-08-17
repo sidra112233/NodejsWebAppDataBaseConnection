@@ -2,7 +2,9 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <style>
+    <!-- Include the updated CSS here -->
+    /* Combined and corrected CSS */
+    <style> /* Include the updated CSS here */
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,10 +19,11 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            position: fixed; /* Make the navbar fixed at the top */
+            position: fixed;
             top: 0;
             width: 100%;
-            z-index: 1000; /* Ensure navbar is on top of other content */
+            z-index: 1000;
+            height: 30px; /* Adjust to your navbar's height */
         }
 
         .navbar-left {
@@ -59,15 +62,17 @@
         .register-btn, .profile-btn, .logout-btn {
             border: 1px solid white;
             border-radius: 5px;
+            margin-right: 30px;
+
         }
 
         .container {
-            margin-top: 70px; /* Ensure there's enough space to account for the fixed navbar */
+            margin-top: 70px; /* Match this value to the height of your navbar */
             padding: 40px;
             color: #ffffff;
             overflow-y: auto;
-            height: calc(100vh - 70px); /* Full viewport height minus navbar height */
-            width: calc(100% - 220px); /* Adjust width to account for the sidebar */
+            height: calc(100vh - 70px); /* Adjust height accordingly */
+            width: calc(100% - 220px);
             box-sizing: border-box;
         }
 
@@ -223,8 +228,9 @@
             box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
             color: #ffffff;
             background-color: #002b5f;
-            padding: 20px;
+            padding: 30px;
             display: none;
+            top: 50px;
             box-sizing: border-box;
         }
 
@@ -248,10 +254,11 @@
             height: 200px;
             background-color: #ffffff;
             color: #000000;
+
         }
 
         .compiler-container textarea#input {
-            height: 100px;
+            height: 80px;
             background-color: #ffffff;
             color: #000000;
         }
@@ -272,7 +279,7 @@
             font-weight: bold;
             font-size: 1em;
             position: absolute;
-            top: 20px;
+            top: 10px;
             right: 20px;
         }
 
@@ -284,19 +291,56 @@
             color: #888;
             font-style: italic;
         }
-
+         .compiler-container.hidden {
+            display: none;
+        }
+        .compiler-container.visible {
+            display: block;
+        }
+         .compiler-header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px; /* Space between dropdown and rest of the content */
+        }
+        #lang {
+            margin-left: 10px; /* Space between label and dropdown */
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .reset-button {
+            background-color: #ff4d4d;
+            margin-right: 110px;
+        }
+        .reset-button:hover {
+            background-color: #e03e3e;
+        }
         .material-and-quizzes {
             background-color: #ffffff;
             border: 1px solid #444;
             border-radius: 5px;
             padding: 20px;
             margin-bottom: 20px;
-            margin-left: 220px; /* Adjust based on sidebar width */
+            margin-left: 220px;
         }
 
         .material {
             margin-bottom: 50px;
-            margin-left: 220px; /* Adjust based on sidebar width */
+            margin-left: 220px;
         }
 
         .material h4, .quiz h4 {
@@ -306,9 +350,28 @@
 
         .quiz {
             margin-bottom: 50px;
-            margin-left: 220px; /* Adjust based on sidebar width */
+            margin-left: 220px;
         }
-    </style>
+
+        #toggle-compiler {
+            position: fixed;
+            top: 50px;
+            left: 250px;
+            background-color: #ffd700;
+            color: #003366;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            z-index: 1001;
+        }
+
+        #toggle-compiler:hover {
+            background-color: #ffc107;
+        }
+</style>
 </head>
 <body>
 <!-- _navbar.ejs -->
@@ -327,7 +390,6 @@
         <% } %>
     </div>
 </nav>
-<button id="toggle-compiler" onclick="toggleCompiler()" style="position: fixed; right: 220px; top: 10px; z-index: 1000;">Open Compiler</button>
 
 <div id="dashboard" class="container">
     <h1 class="course-header">Welcome, <%= student.student_name %>!</h1>
@@ -384,24 +446,31 @@
 <div id="details-container" class="details-container hidden">
     <h2 id="module-details-title"></h2>
     <div id="module-details-content"></div>
+    <button id="toggle-compiler" onclick="toggleCompiler()">Open Compiler</button>
+
 </div>
 
+
 <div id="compiler-container" class="compiler-container hidden">
-    <h1>Online Code Compiler</h1>
     <form action="/compilecode" method="POST">
-        <label for="code">Enter Code:</label><br>
+        <label for="code"></label><br>
         <textarea name="code" id="code" rows="10" cols="50" placeholder="Enter your code here..."></textarea><br><br>
         
         <label for="input">Input (Optional):</label><br>
         <textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
-
+                <div class="compiler-header">
         <label for="lang">Select Language:</label>
         <select name="lang" id="lang">
             <option value="C">C</option>
             <option value="C++">C++</option>
             <option value="Python">Python</option>
         </select><br><br>
+       <button class="close-button" onclick="toggleCompiler()">×</button>
+
+        </div>
         <button type="submit">Compile</button>
+        <button class="reset-button" onclick="resetCompiler()">Reset</button>
+
     </form>
 </div>
 
@@ -411,12 +480,12 @@
     });
 
     function showEnrollForm(courseId) {
-        console.log('Showing enroll form'); // Debugging statement
+        console.log('Showing enroll form');
         window.location.href = `/enroll?course_id=${courseId}`;
     }
 
     function showModuleInSidebar(courseName, modules, selectedModuleId) {
-        console.log('Showing module in sidebar', courseName, modules, selectedModuleId); // Debugging statement
+        console.log('Showing module in sidebar', courseName, modules, selectedModuleId);
 
         document.getElementById('dashboard').classList.add('hidden');
         const sidebar = document.getElementById('sidebar');
@@ -435,15 +504,11 @@
             `;
         });
 
-        // Automatically show the details of the selected module
         showModuleDetails(selectedModuleId, modules.find(m => m.module_id === selectedModuleId).module_name);
-
-        // Show the compiler when a module is selected
-        document.getElementById('compiler-container').classList.remove('hidden');
     }
 
     function showModuleDetails(moduleId, moduleName) {
-        console.log('Showing module details', moduleId, moduleName); // Debugging statement
+        console.log('Showing module details', moduleId, moduleName);
         fetch(`/module-details/${moduleId}`)
             .then(response => response.json())
             .then(data => {
@@ -482,7 +547,6 @@
                     moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
                 }
 
-                // Ensure the compiler is visible
                 document.getElementById('compiler-container').classList.remove('hidden');
             })
             .catch(error => {
@@ -490,15 +554,22 @@
             });
     }
 
-    function toggleCompiler() {
-        const compilerContainer = document.getElementById('compiler-container');
-        if (compilerContainer.classList.contains('hidden')) {
-            compilerContainer.classList.remove('hidden');
-        } else {
-            compilerContainer.classList.add('hidden');
-        }
+   function toggleCompiler() {
+    const compilerContainer = document.getElementById('compiler-container');
+    if (compilerContainer) {
+        // Toggle between hidden and visible classes
+        compilerContainer.classList.toggle('hidden');
+        compilerContainer.classList.toggle('visible');
+    } else {
+        console.error('Compiler container not found.');
     }
+}
 
+ function resetCompiler() {
+            document.getElementById('code').value = '';
+            document.getElementById('input').value = '';
+            document.getElementById('lang').selectedIndex = 0;
+        }
     function showDashboard() {
         document.getElementById('details-container').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
