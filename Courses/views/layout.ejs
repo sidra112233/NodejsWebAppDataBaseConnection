@@ -1,84 +1,120 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Course Management</title>
     <style>
-        /* Your existing CSS here */
-         body {
-            display: flex;
-            font-family: Arial, sans-serif;
+        body {
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
             height: 100vh;
-            overflow: hidden;
         }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: black;
+            padding: 10px 20px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .site-name {
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .navbar-right a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .navbar-right a:hover {
+            background-color: gray;
+        }
+
+        @media screen and (max-width: 500px) {
+            .navbar a {
+                float: none;
+                display: block;
+            }
+        }
+
+        .register-btn {
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+
+        /* Main container for sidebar and content */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 60px); /* Adjust height based on navbar height */
+        }
+
+        /* Sidebar styling */
         #sidebar {
             width: 250px;
             background: #f4f4f4;
             padding: 15px;
             overflow-y: auto;
-            transition: width 0.3s ease;
-            position: relative;
-            height: auto;
+            height: 100%;
         }
-        #sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        #sidebar ul li {
-            margin-bottom: 10px;
-        }
-        #sidebar ul li a {
-            text-decoration: none;
-            color: #333;
-            display: block;
-            padding: 5px;
-        }
-        .module-list {
-            display: none;
-            padding-left: 20px;
-        }
-        .module-list ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .module-list ul li {
-            margin-bottom: 5px;
-        }
-        .module-list ul li a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        .module-list ul li a:hover {
-            text-decoration: underline;
-        }
+
+        /* Content styling */
         #content {
             flex: 1;
             padding: 15px;
             overflow-y: auto;
+            height: 100%;
         }
-        .material-description {
+
+        #course-list, .module-list ul, #material-list, #quiz-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #course-list li, .module-list ul li {
+            margin-bottom: 10px;
+        }
+
+        #course-list a, .module-list a, .material-link {
+            text-decoration: none;
+            color: #007bff;
             display: block;
+            padding: 5px;
+        }
+
+        .module-list {
+            display: none;
+            padding-left: 20px;
+        }
+
+        .module-list a:hover, #course-list a:hover, .material-link:hover {
+            text-decoration: underline;
+        }
+
+        .material-description {
             color: #555;
             font-style: italic;
             margin-bottom: 5px;
         }
-        .material-link {
-            color: #1a73e8;
-            text-decoration: none;
-        }
-        .material-link:hover {
-            text-decoration: underline;
-        }
-        .quiz-list ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .quiz-list ul li {
-            margin-bottom: 5px;
-        }
+
         .loading {
             font-style: italic;
             color: #555;
@@ -86,6 +122,23 @@
     </style>
 </head>
 <body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="navbar-left">
+        <img src="/path/to/logo.png" alt="Logo" class="logo">
+        <span class="site-name">LEARN CODE PRO</span>
+    </div>
+    <div class="navbar-right">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/login" class="register-btn">Register</a>
+    </div>
+</nav>
+
+<!-- Main container for sidebar and content -->
+<div class="main-container">
     <div id="sidebar">
         <h2>Courses</h2>
         <ul id="course-list">

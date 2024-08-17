@@ -31,10 +31,12 @@
     <Content Include="compiler.js" />
     <Content Include="config.js" />
     <Content Include="courses.js" />
+    <Content Include="exercise.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="views\dashboard.ejs" />
     <Content Include="views\enroll.ejs" />
+    <Content Include="views\exercise.ejs" />
     <Content Include="views\home.ejs" />
     <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
@@ -42,11 +44,10 @@
     <Content Include="views\quiz.ejs" />
     <Content Include="views\quizStart.ejs" />
     <Content Include="views\result.ejs" />
-    <Content Include="views\signup.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\" />
-    <Folder Include="public\NewFolder1\" />
+    <Folder Include="public\images\" />
     <Folder Include="views\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercises</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 10px auto;
+            padding: 20px;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            margin-top: 0;
+        }
+        .code-area {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
+        .code-input {
+            width: 100px;
+            height: 24px;
+            margin: 0 2px;
+            padding: 2px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+            text-align: center;
+        }
+        .check-btn {
+            margin-top: 10px;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .check-btn:hover {
+            background: #0056b3;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .label {
+            display: inline-block;
+            width: 120px;
+            text-align: right;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exercises</h1>
+    <ul>
+        <% exercises.forEach((exercise, index) => { %>
+            <li>
+                <h3><%= exercise.title %></h3>
+                <p><strong>Question:</strong> <%= exercise.question_text %></p>
+                <div class="code-area">
+                    <p><strong>Complete the code below:</strong></p>
+ <pre><code>
+<% 
+    let parts = exercise.code_snippet.split(/(<input\d+>)/g);
+    let inputIndex = 0;
+%>
+<% 
+    parts.forEach(part => {
+        if (part.startsWith('<input')) {
+            let label = `Placeholder ${++inputIndex}`;
+            %><span class="label"><%= label %>:</span><input type="text" id="input-<%= index %>-<%= inputIndex %>" class="code-input"><% 
+        } else {
+            // Directly render the part without replacing spaces with &nbsp;
+            %><%= part %><% 
+        }
+    });
+%>
+</code></pre>
+
+
+                    <button class="check-btn" onclick="checkCode(<%= index %>, '<%= exercise.correct_answers %>')">Check Answer</button>
+                    <div class="feedback" id="feedback-<%= index %>"></div>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+   <script>
+       async function loadExercises(moduleId) {
+            try {
+                const response = await fetch(`/exercises/${moduleId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const exercises = await response.json();
+                const container = document.getElementById('exercise-container');
+
+                container.innerHTML = ''; // Clear existing content
+
+                exercises.forEach((exercise, index) => {
+                    const exerciseDiv = document.createElement('div');
+                    exerciseDiv.className = 'exercise';
+                    exerciseDiv.innerHTML = `
+                        <h2>Exercise ${exercise.exercise_id}</h2>
+                        <p><strong>Question:</strong> ${escapeHtml(exercise.question_text)}</p>
+                        <div class="code-area">
+                            <pre>${replacePlaceholders(escapeHtml(exercise.code_snippet), index)}</pre>
+                            <button class="check-btn" onclick="checkCode(${index}, '${exercise.correct_answers}')">Check Answer</button>
+                            <div class="feedback" id="feedback-${index}"></div>
+                        </div>
+                    `;
+                    container.appendChild(exerciseDiv);
+                });
+            } catch (error) {
+                console.error('Error loading exercises:', error);
+            }
+        }
+
+        function replacePlaceholders(codeSnippet, index) {
+            return codeSnippet.replace(/<input(\d+)>/g, (match, p1) => {
+                return `<input type="text" id="input-${index}-${p1}" class="code-input" placeholder="input${p1}">`;
+            });
+        }
+       function escapeHtml(text) {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\n/g, '<br>')  // Convert newlines to <br> tags
+        .replace(/ /g, '&nbsp;')  // Convert spaces to non-breaking spaces
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');  // Convert tabs to spaces
+}
+
+
+        function checkCode(index, correctAnswers) {
+            const correct = JSON.parse(correctAnswers);
+            const feedbackDiv = document.getElementById(`feedback-${index}`);
+            let isCorrect = true;
+
+            Object.keys(correct).forEach((key, idx) => {
+                const input = document.getElementById(`input-${index}-${idx + 1}`);
+                if (input.value.trim() !== correct[key]) {
+                    isCorrect = false;
+                }
+            });
+
+            if (isCorrect) {
+                feedbackDiv.textContent = 'Correct! Well done.';
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                feedbackDiv.textContent = 'Incorrect, try again.';
+                feedbackDiv.className = 'feedback incorrect';
+            }
+            feedbackDiv.style.display = 'block'; // Show the feedback
+        }
+
+        // Example: Load exercises for module ID 1 when the page loads
+        window.onload = () => loadExercises(1);
+    </script>
+</body>
+</html>

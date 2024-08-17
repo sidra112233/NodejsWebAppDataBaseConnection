@@ -175,7 +175,7 @@
             outline: none;
         }
         .progress-container {
-    width: 100%;
+    width: 110%;
     background-color: #e0e0e0;
     border-radius: 5px;
     overflow: hidden;
@@ -191,24 +191,47 @@
 
     </style>
     <script>
-        function startTimer(duration, display) {
-            var timer = duration, minutes, seconds;
-            var intervalId = setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
+      // Set the time limit (in seconds)
+let timeLimit = 120; // For example, 2 minutes
 
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
+// Display the remaining time
+let timerElement = document.getElementById('timer');
+timerElement.innerHTML = `Time left: ${timeLimit} seconds`;
 
-                display.textContent = minutes + ':' + seconds;
+// Countdown function
+let countdown = setInterval(function() {
+  timeLimit--;
 
-                if (--timer < 0) {
-                    timer = 0;
-                    clearInterval(intervalId);
-                    document.querySelector('form').submit(); // Auto-submit when time expires
-                }
-            }, 1000);
+  // Update the timer display
+  timerElement.innerHTML = `Time left: ${timeLimit} seconds`;
+
+  // When time is up
+  if (timeLimit <= 0) {
+    clearInterval(countdown);
+
+    // Show prompt to user
+    let restart = confirm("Time is up! Do you want to restart the quiz?");
+    
+    if (restart) {
+      resetQuiz();
+    } else {
+      // Optionally, you can redirect to another page or handle it differently
+      alert("Quiz will not be submitted.");
+    }
+  }
+}, 1000);
+   window.onload = function () {
+            var timeLimitInSeconds = <%= timeLimit * 60 %>; // Total quiz time in seconds
+            var timeLeftInSeconds = <%= timeLeft %>; // Remaining time in seconds
+            var display = document.querySelector('#time');
+            startTimer(timeLeftInSeconds, display);
         }
+// Reset quiz function
+function resetQuiz() {
+  // Reload the page to reset the quiz
+  location.reload();
+}
+
 
         window.onload = function () {
             var timeLimitInSeconds = <%= timeLimit * 60 %>; // Total quiz time in seconds

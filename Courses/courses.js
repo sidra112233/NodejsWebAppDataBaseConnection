@@ -26,6 +26,11 @@ function ensureAuthenticated(req, res, next) {
     }
     res.redirect('/login');
 }
+app.use((req, res, next) => {
+    res.locals.student = req.session.student_name; // Make student name available in EJS templates
+    next();
+});
+
 
 // Define protected routes
 app.use('/modules/:moduleId/materials', ensureAuthenticated);
@@ -258,6 +263,7 @@ app.post('/login', async (req, res) => {
 
             // Set session data
             req.session.student_id = student.student_id;
+            req.session.student_name = student.student_name; // Store student name
 
             // Fetch enrolled courses
             const coursesQuery = `
@@ -314,37 +320,35 @@ app.get('/register', (req, res) => {
 });
 // Route to handle registration
 app.post('/register', async (req, res) => {
-    const { username, email, password, confirmPassword } = req.body;
+    const { student_name, email, password_hash, confirmPassword } = req.body;
 
-    if (password !== confirmPassword) {
+    if (password_hash !== confirmPassword) {
         req.session.message = 'Passwords do not match';
         return res.redirect('/login');
     }
 
     try {
         const pool = await sql.connect(config);
-        const existingUser = await pool.request()
-            .input('student_name', sql.VarChar, username)
-            .query('SELECT * FROM Student WHERE student_name = @student_name');
-
-        if (existingUser.recordset.length > 0) {
-            req.session.message = 'Username already exists';
-            return res.redirect('/login');
-        }
-
+        const sqlQuery = 'INSERT INTO Student (student_name, password_hash, email) VALUES (@student_name, @password_hash, @email)';
         await pool.request()
-            .input('student_name', sql.VarChar, username)
-            .input('password_hash', sql.VarChar, password)
+            .input('student_name', sql.VarChar, student_name)
+            .input('password_hash', sql.VarChar, password_hash)
             .input('email', sql.VarChar, email)
-            .query('INSERT INTO Student (student_name, password_hash, email) VALUES (@student_name, @password_hash, @email)');
+            .query(sqlQuery);
 
-        req.session.message = 'Student signed up successfully';
-        res.redirect('/login');
+        res.send('Signup successful! You can now log in.');
     } catch (err) {
-        console.error(err);
-        req.session.message = 'Error registering user';
-        res.redirect('/login');
+        console.error('Error executing query:', err);
+        res.send('An error occurred while processing your request.');
     }
+});
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error destroying session:', err);
+        }
+        res.redirect('/');
+    });
 });
 
 app.get('/enroll', (req, res) => {
@@ -470,8 +474,7 @@ app.get('/dashboard', async (req, res) => {
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
-            quizzesByModule: quizzesByModule,
-            avgProgress
+            quizzesByModule: quizzesByModule
         });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
@@ -665,7 +668,7 @@ app.get('/quiz/start/:id', async (req, res) => {
 
         // Define fixed quiz parameters
         const quizParams = {
-            timeLimit: 30, // in minutes
+            timeLimit: 15, // in minutes
             numberOfQuestions: 10,
             pointsToScore: 100,
             passingScore: 50
