@@ -13,7 +13,7 @@
         }
 
         .navbar {
-            background-color: #333;
+            background-color: #433D8B;
             overflow: hidden;
             display: flex;
             justify-content: space-between;
@@ -23,7 +23,7 @@
             top: 0;
             width: 100%;
             z-index: 1000;
-            height: 30px; /* Adjust to your navbar's height */
+            height: 40px; /* Adjust to your navbar's height */
         }
 
         .navbar-left {
@@ -67,11 +67,13 @@
         }
 
         .container {
-            margin-top: 70px; /* Match this value to the height of your navbar */
+            margin-top: 10px; /* Match this value to the height of your navbar */
+            margin-left: 100px; /* Match this value to the height of your navbar */
+
             padding: 40px;
             color: #ffffff;
             overflow-y: auto;
-            height: calc(100vh - 70px); /* Adjust height accordingly */
+            height: calc(100vh - 40px); /* Adjust height accordingly */
             width: calc(100% - 220px);
             box-sizing: border-box;
         }
@@ -89,10 +91,10 @@
             flex-direction: row;
             border: 1px solid #444;
             border-radius: 5px;
-            padding: 20px;
+            padding: 40px;
             margin: 10px 0;
             background-color: #002b5f;
-            width: 100%;
+            width: 100%; /* Adjust width as needed */
             box-sizing: border-box;
         }
 
@@ -105,7 +107,7 @@
         .details-container h2#module-details-title {
             font-size: 1.5em;
             color: #ffd700;
-            margin: 20px 0;
+            margin: 80px 0;
             text-align: center;
         }
 
@@ -177,45 +179,46 @@
             background-color: #ffc107;
         }
 
-        .sidebar {
-            width: 200px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            background-color: #003366;
-            color: #ffffff;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-            display: none;
-            flex-direction: column;
-            font-size: 1em;
-        }
+       .sidebar {
+    width: 250px;
+    height: calc(100vh - 50px); /* Adjusted for navbar height */
+    position: fixed;
+    top: 50px; /* Adjusted for navbar height */
+    left: 0;
+    background-color: #003366;
+    color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    font-size: 1em;
+}
 
-        .sidebar h2 {
-            margin-top: 0;
-            font-size: 1.5em;
-            color: #ffd700;
-        }
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #ffd700;
+}
 
-        .sidebar .module {
-            border: none;
-            border-bottom: 1px solid #444;
-            padding: 10px 0;
-            cursor: pointer;
-            background-color: transparent;
-        }
+.sidebar .module {
+    border: none;
+    border-bottom: 1px solid #444;
+    padding: 10px 0;
+    cursor: pointer;
+    background-color: transparent;
+}
 
-        .sidebar .module h4 {
-            margin: 0;
-            font-size: 1.2em;
-            color: #ffd700;
-        }
+.sidebar .module h4 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #ffd700;
+}
 
-        .sidebar .module:last-child {
-            border-bottom: none;
-        }
+.sidebar .module:last-child {
+    border-bottom: none;
+}
+
 
         .compiler-container {
             width: 400px;
@@ -230,7 +233,7 @@
             background-color: #002b5f;
             padding: 30px;
             display: none;
-            top: 50px;
+            top: 70px;
             box-sizing: border-box;
         }
 
@@ -264,7 +267,7 @@
         }
 
         .compiler-container select {
-            margin: 10px 0;
+            margin: 40px 0;
             width: 100%;
             text-align: center;
         }
@@ -280,7 +283,7 @@
             font-size: 1em;
             position: absolute;
             top: 10px;
-            right: 20px;
+            right: 40px;
         }
 
         .compiler-container button:hover {
@@ -335,12 +338,12 @@
             border-radius: 5px;
             padding: 20px;
             margin-bottom: 20px;
-            margin-left: 220px;
+            margin-left: 290px;
         }
 
         .material {
             margin-bottom: 50px;
-            margin-left: 220px;
+            margin-left: 300px;
         }
 
         .material h4, .quiz h4 {
@@ -349,14 +352,14 @@
         }
 
         .quiz {
-            margin-bottom: 50px;
-            margin-left: 220px;
+            margin-bottom: 70px;
+            margin-left: 300px;
         }
 
         #toggle-compiler {
             position: fixed;
-            top: 50px;
-            left: 250px;
+            top: 60px;
+            left: 300px;
             background-color: #ffd700;
             color: #003366;
             border: none;
@@ -370,7 +373,39 @@
 
         #toggle-compiler:hover {
             background-color: #ffc107;
-        }
+}
+.compiler-output {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+.example pre {
+    background-color: #001f3f; /* Navy blue background color */
+    border: 1px solid #ccc; /* Border around the code block */
+    padding: 10px; /* Padding inside the code block */
+    border-radius: 5px; /* Rounded corners */
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    overflow-x: auto; /* Horizontal scroll if code is too wide */
+    font-family: 'Courier New', Courier, monospace; /* Monospaced font */
+    font-size: 14px; /* Adjust font size as needed */
+    color: #ffffff; /* White text color */
+    margin-left: 300px;
+
+}
+
+.example code {
+    color: #ffffff; /* White text color */
+    display: block; /* Display code block */
+    white-space: pre-wrap; /* Preserve whitespace */
+}
+
+
+
 </style>
 </head>
 <body>
@@ -450,7 +485,6 @@
 
 </div>
 
-
 <div id="compiler-container" class="compiler-container hidden">
     <form action="/compilecode" method="POST">
         <label for="code"></label><br>
@@ -458,20 +492,22 @@
         
         <label for="input">Input (Optional):</label><br>
         <textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
-                <div class="compiler-header">
-        <label for="lang">Select Language:</label>
-        <select name="lang" id="lang">
-            <option value="C">C</option>
-            <option value="C++">C++</option>
-            <option value="Python">Python</option>
-        </select><br><br>
-       <button class="close-button" onclick="toggleCompiler()">×</button>
-
+        
+        <div class="compiler-header">
+            <label for="lang">Select Language:</label>
+            <select name="lang" id="lang">
+                <option value="C">C</option>
+                <option value="C++">C++</option>
+                <option value="Python">Python</option>
+            </select><br><br>
+            <button class="close-button" onclick="toggleCompiler()">×</button>
         </div>
+        
         <button type="submit">Compile</button>
         <button class="reset-button" onclick="resetCompiler()">Reset</button>
-
     </form>
+    
+    <div id="compiler-output" class="compiler-output"></div>
 </div>
 
 <script>
@@ -498,61 +534,85 @@
             sidebarModules.innerHTML += `
                 <div class="module ${module.module_id === selectedModuleId ? 'selected' : ''}" onclick="showModuleDetails(${module.module_id}, '${module.module_name}')">
                     <h4>${module.module_name}</h4>
-                    <p>Study Resources</p>
-                    <p>Quiz: ${module.quiz_score ? module.quiz_score + '%' : '-'}</p>
+\                    <p>Quiz: ${module.quiz_score ? module.quiz_score + '%' : '-'}</p>
                 </div>
             `;
         });
 
         showModuleDetails(selectedModuleId, modules.find(m => m.module_id === selectedModuleId).module_name);
     }
-
     function showModuleDetails(moduleId, moduleName) {
-        console.log('Showing module details', moduleId, moduleName);
-        fetch(`/module-details/${moduleId}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Fetched module details:', data);
+    console.log('Showing module details', moduleId, moduleName);
+    fetch(`/module-details/${moduleId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Fetched module details:', data);
 
-                document.getElementById('details-container').classList.remove('hidden');
+            document.getElementById('details-container').classList.remove('hidden');
 
-                document.getElementById('module-details-title').innerText = moduleName;
-                const moduleDetailsContent = document.getElementById('module-details-content');
-                moduleDetailsContent.innerHTML = '';
+            document.getElementById('module-details-title').innerText = moduleName;
+            const moduleDetailsContent = document.getElementById('module-details-content');
+            moduleDetailsContent.innerHTML = '';
 
-                moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Materials</h3>`;
-                data.materials.forEach(material => {
+            // Display materials
+            moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Materials</h3>`;
+            data.materials.forEach(material => {
+                moduleDetailsContent.innerHTML += `
+                    <div class="material">
+                        <h4>${material.title}</h4>
+                        <p>Type: ${material.type}</p>
+                        <p>Description: ${material.description}</p>
+                        <a href="${material.link}" target="_blank">Link</a>
+                    </div>
+                `;
+            });
+
+            // Display examples
+            moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Examples</h3>`;
+            if (data.examples && data.examples.length > 0) {
+                data.examples.forEach(example => {
                     moduleDetailsContent.innerHTML += `
-                        <div class="material">
-                            <h4>${material.title}</h4>
-                            <p>Type: ${material.type}</p>
-                            <p>Description: ${material.description}</p>
-                            <a href="${material.link}" target="_blank">Link</a>
+                        <div class="example">
+                            <h4>${example.language}</h4>
+                            <pre><code>${escapeHtml(example.code_snippet)}</code></pre>
                         </div>
                     `;
                 });
+            } else {
+                moduleDetailsContent.innerHTML += `<p>No examples available for this module.</p>`;
+            }
 
-                moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Quizzes</h3>`;
-                if (data.quizzes && data.quizzes.length > 0) {
-                    data.quizzes.forEach(quiz => {
-                        moduleDetailsContent.innerHTML += `
-                            <div class="quiz">
-                                <h4>${quiz.quiz_title}</h4>
-                                <p>Total Marks: ${quiz.total_marks}</p>
-                                <a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>
-                            </div>
-                        `;
-                    });
-                } else {
-                    moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
-                }
+            // Display quizzes
+            moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Quizzes</h3>`;
+            if (data.quizzes && data.quizzes.length > 0) {
+                data.quizzes.forEach(quiz => {
+                    moduleDetailsContent.innerHTML += `
+                        <div class="quiz">
+                            <h4>${quiz.quiz_title}</h4>
+                            <p>Total Marks: ${quiz.total_marks}</p>
+                            <a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>
+                        </div>
+                    `;
+                });
+            } else {
+                moduleDetailsContent.innerHTML += `<p>No quizzes available for this module.</p>`;
+            }
 
-                document.getElementById('compiler-container').classList.remove('hidden');
-            })
-            .catch(error => {
-                console.error('Error fetching module details:', error);
-            });
-    }
+            document.getElementById('compiler-container').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error fetching module details:', error);
+        });
+}
+// Function to escape HTML special characters to prevent injection attacks
+function escapeHtml(pre) {
+    return pre
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
    function toggleCompiler() {
     const compilerContainer = document.getElementById('compiler-container');
@@ -570,6 +630,31 @@
             document.getElementById('input').value = '';
             document.getElementById('lang').selectedIndex = 0;
         }
+      document.querySelector('form').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const codeInput = document.getElementById('code');
+    const inputInput = document.getElementById('input');
+    const langSelect = document.getElementById('lang');
+
+    const formData = new FormData();
+    formData.append('code', codeInput.value);
+    formData.append('input', inputInput.value);
+    formData.append('lang', langSelect.value);
+
+    fetch('/compilecode', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('compiler-output').textContent = data.output;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('compiler-output').textContent = 'An error occurred while compiling the code.';
+    });
+});
     function showDashboard() {
         document.getElementById('details-container').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');

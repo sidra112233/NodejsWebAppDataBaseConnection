@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercises</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -86,10 +87,14 @@
             margin-right: 5px;
             vertical-align: middle;
         }
+        .code-area pre {
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
     </style>
 </head>
 <body>
     <h1>Exercises</h1>
+    <ul id="exercise-container">
     <ul>
         <% exercises.forEach((exercise, index) => { %>
             <li>
@@ -121,9 +126,12 @@
                 </div>
             </li>
         <% }) %>
-    </ul>
-   <script>
-       async function loadExercises(moduleId) {
+    </ul>    </ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+
+    <script>
+        async function loadExercises(moduleId) {
             try {
                 const response = await fetch(`/exercises/${moduleId}`);
                 if (!response.ok) {
@@ -135,19 +143,21 @@
                 container.innerHTML = ''; // Clear existing content
 
                 exercises.forEach((exercise, index) => {
-                    const exerciseDiv = document.createElement('div');
-                    exerciseDiv.className = 'exercise';
+                    const exerciseDiv = document.createElement('li');
                     exerciseDiv.innerHTML = `
-                        <h2>Exercise ${exercise.exercise_id}</h2>
+                        <h3>${escapeHtml(exercise.title)}</h3>
                         <p><strong>Question:</strong> ${escapeHtml(exercise.question_text)}</p>
                         <div class="code-area">
-                            <pre>${replacePlaceholders(escapeHtml(exercise.code_snippet), index)}</pre>
+                            <p><strong>Complete the code below:</strong></p>
+                            <pre><code class="language-java">${replacePlaceholders(escapeHtml(exercise.code_snippet), index)}</code></pre>
                             <button class="check-btn" onclick="checkCode(${index}, '${exercise.correct_answers}')">Check Answer</button>
                             <div class="feedback" id="feedback-${index}"></div>
                         </div>
                     `;
                     container.appendChild(exerciseDiv);
                 });
+
+                Prism.highlightAll(); // Apply syntax highlighting to dynamically added content
             } catch (error) {
                 console.error('Error loading exercises:', error);
             }
@@ -158,16 +168,15 @@
                 return `<input type="text" id="input-${index}-${p1}" class="code-input" placeholder="input${p1}">`;
             });
         }
-       function escapeHtml(text) {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\n/g, '<br>')  // Convert newlines to <br> tags
-        .replace(/ /g, '&nbsp;')  // Convert spaces to non-breaking spaces
-        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');  // Convert tabs to spaces
-}
 
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>') // Convert newlines to <br> tags
+                .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;'); // Convert tabs to 4 non-breaking spaces
+        }
 
         function checkCode(index, correctAnswers) {
             const correct = JSON.parse(correctAnswers);

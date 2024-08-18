@@ -3,51 +3,106 @@
 <head>
     <title>Enroll</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #001f3f;
-            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
         }
 
         .container {
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            background-color: #f9f9f9;
-            color: #333;
-            width: 300px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
         }
 
         form label {
             display: block;
-            margin: 10px 0 5px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #7f8c8d;
         }
 
         form input {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #dfe6e9;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2c3e50;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        form input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
         }
 
         form button {
-            background-color: #007bff;
+            display: block;
+            width: 100%;
+            background-color: #134B70;
             color: #fff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            animation: fadeInUp 0.5s ease;
         }
 
         form button:hover {
-            background-color: #0056b3;
+            background-color: #2980b9;
+        }
+
+        form .cancel-btn {
+            background-color: #7f8c8d;
+            margin-top: 10px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        form .cancel-btn:hover {
+            background-color: #636e72;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -64,7 +119,7 @@
             <input type="password" name="password" id="password" required>
             
             <button type="submit">Confirm Enrollment</button>
-            <button type="button" onclick="window.location.href='/dashboard'">Cancel</button>
+            <button type="button" class="cancel-btn" onclick="window.location.href='/dashboard'">Cancel</button>
         </form>
     </div>
 </body>

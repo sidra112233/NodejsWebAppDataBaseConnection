@@ -112,6 +112,13 @@ app.get('/course/:courseId', async (req, res) => {
             courses: coursesResult.recordset, // All courses for display
             modules: modulesResult.recordset, // Modules for the selected course
             materials: [], // Placeholder for materials if needed
+            "examples": [
+                {
+                    "title": "Hello World in JavaScript",
+                    "code": "console.log('Hello, World!');",
+                    "description": "A simple example of printing 'Hello, World!' to the console."
+                }
+            ],
             courseName: courseName,
             courseDescription: courseDescription,
             moduleName: '',
@@ -318,13 +325,12 @@ app.post('/login', async (req, res) => {
 app.get('/register', (req, res) => {
     res.render('login'); // Make sure you have a login.ejs or equivalent file
 });
-// Route to handle registration
 app.post('/register', async (req, res) => {
     const { student_name, email, password_hash, confirmPassword } = req.body;
 
     if (password_hash !== confirmPassword) {
         req.session.message = 'Passwords do not match';
-        return res.redirect('/login');
+        return res.redirect('/register');
     }
 
     try {
@@ -336,10 +342,15 @@ app.post('/register', async (req, res) => {
             .input('email', sql.VarChar, email)
             .query(sqlQuery);
 
-        res.send('Signup successful! You can now log in.');
+        // Set a session variable to store the success message
+        req.session.message = 'Signup successful! You can now log in.';
+
+        // Redirect the user to the login page
+        return res.redirect('/login');
     } catch (err) {
         console.error('Error executing query:', err);
-        res.send('An error occurred while processing your request.');
+        req.session.message = 'An error occurred while processing your request.';
+        return res.redirect('/register');
     }
 });
 app.get('/logout', (req, res) => {
@@ -462,12 +473,7 @@ app.get('/dashboard', async (req, res) => {
             acc[quiz.module_id].push(quiz);
             return acc;
         }, {});
-        // Calculate average progress
-        const progressResult = await pool.request()
-            .input('student_id', sql.Int, student_id)
-            .query('SELECT AVG(progress) as avgProgress FROM QuizSubmissions WHERE student_id = @student_id');
-        const avgProgress = progressResult.recordset[0].avgProgress || 0;
-
+        
         // Render dashboard with all necessary data
         res.render('dashboard', {
             student: student, // Pass the student data here
@@ -475,13 +481,13 @@ app.get('/dashboard', async (req, res) => {
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
             quizzesByModule: quizzesByModule
+           
         });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
         res.send('An error occurred while processing your request.');
     }
 });
-
 app.get('/module-details/:moduleId', async (req, res) => {
     const { moduleId } = req.params;
 
@@ -500,8 +506,15 @@ app.get('/module-details/:moduleId', async (req, res) => {
             .input('module_id', sql.Int, moduleId)
             .query(quizzesQuery);
 
+        // Fetch examples for the module
+        const examplesQuery = 'SELECT * FROM ModuleCode WHERE module_id = @module_id';
+        const examplesResult = await pool.request()
+            .input('module_id', sql.Int, moduleId)
+            .query(examplesQuery);
+
         res.json({
             materials: materialsResult.recordset,
+            examples: examplesResult.recordset,  // Fetch and include module-specific examples
             quizzes: quizzesResult.recordset
         });
     } catch (err) {
