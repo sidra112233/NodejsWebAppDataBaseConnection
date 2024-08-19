@@ -204,9 +204,11 @@
 .sidebar .module {
     border: none;
     border-bottom: 1px solid #444;
-    padding: 10px 0;
+    padding: 15px 0;
     cursor: pointer;
     background-color: transparent;
+    text-align: left;
+
 }
 
 .sidebar .module h4 {
@@ -438,9 +440,6 @@
                         <% modulesByCourse[course.course_id].forEach(module => { %>
                             <div class="module" onclick="showModuleInSidebar('<%= course.course_name %>', <%= JSON.stringify(modulesByCourse[course.course_id]) %>, <%= module.module_id %>)">
                                 <h4><%= module.module_name %></h4>
-                                <p>Study Resources</p>
-                                <p>Quiz: <%= module.quiz_score ? module.quiz_score + '%' : '-' %></p>
-                                <p>Test: <%= module.test_score ? module.test_score + '%' : '-' %></p>
                                 <% if (module.quiz_id) { %>
                                     <form action="/quiz/start" method="post">
                                         <input type="hidden" name="quiz_id" value="<%= module.quiz_id %>">
@@ -484,32 +483,34 @@
     <button id="toggle-compiler" onclick="toggleCompiler()">Open Compiler</button>
 
 </div>
-
 <div id="compiler-container" class="compiler-container hidden">
     <form action="/compilecode" method="POST">
-        <label for="code"></label><br>
-        <textarea name="code" id="code" rows="10" cols="50" placeholder="Enter your code here..."></textarea><br><br>
-        
-        <label for="input">Input (Optional):</label><br>
-        <textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
-        
-        <div class="compiler-header">
-            <label for="lang">Select Language:</label>
-            <select name="lang" id="lang">
-                <option value="C">C</option>
-                <option value="C++">C++</option>
-                <option value="Python">Python</option>
-            </select><br><br>
-            <button class="close-button" onclick="toggleCompiler()">×</button>
+        <div class="compiler-content">
+            <div class="code-input">
+                <label for="code"></label><br>
+                <textarea name="code" id="code" rows="10" cols="50" placeholder="Enter your code here..."></textarea><br><br>
+            </div>
+            <div class="input-section">
+                <label for="input">Input (Optional):</label><br>
+                <textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
+            </div>
+            <div class="compiler-header">
+                <label for="lang"></label>
+                <select name="lang" id="lang">
+                    <option value="C">C</option>
+                    <option value="C++">C++</option>
+                    <option value="Python">Python</option>
+                </select><br><br>
+                <button class="close-button" onclick="toggleCompiler()">×</button>
+            </div>
         </div>
-        
-        <button type="submit">Compile</button>
-        <button class="reset-button" onclick="resetCompiler()">Reset</button>
+        <div class="compiler-actions">
+            <button type="submit">Compile</button>
+            <button class="reset-button" onclick="resetCompiler()">Reset</button>
+        </div>
     </form>
-    
     <div id="compiler-output" class="compiler-output"></div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         console.log('DOM fully loaded and parsed');
@@ -534,7 +535,7 @@
             sidebarModules.innerHTML += `
                 <div class="module ${module.module_id === selectedModuleId ? 'selected' : ''}" onclick="showModuleDetails(${module.module_id}, '${module.module_name}')">
                     <h4>${module.module_name}</h4>
-\                    <p>Quiz: ${module.quiz_score ? module.quiz_score + '%' : '-'}</p>
+\                    <p> ${module.quiz_score ? module.quiz_score + '%' : ''}</p>
                 </div>
             `;
         });
