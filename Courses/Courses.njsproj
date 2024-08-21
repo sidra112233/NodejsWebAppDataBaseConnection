@@ -28,10 +28,8 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="compiler.js" />
     <Content Include="config.js" />
     <Content Include="courses.js" />
-    <Content Include="exercise.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="views\dashboard.ejs" />
