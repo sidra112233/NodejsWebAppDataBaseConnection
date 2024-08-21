@@ -1,30 +1,25 @@
 CREATE TABLE Student(
-    student_id INT IDENTITY PRIMARY KEY NOT NULL,
+    student_id INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
     student_name VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-ADD CONSTRAINT UQ_Student_Email UNIQUE (email),
+    email VARCHAR(100) UNIQUE NOT NULL ,
     created_at DATETIME DEFAULT GETDATE()
 );
-
+ALTER TABLE Student
+ADD CONSTRAINT UQ_Student_Email UNIQUE (email);
 CREATE TABLE Courses(
     course_id INT IDENTITY(1,1) PRIMARY KEY,
     course_name VARCHAR(100) NOT NULL,
     category VARCHAR(50) NOT NULL,
     difficulty VARCHAR(20) NOT NULL,
     description TEXT,
-	payment_status VARCHAR(50),
-    payment_amount DECIMAL(10, 2),
-    payment_date DATE,
     enrolled_students INT DEFAULT 0,
-    start_date DATE,
-    duration INT
 );
 CREATE TABLE Enrollments (
     enrollment_id INT IDENTITY(1,1) PRIMARY KEY,
     student_id INT,
     course_id INT,
-    enrollment_date DATE,
+    enrollment_date DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (student_id) REFERENCES Student(student_id),
     FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
@@ -59,6 +54,7 @@ CREATE TABLE QuizSubmissions (
     student_id INT NOT NULL,
 	submission_date DATETIME DEFAULT GETDATE(),
     score FLOAT,
+	progress INT,
 	FOREIGN KEY (student_id) REFERENCES Student(student_id),
 	FOREIGN KEY (quiz_id) REFERENCES Quizzes(quiz_id)
 );
@@ -85,4 +81,20 @@ CREATE TABLE QuizAnswers (
     FOREIGN KEY (question_id) REFERENCES QuizQuestions(question_id),
     FOREIGN KEY (student_id) REFERENCES Student(student_id)
 );
-SELECT * FROM QuizQuestions;
+CREATE TABLE Exercises (
+    exercise_id INT IDENTITY(1,1) PRIMARY KEY,
+    module_id INT NOT NULL,
+    question_text NVARCHAR(MAX) NOT NULL,
+    code_snippet NVARCHAR(MAX) NOT NULL,
+    correct_answers NVARCHAR(MAX) NOT NULL,
+    feedback_correct NVARCHAR(255) NOT NULL,
+    feedback_incorrect NVARCHAR(255) NOT NULL,
+    FOREIGN KEY (module_id) REFERENCES Modules(module_id)
+);
+CREATE TABLE ModuleCode (
+    code_id INT PRIMARY KEY IDENTITY(1,1),
+    module_id INT FOREIGN KEY REFERENCES Modules(module_id),
+    language VARCHAR(50),
+    code_snippet TEXT,
+    created_at DATETIME DEFAULT GETDATE()
+);
