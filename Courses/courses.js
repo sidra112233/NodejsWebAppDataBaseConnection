@@ -24,7 +24,7 @@ function ensureAuthenticated(req, res, next) {
     if (req.session && req.session.student_id) {
         return next();
     }
-    res.redirect('/login');
+    res.redirect('/sign-in');
 }
 app.use((req, res, next) => {
     res.locals.student = req.session.student_name; // Make student name available in EJS templates
@@ -246,13 +246,13 @@ app.get('/modules/:moduleId', async (req, res) => {
 });
 
 // Login and signup routes
-app.get('/login', (req, res) => {
+app.get('/sign-in', (req, res) => {
     if (req.session && req.session.student_id) {
-        return res.redirect('/login'); // Redirect logged in users to the homepage
+        return res.redirect('/sign-in'); // Redirect logged in users to the homepage
     }
-    res.render('login');
+    res.render('sign-in');
 });
-app.post('/login', async (req, res) => {
+app.post('/sign-in', async (req, res) => {
     const { student_name, password_hash } = req.body;
 
     try {
@@ -322,15 +322,15 @@ app.post('/login', async (req, res) => {
         res.send('An error occurred while processing your request.');
     }
 });
-app.get('/register', (req, res) => {
-    res.render('login'); // Make sure you have a login.ejs or equivalent file
+app.get('/sign-up', (req, res) => {
+    res.render('sign-up'); // Make sure you have a login.ejs or equivalent file
 });
-app.post('/register', async (req, res) => {
+app.post('/sign-up', async (req, res) => {
     const { student_name, email, password_hash, confirmPassword } = req.body;
 
     if (password_hash !== confirmPassword) {
         req.session.message = 'Passwords do not match';
-        return res.redirect('/register');
+        return res.redirect('/sign-up');
     }
 
     try {
@@ -346,14 +346,14 @@ app.post('/register', async (req, res) => {
         req.session.message = 'Signup successful! You can now log in.';
 
         // Redirect the user to the login page
-        return res.redirect('/login');
+        return res.redirect('/sign-in');
     } catch (err) {
         console.error('Error executing query:', err);
         req.session.message = 'An error occurred while processing your request.';
-        return res.redirect('/register');
+        return res.redirect('/sign-up');
     }
 });
-app.get('/logout', (req, res) => {
+app.get('/sign-out', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error('Error destroying session:', err);
@@ -399,7 +399,7 @@ app.get('/dashboard', async (req, res) => {
     const student_id = req.session.student_id;
 
     if (!student_id) {
-        return res.redirect('/login'); // Redirect to login if not authenticated
+        return res.redirect('/sign-in'); // Redirect to login if not authenticated
     }
 
     try {

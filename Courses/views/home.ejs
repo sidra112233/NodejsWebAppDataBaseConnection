@@ -28,14 +28,14 @@ body {
             max-width: auto px;
             margin: auto;
             text-align: center;
-            background-color: gray;
+            background-color: #ffffff;
             padding: 25px;
             margin-bottom: 0px;
         }
 
         h1 {
             margin-bottom: 20px;
-            color: white;
+            color: #007acc;
         }
 
         .gallery {
@@ -46,8 +46,8 @@ body {
         }
 
         .course {
-            background-color: rgb(145, 133, 133);
-            border: 1px solid hsl(0, 0%, 87%);
+            background-color: #e6f7ff; /* Light blue */
+            border: 1px solid #b3e0ff; /* Slightly darker blue */
             border-radius: 5px;
             overflow: hidden;
             width: calc(25% - 20px);
@@ -58,7 +58,7 @@ body {
         }
         .course img {
     width: 100%;
-    height: auto; /* Maintain aspect ratio */
+    height: 200px; /* Maintain aspect ratio */
     object-fit: cover; /* Cover the container, cropping if necessary */
     display: block; /* Remove any default margin/padding */
 }
@@ -69,16 +69,17 @@ body {
 
         .course-details h2 {
             margin: 10px 0;
-            color: white;
+            color: #00509e; /* Darker blue */
         }
 
         .course-details p {
             margin: 5px 0;
-            color: white;
+            color: #00509e; /* Darker blue */
+            height: 20px;
         }
 
         .enroll-btn {
-            background-color: #3a3c3a;
+            background-color: #00509e; /* Darker blue */
             color: white;
             border: none;
             padding: 10px 20px;
@@ -90,7 +91,7 @@ body {
         }
 
         .enroll-btn:hover {
-            background-color: #928be1;
+    background-color: #004080; /* Even darker blue */
         }
 body{
     margin: 0;
@@ -103,8 +104,9 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: black;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9); /* Light blue gradient */
     padding: 10px 20px;
+   
     
 }
 
@@ -112,43 +114,35 @@ body{
     display: flex;
     align-items: center;
 }
-
 .logo {
     height: 40px;
+    width: 50px;
     margin-right: 10px;
 }
 
 .site-name {
-    color: white;
+    color: #1a237e; /* Deep blue for better contrast */
     font-size: 1.5em;
 }
 
 .navbar-right a {
-    color: white;
+    color: #1a237e; /* Deep blue for better contrast */
     padding: 14px 20px;
     text-decoration: none;
     text-align: center;
 }
 
 .navbar-right a:hover {
-    background-color: gray;
+    background-color: #82b1ff; /* Slightly darker blue hover effect */
+}
+.register-btn, .profile-btn, .logout-btn {
+    border: 1px solid #1a237e; /* Deep blue border */
+    border-radius: 5px;
+    color: #1a237e; /* Deep blue text color */
 }
 
-.register-btn {
-    border: 1px solid white;
-    border-radius: 5px;
-}
-
-.profile-btn {
-    /* If needed, add specific styles for profile button */
-      border: 1px solid white;
-    border-radius: 5px;
-}
-
-.logout-btn {
-    /* If needed, add specific styles for logout button */
-      border: 1px solid white;
-    border-radius: 5px;
+.sign-up-btn:hover, .profile-btn:hover, .sign-in-btn:hover {
+    background-color: #e3f2fd; /* Light blue hover effect */
 }
         * {box-sizing: border-box}
         body {font-family: Verdana, sans-serif; margin:0}
@@ -156,125 +150,125 @@ body{
         img {vertical-align: middle;}
         
         /* Slideshow container */
-        .s {
-            margin-top: 0px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #1f1f1f, #acaaaa); /* Dark gradient background */
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-        }
+      .s {
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw; /* Set to full screen width */
+    background: linear-gradient(135deg, #f0f8ff, #e6f7ff); /* Light gradient background */
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
 
         .scene {
             position: relative;
-            width: 200vw; /* Width relative to viewport width */
+            width: 300vw; /* Width relative to viewport width */
             height: 95vh; /* Height relative to viewport height */
             max-width: 1150px; /* Maximum width for large screens */
             max-height: 800px; /* Maximum height for large screens */
-            background-color: #c9c4c4; /* Dark gray background for the scene */
+            background-color: #ffffff; /* Light white background for the scene */
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
+.girl {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .girl {
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%) translateY(100px);
-            opacity: 0;
-            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.girl.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 
-        .girl.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+.girl video {
+    width: 1150px;
+    height: auto;
+    border-radius: 10px;
+}
 
-        .girl video {
-            width: 1150px;
-            height: auto;
-            border-radius: 10px;
-        }
+.speech-bubble {
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translateX(-50%) scale(0);
+    background-color: #e6f7ff; /* Very light blue */
+    border: 2px solid #00509e; /* Darker blue */
+    padding: 15px 25px;
+    border-radius: 20px;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
 
-        .speech-bubble {
-            position: absolute;
-            left: 50%;
-            bottom: 5px;
-            transform: translateX(-50%) scale(0);
-            background-color: #e0f7fa; /* Light cyan background for a professional look */
-            border: 2px solid #00838f; /* Darker border color */
-            padding: 15px 25px;
-            border-radius: 20px;
-            font-size: 18px;
-            opacity: 0;
-            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-        }
+.speech-bubble.show {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
 
-        .speech-bubble.show {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-        }
+.balloons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none; /* Ensure balloons don't block interactions */
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
 
-        .balloons {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none; /* Ensure balloons don't block interactions */
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
+.balloon {
+    width: 100px;
+    height: 140px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: absolute;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    z-index: 10;
+}
 
-        .balloon {
-            width: 100px;
-            height: 140px;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            position: absolute;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-            z-index: 10;
-        }
+.balloon.blue {
+    background-color: #4fc3f7; /* Light blue */
+}
 
-        .balloon.blue {
-            background-color: #00aaff; /* Light blue */
-        }
+.balloon.green {
+    background-color: #a5d6a7; /* Light green */
+}
 
-        .balloon.green {
-            background-color: #66bb6a; /* Light green */
-        }
+.balloon.purple {
+    background-color: #ce93d8; /* Light purple */
+}
 
-        .balloon.purple {
-            background-color: #ab47bc; /* Light purple */
-        }
+.balloon.orange {
+    background-color: #ffb74d; /* Light orange */
+}
 
-        .balloon.orange {
-            background-color: #ff7043; /* Light orange */
-        }
+.balloon.show {
+    opacity: 1;
+    animation: float 12s linear infinite;
+}
 
-        .balloon.show {
-            opacity: 1;
-            animation: float 12s linear infinite;
-        }
-
-        /* Adjusted animation for smoother flow */
-        @keyframes float {
-            0% { transform: translateY(60vh) translateX(0); }
-            100% { transform: translateY(-60vh) translateX(50px); }
-        }
+@keyframes float {
+    0% { transform: translateY(60vh) translateX(0); }
+    100% { transform: translateY(-60vh) translateX(50px); }
+}
 
         .picture {
             display: none; /* Initially hidden */
@@ -319,14 +313,15 @@ body{
               }*/
    
 .footer {
-    margin-top: 2380px;;
+    margin-top: 2220px;;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: auto ;
   width: 100%;
-  background: #10182F;
+  background: linear-gradient(135deg, #f9f9f9, #f0e9d2, #e0f7fa, #ffecd2);
+    color: #333;
   border-radius: 6px;
 }
 .footer .footer-row {
@@ -337,12 +332,13 @@ body{
   padding: 60px;
 }
 .footer-row .footer-col h4 {
-  color: #fff;
+  color: #444;
   font-size: 1.2rem;
   font-weight: 400;
 }
 .footer-col .links {
   margin-top: 20px;
+    color: #666;
 }
 .footer-col .links li {
   list-style: none;
@@ -350,14 +346,14 @@ body{
 }
 .footer-col .links li a {
   text-decoration: none;
-  color: #bfbfbf;
+  color: #333;
 }
 .footer-col .links li a:hover {
-  color: #fff;
+  color: #333;
 }
 .footer-col p {
   margin: 20px 0;
-  color: #bfbfbf;
+  color: #333;
   max-width: 300px;
 }
 .footer-col form {
@@ -367,19 +363,19 @@ body{
 .footer-col input {
   height: 40px;
   border-radius: 6px;
-  background: none;
+  background: #fff;
   width: 100%;
   outline: none;
   border: 1px solid #7489C6 ;
   caret-color: #fff;
-  color: #fff;
+  color: #333;
   padding-left: 10px;
 }
 .footer-col input::placeholder {
   color: #ccc;
 }
  .footer-col form button {
-  background: #fff;
+  background: #f0e9d2;
   outline: none;
   border: none;
   padding: 10px 15px;
@@ -396,12 +392,13 @@ body{
   margin-top: 30px;
   gap: 30px;
   cursor: pointer;
+  color: #777;
 }
 .footer-col .icons i {
-  color: #afb6c7;
+    color: #444; /* Light cyan */
 }
 .footer-col .icons i:hover  {
-  color: #fff;
+    color: #ffffff; /* White on hover */
 }
 @media (max-width: 768px) {
   .footer {
@@ -431,8 +428,8 @@ body{
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background: #121212;
-            color: #e0e0e0;
+            background: #ffffff; /* Light white background */
+            color: #333; /* Dark text color */
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -453,13 +450,13 @@ body{
 
         .about-section h1 {
             font-size: 28px;
-            color: #ffffff;
+    color: #00796b; /* Dark cyan */
             margin-bottom: 10px;
         }
 
         .about-section p {
             font-size: 16px;
-            color: #b0b0b0;
+    color: #555; /* Dark gray for readability */
             max-width: 800px;
             margin: 0 auto;
         }
@@ -471,7 +468,7 @@ body{
         }
 
         .card {
-            background: gray;
+            background: #ffffff; /* White background */
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(1, 1, 0, 0.3);
             width: 300px;
@@ -480,8 +477,9 @@ body{
             overflow: hidden;
             backdrop-filter: blur(10px);
             text-align: center;
-            color: #fff;
+            color: #333; /* Dark text color */
             padding-top: 40px; /* Ensures the heading is positioned at the top */
+            gap: 50px;
         }
 
         .card .card-image {
@@ -525,7 +523,7 @@ body{
 
         .card .card-content p {
             font-size: 16px;
-            color: #b0b0b0;
+            color: #e0e0e0; /* Light gray text */
             line-height: 1.6;
             max-height: 0;
             overflow: hidden;
@@ -552,18 +550,19 @@ body{
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <img src="C:\Users\PC\Downloads\icon-removebg-preview.png" alt="Logo" class="logo">
+            <img src="/images/Logo.png" alt="Logo" class="logo">
             <span class="site-name">LEARN CODE PRO</span>
         </div>
         <div class="navbar-right">
             <a href="#">Home</a>
             <a href="#">About</a>
-            <a href="file:///C:/Users/PC/OneDrive/Desktop/project%20folder/contact.html">Contact</a>
   <% if (student) { %>
                 <a href="/profile"><%= student %></a>
-                <a href="/logout">Logout</a>
+                <a href="/sign-out">Sign Out</a>
             <% } else { %>
-                <a href="/register">Register</a>
+                <a href="/sign-up">Sign Up</a>
+                <a href="/sign-in">Sign In</a>
+
             <% } %>
             </div>
     </nav>
@@ -672,36 +671,40 @@ const imageMap = {
         <div class="course-details">
             <h2><%= course.course_name %></h2>
             <p><%= course.description %></p>
-            <p>Price: <%= course.price %></p>
         </div>
         <a href="/course/<%= course.course_id %>" class="enroll-btn">Enroll Now</a>
     </div>
 <% }); %>
 
                 <div class="course">
-                    <img src="/images/cs.jpg" alt="CSS Course">
+                    <img src="/images/cs.jpg" alt="CSS Course" height="200px" width="300px">
                     <div class="course-details">
                         <h2>CSS</h2>
                         <p>Master the art of styling web pages with CSS. Provide interactive webpage.</p>
-                        <p>Price: 300</p>
+                    </div>
+                    <button class="enroll-btn">Enroll Now</button>
+                </div>
+                 <div class="course">
+                    <img src="/images/nodejs.png" alt="Node JS Course" height="200px" width="300px">
+                    <div class="course-details">
+                        <h2>Node JS</h2>
+                        <p>Master the art of styling web pages with CSS. Provide interactive webpage.</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>
                 <div class="course">
-                    <img src="/images/js.png" alt="JavaScript Course">
+                    <img src="/images/js.png" alt="JavaScript Course" height="200px" width="300px">
                     <div class="course-details">
                         <h2>JavaScript</h2>
                         <p>Learn JavaScript to make your web pages interactive and dynamic. It provides responsive webpages.</p>
-                        <p>Price: 700</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>
                 <div class="course">
-                    <img src="/images/ruby.jpg" alt="Ruby Course">
+                    <img src="/images/ruby.jpg" alt="Ruby Course" height="200px" width="300px">
                     <div class="course-details">
                         <h2>Ruby</h2>
                         <p>Get started with Ruby, known for its simplicity and productivity.</p>
-                        <p>Price: 700</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>
@@ -710,7 +713,6 @@ const imageMap = {
                     <div class="course-details">
                         <h2>PHP</h2>
                         <p>Learn PHP to create dynamic web pages and applications.</p>
-                        <p>Price: 600</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>
@@ -719,7 +721,6 @@ const imageMap = {
                     <div class="course-details">
                         <h2>C#</h2>
                         <p>Master C#, a language widely used in enterprise applications.</p>
-                        <p>Price: 800</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>

@@ -12,12 +12,12 @@
             height: 100vh;
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #f2f7fa; /* Very light blue-gray */
         }
 
         .container {
             width: 500px;
-            background-color: #fff;
+            background: linear-gradient(135deg, #f9fcff, #eaf3f8); /* Light gradient */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             padding: 30px;
@@ -27,14 +27,14 @@
         h2 {
             text-align: center;
             margin-bottom: 20px;
-            color: #2c3e50;
+            color: #3b5998; /* Soft blue */
         }
 
         form label {
             display: block;
             font-weight: 500;
             margin-bottom: 5px;
-            color: #7f8c8d;
+            color: #6c757d; /* Muted gray */
         }
 
         form input {
@@ -42,23 +42,24 @@
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid #dfe6e9;
+            border: 1px solid #ced4da;
             border-radius: 6px;
             font-size: 14px;
-            color: #2c3e50;
+            color: #495057; /* Darker gray-blue */
+            background-color: #ffffff; /* White background */
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         form input:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+            border-color: #5bc0de; /* Light blue focus */
+            box-shadow: 0 0 5px rgba(91, 192, 222, 0.5);
         }
 
         form button {
             display: block;
             width: 100%;
-            background-color: #134B70;
+            background: linear-gradient(135deg, #5bc0de, #65c7ed); /* Gradient blue */
             color: #fff;
             border: none;
             padding: 12px;
@@ -70,17 +71,17 @@
         }
 
         form button:hover {
-            background-color: #2980b9;
+            background: linear-gradient(135deg, #4aa3cf, #59b3e2); /* Darker gradient on hover */
         }
 
         form .cancel-btn {
-            background-color: #7f8c8d;
+            background: linear-gradient(135deg, #adb5bd, #ced4da); /* Gradient light gray */
             margin-top: 10px;
             animation: fadeInUp 0.6s ease;
         }
 
         form .cancel-btn:hover {
-            background-color: #636e72;
+            background: linear-gradient(135deg, #868e96, #adb5bd); /* Darker gradient on hover */
         }
 
         @keyframes fadeIn {

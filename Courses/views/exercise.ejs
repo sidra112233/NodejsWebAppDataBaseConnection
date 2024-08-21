@@ -111,7 +111,7 @@
     parts.forEach(part => {
         if (part.startsWith('<input')) {
             let label = `Placeholder ${++inputIndex}`;
-            %><span class="label"><%= label %>:</span><input type="text" id="input-<%= index %>-<%= inputIndex %>" class="code-input"><% 
+                        %><input type="text" id="input-<%= index %>-<%= ++inputIndex %>" class="code-input" placeholder="Placeholder <%= inputIndex %>"><% 
         } else {
             // Directly render the part without replacing spaces with &nbsp;
             %><%= part %><% 

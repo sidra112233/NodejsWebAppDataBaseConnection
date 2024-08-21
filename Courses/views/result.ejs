@@ -9,10 +9,23 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
+            margin: 0;
+        }
+        .header {
+            background-color: #f0e9d2; /* Light multishade background color */
+            padding: 10px 20px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .header a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
         }
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 50px auto 0 auto;
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 10px;
@@ -32,11 +45,16 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <a href="/dashboard">Home</a>
+    </header>
+
     <div class="container">
         <h1>Quiz Completed!</h1>
         <p>Your total score is:</p>
-        <p class="score"><%= totalScore %></p>
+<p class="score"><%= totalScore %> / 100</p>
         <h3>Your Progress: <%= progress %>%</h3>
+        <a href="/dashboard">Back</a>
     </div>
 </body>
 </html>

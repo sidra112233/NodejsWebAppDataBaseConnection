@@ -5,190 +5,227 @@
     <!-- Include the updated CSS here -->
     /* Combined and corrected CSS */
     <style> /* Include the updated CSS here */
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #001f3f;
-            color: #ffffff;
-        }
-
-        .navbar {
-            background-color: #433D8B;
-            overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            height: 40px; /* Adjust to your navbar's height */
-        }
-
-        .navbar-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        .site-name {
-            color: white;
-            font-size: 1.5em;
-        }
-
-        .navbar-right a {
-            color: white;
-            padding: 14px 20px;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .navbar-right a:hover {
-            background-color: gray;
-        }
-
-        @media screen and (max-width: 500px) {
-            .navbar a {
-                float: none;
-                display: block;
-            }
-        }
-
-        .register-btn, .profile-btn, .logout-btn {
-            border: 1px solid white;
-            border-radius: 5px;
-            margin-right: 30px;
-
-        }
-
-        .container {
-            margin-top: 10px; /* Match this value to the height of your navbar */
-            margin-left: 100px; /* Match this value to the height of your navbar */
-
-            padding: 40px;
-            color: #ffffff;
-            overflow-y: auto;
-            height: calc(100vh - 40px); /* Adjust height accordingly */
-            width: calc(100% - 220px);
-            box-sizing: border-box;
-        }
-
-        .course-header {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .module-container {
-            display: flex;
-            flex-direction: row;
-            border: 1px solid #444;
-            border-radius: 5px;
-            padding: 40px;
-            margin: 10px 0;
-            background-color: #002b5f;
-            width: 100%; /* Adjust width as needed */
-            box-sizing: border-box;
-        }
-
-        .details-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .details-container h2#module-details-title {
-            font-size: 1.5em;
-            color: #ffd700;
-            margin: 80px 0;
-            text-align: center;
-        }
-
-        .module {
-            text-align: center;
-            padding: 10px;
-            border-bottom: 1px solid #555;
-            cursor: pointer;
-            background-color: #003366;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .module h4 {
-            margin-bottom: 5px;
-            font-size: 1.2em;
-            color: #ffd700;
-        }
-
-        .module p {
-            margin: 3px 0;
-            font-size: 0.9em;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .module:last-child {
-            border-bottom: none;
-        }
-
-        .course-cards {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .card {
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px;
-            width: calc(33.333% - 20px);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            background-color: #003366;
-            color: #ffffff;
-        }
-
-        .card h3 {
-            margin-top: 0;
-            font-size: 1.5em;
-            color: #ffd700;
-        }
-
-        .card button {
-            background-color: #ffd700;
-            color: #003366;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-        }
-
-        .card button:hover {
-            background-color: #ffc107;
-        }
-
-       .sidebar {
-    width: 250px;
-    height: calc(100vh - 50px); /* Adjusted for navbar height */
+     body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f9ff; /* Lightest blue */
+    color: #333; /* Dark text for contrast */
+}
+.small-header-bar {
     position: fixed;
-    top: 50px; /* Adjusted for navbar height */
+    top: 0;
     left: 0;
-    background-color: #003366;
+    width: 100%;
+    height: 40px;
+    background-color: #007BFF; /* Blue background */
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#home-button {
+    background-color: #ffffff; /* White button */
+    color: #007BFF; /* Blue text */
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#home-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
     color: #ffffff;
+}
+
+.navbar {
+    background: linear-gradient(135deg, #a2c2e8, #6e9ecf); /* Light blue gradient */
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 40px; /* Adjusted height */
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.site-name {
+    color: #ffffff;
+    font-size: 1.5em;
+}
+
+.navbar-right a {
+    color: #ffffff;
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+    background: linear-gradient(135deg, #6e9ecf, #a2c2e8); /* Light blue gradient */
+    border-radius: 5px;
+}
+
+.navbar-right a:hover {
+    background: linear-gradient(135deg, #a2c2e8, #6e9ecf); /* Inverted gradient */
+}
+
+@media screen and (max-width: 500px) {
+    .navbar a {
+        float: none;
+        display: block;
+    }
+}
+
+ .home-btn.profile-btn, .sign-out-btn {
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    margin-right: 30px;
+    background: linear-gradient(135deg, #ffffff, #e3f2fd); /* Light blue gradient */
+    color: #003366;
+}
+
+.container {
+    margin-top: 90px; /* Match this value to the height of your navbar */
+    padding: 40px;
+    color: #004d40; /* Dark teal */
+    overflow-y: auto;
+    height: calc(100vh - 60px); /* Adjust height accordingly */
+    width: calc(110% - 90px); /* Adjusted width */
+    box-sizing: border-box;
+}
+
+.course-header {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #00796b; /* Teal */
+    margin-left:70px;
+}
+
+.module-container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    margin-left: 0;
+    margin-right: 0;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    width: 100%;
+    box-sizing: border-box;
+
+}
+
+.details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.details-container h2#module-details-title {
+    font-size: 1.5em;
+    color: #00796b; /* Teal */
+    margin: 40px 0;
+    text-align: center;
+}
+
+.module {
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Light blue gradient */
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.module h4 {
+    margin-bottom: 5px;
+    font-size: 1.2em;
+    color: #00796b; /* Teal */
+}
+
+.module p {
+    margin: 3px 0;
+    font-size: 0.9em;
+}
+
+.hidden {
+    display: none;
+}
+
+.module:last-child {
+    border-bottom: none;
+}
+
+.course-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-left: 100px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: calc(33.333% - 20px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    color: #004d40; /* Dark teal */
+    margin-left: 100px;
+    margin-right: 0;
+
+
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #00796b; /* Teal */
+}
+
+.card button {
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    color: #004d40; /* Dark teal */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.card button:hover {
+    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Inverted gradient */
+}
+
+.sidebar {
+    width: 250px;
+    height: calc(100vh - 60px); /* Adjusted for navbar height */
+    position: fixed;
+    top: 60px; /* Adjusted for navbar height */
+    left: 0;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    color: #004d40; /* Dark teal */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     display: none;
     flex-direction: column;
@@ -198,184 +235,216 @@
 .sidebar h2 {
     margin-top: 0;
     font-size: 1.5em;
-    color: #ffd700;
+    color: #00796b; /* Teal */
 }
 
 .sidebar .module {
     border: none;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid #ddd;
     padding: 15px 0;
     cursor: pointer;
-    background-color: transparent;
+    background: transparent;
     text-align: left;
-
 }
 
 .sidebar .module h4 {
     margin: 0;
     font-size: 1.2em;
-    color: #ffd700;
+    color: #00796b; /* Teal */
 }
 
 .sidebar .module:last-child {
     border-bottom: none;
 }
 
-
-        .compiler-container {
-            width: 400px;
-            max-width: 100%;
-            position: fixed;
-            right: 0;
-            top: 0;
-            height: 100%;
-            overflow-y: auto;
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
-            color: #ffffff;
-            background-color: #002b5f;
-            padding: 30px;
-            display: none;
-            top: 70px;
-            box-sizing: border-box;
-        }
-
-        .compiler-container h1 {
-            font-size: 1.5em;
-            color: #ffd700;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .compiler-container textarea#code, .compiler-container textarea#input {
-            width: 100%;
-            border-radius: 5px;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            border: 1px solid #ccc;
-            resize: vertical;
-        }
-
-        .compiler-container textarea#code {
-            height: 200px;
-            background-color: #ffffff;
-            color: #000000;
-
-        }
-
-        .compiler-container textarea#input {
-            height: 80px;
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        .compiler-container select {
-            margin: 40px 0;
-            width: 100%;
-            text-align: center;
-        }
-
-        .compiler-container button {
-            background-color: #ffd700;
-            color: #003366;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            position: absolute;
-            top: 10px;
-            right: 40px;
-        }
-
-        .compiler-container button:hover {
-            background-color: #ffc107;
-        }
-
-        textarea::placeholder {
-            color: #888;
-            font-style: italic;
-        }
-         .compiler-container.hidden {
-            display: none;
-        }
-        .compiler-container.visible {
-            display: block;
-        }
-         .compiler-header {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 20px; /* Space between dropdown and rest of the content */
-        }
-        #lang {
-            margin-left: 10px; /* Space between label and dropdown */
-        }
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .reset-button {
-            background-color: #ff4d4d;
-            margin-right: 110px;
-        }
-        .reset-button:hover {
-            background-color: #e03e3e;
-        }
-        .material-and-quizzes {
-            background-color: #ffffff;
-            border: 1px solid #444;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            margin-left: 290px;
-        }
-
-        .material {
-            margin-bottom: 50px;
-            margin-left: 300px;
-        }
-
-        .material h4, .quiz h4 {
-            font-size: 1.2em;
-            color: #ffd700;
-        }
-
-        .quiz {
-            margin-bottom: 70px;
-            margin-left: 300px;
-        }
-
-        #toggle-compiler {
-            position: fixed;
-            top: 60px;
-            left: 300px;
-            background-color: #ffd700;
-            color: #003366;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            z-index: 1001;
-        }
-
-        #toggle-compiler:hover {
-            background-color: #ffc107;
+.compiler-container {
+    width: 400px;
+    max-width: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    color: #004d40; /* Dark teal */
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    padding: 30px;
+    display: none;
+    top: 70px;
+    box-sizing: border-box;
 }
+
+.compiler-container h1 {
+    font-size: 1.5em;
+    color: #00796b; /* Teal */
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.compiler-container textarea#code, .compiler-container textarea#input {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    border: 1px solid #ddd;
+    resize: vertical;
+}
+
+.compiler-container textarea#code {
+    height: 200px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.compiler-container textarea#input {
+    height: 80px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.compiler-container select {
+    margin: 40px 0;
+    width: 100%;
+    text-align: center;
+}
+
+.compiler-container button {
+    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Light blue gradient */
+    color: #004d40; /* Dark teal */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+    position: absolute;
+    top: 10px;
+    right: 80px;
+}
+
+.compiler-container button:hover {
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Inverted gradient on hover */
+}
+
+textarea::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+.compiler-container.hidden {
+    display: none;
+}
+
+.compiler-container.visible {
+    display: block;
+}
+  #lang {
+    position: absolute;
+    width: 60px;
+    top: -10px; /* Move the dropdown higher by 10px */
+    right: 300px; /* Align to the right side of the container */
+    margin-left: 10px; /* Space between label and dropdown */
+}
+
+.close-button {
+    position: absolute;
+    top: 10px; /* Space from the top */
+    right: 0; /* Space from the right */
+    background-color: #ff4d4d; /* Background color for the button */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 50%; /* Circular shape */
+    width: 30px; /* Width of the button */
+    height: 30px; /* Height of the button */
+    display: flex; /* Center the content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 16px; /* Font size for the × symbol */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for better visibility */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+.close-button:hover {
+    background-color: #e03e3e; /* Darker shade on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+.close-button:focus {
+    outline: none; /* Remove default outline on focus */
+}
+
+.reset-button {
+    background-color: #004d40;
+    margin-right: 110px;
+}
+
+.reset-button:hover {
+    background-color: #e03e3e;
+}
+
+.code-output {
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #004d40; /* Dark teal */
+    overflow-x: auto;
+}
+
+.material-and-quizzes {
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left: 290px;
+}
+
+.material {
+    margin-bottom: 50px;
+    margin-left: 300px;
+    color: #00796b; /* Teal */
+}
+.material h4, .a, .quiz h4 {
+    font-size: 1.5em;
+    color: #00796b; /* Teal */
+    left:0;
+}
+
+.material a {
+    color: #00796b; /* Teal */
+}
+
+.quiz {
+    margin-bottom: 70px;
+    margin-left: 300px;
+}
+
+.quiz a {
+    color: #00796b; /* Teal */
+}
+
+#toggle-compiler {
+    position: fixed;
+    top: 60px;
+    left: 300px;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    color: #004d40; /* Dark teal */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+    z-index: 1001;
+}
+
+#toggle-compiler:hover {
+    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Inverted gradient on hover */
+}
+
 .compiler-output {
     margin-top: 20px;
     padding: 10px;
@@ -386,8 +455,9 @@
     white-space: pre-wrap;
     overflow-x: auto;
 }
+
 .example pre {
-    background-color: #001f3f; /* Navy blue background color */
+    background-color: #e3f2fd; /* Light blue background color */
     border: 1px solid #ccc; /* Border around the code block */
     padding: 10px; /* Padding inside the code block */
     border-radius: 5px; /* Rounded corners */
@@ -395,33 +465,33 @@
     overflow-x: auto; /* Horizontal scroll if code is too wide */
     font-family: 'Courier New', Courier, monospace; /* Monospaced font */
     font-size: 14px; /* Adjust font size as needed */
-    color: #ffffff; /* White text color */
+    color: #000000; /* Black text color */
     margin-left: 300px;
-
 }
 
 .example code {
-    color: #ffffff; /* White text color */
+    color: #000000; /* Black text color */
     display: block; /* Display code block */
     white-space: pre-wrap; /* Preserve whitespace */
 }
-
-
 
 </style>
 </head>
 <body>
 <!-- _navbar.ejs -->
+<header class="small-header-bar">
+        <button id="home-button">Home</button>
+    </header>
 <nav class="navbar">
     <div class="navbar-left">
-        <img src="/path/to/logo.png" alt="Logo" class="logo">
+        <img src="/images/Logo.png" alt="Logo" class="logo">
         <span class="site-name">LEARN CODE PRO</span>
     </div>
     <div class="navbar-right">
-        <a href="/">Home</a>
+        <a href="/" class="button home-btn">Home</a>
         <% if (student) { %>
             <a href="/profile" class="button profile-btn"><%= student.student_name %></a>
-            <a href="/logout" class="button logout-btn">Logout</a>
+            <a href="/sign-out" class="button sign-out-btn">Sign-Out</a>
         <% } else { %>
             <a href="/register">Register</a>
         <% } %>
@@ -494,15 +564,13 @@
                 <label for="input">Input (Optional):</label><br>
                 <textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
             </div>
-            <div class="compiler-header">
                 <label for="lang"></label>
                 <select name="lang" id="lang">
                     <option value="C">C</option>
                     <option value="C++">C++</option>
                     <option value="Python">Python</option>
-                </select><br><br>
+                </select>
                 <button class="close-button" onclick="toggleCompiler()">×</button>
-            </div>
         </div>
         <div class="compiler-actions">
             <button type="submit">Compile</button>
@@ -592,6 +660,7 @@
                             <h4>${quiz.quiz_title}</h4>
                             <p>Total Marks: ${quiz.total_marks}</p>
                             <a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>
+
                         </div>
                     `;
                 });
@@ -662,6 +731,11 @@ function escapeHtml(pre) {
         document.getElementById('sidebar').style.display = 'none';
         document.getElementById('compiler-container').classList.add('hidden');
     }
+    document.getElementById('home-button').addEventListener('click', function() {
+    const dashboard = document.getElementById('dashboard');
+    dashboard.classList.toggle('hidden');
+});
+
 </script>
 </body>
 </html>

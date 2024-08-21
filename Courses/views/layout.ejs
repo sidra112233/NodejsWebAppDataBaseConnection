@@ -1,133 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <title>Course Management</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            color: #2E073F;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+<style>
+    
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #2E073F;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #0D7C66;
-            padding: 10px 20px;
-        }
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #A8DADC, #F1FAEE); /* Soft teal to very light mint gradient */
+    padding: 10px 20px;
+}
 
-        .navbar-left {
-            display: flex;
-            align-items: center;
-        }
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
 
-        .logo {
-            height: 40px;
-            margin-right: 10px;
-        }
+.logo {
+    height: 40px;
+    margin-right: 10px;
+}
 
-        .site-name {
-            color: white;
-            font-size: 1.5em;
-        }
+.site-name {
+    color: #1D3557; /* Deep blue text color */
+    font-size: 1.5em;
+}
 
-        .navbar-right a {
-            color: white;
-            padding: 14px 20px;
-            text-decoration: none;
-            text-align: center;
-        }
+.navbar-right a {
+    color: #1D3557; /* Deep blue text color */
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+}
 
-        .navbar-right a:hover {
-            background-color: gray;
-        }
+.navbar-right a:hover {
+    background-color: #A8DADC; /* Light teal on hover */
+}
 
-        @media screen and (max-width: 500px) {
-            .navbar a {
-                float: none;
-                display: block;
-            }
-        }
+@media screen and (max-width: 500px) {
+    .navbar a {
+        float: none;
+        display: block;
+    }
+}
 
-        .register-btn {
-            border: 1px solid white;
-            border-radius: 5px;
-        }
+.register-btn {
+    border: 1px solid #1D3557; /* Deep blue border */
+    border-radius: 5px;
+}
 
-        /* Main container for sidebar and content */
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            height: calc(100vh - 60px); /* Adjust height based on navbar height */
-        }
+/* Main container for sidebar and content */
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 60px); /* Adjust height based on navbar height */
+}
 
-        /* Sidebar styling */
-        #sidebar {
-            width: 250px;
-             background-color: #219C90;
-            color: #ffffff;
-            padding: 15px;
-            overflow-y: auto;
-            height: 100%;
-        }
+/* Sidebar styling */
+#sidebar {
+    width: 250px;
+    background: linear-gradient(135deg, #F4A261, #FFE8D6); /* Soft orange to light peach gradient */
+    color: #1D3557; /* Deep blue text color */
+    padding: 15px;
+    overflow-y: auto;
+    height: 100%;
+}
+.logo1 {
+    height: 150px;
+    width: 200px;
 
-        /* Content styling */
-        #content {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            height: 100%;
-            background-color: #41B3A2;
+margin-top:0;
+}
 
-        }
+/* Content styling */
+#content {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    height: 100%;
+    background: linear-gradient(135deg, #F1FAEE, #A8DADC); /* Very light mint to soft teal gradient */
+}
+.module-description {
+    color: #4A4E69; /* Soft dark blue color */
+    font-style: italic;
+    font-size: 1.1em;
+    background-color: #F2E9E4; /* Light beige background */
+    padding: 10px;
+    border-left: 4px solid #9A8C98; /* Accent color on the left */
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for a slight 3D effect */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-        #course-list, .module-list ul, #material-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        #quiz-list{
-            margin-bottom: 50px;
+.module-description:hover {
+    background-color: #E8D6CF; /* Slightly darker beige on hover */
+    color: #333; /* Darker text on hover */
+}
 
-        }
-        #course-list li, .module-list ul li {
-            margin-bottom: 10px;
-        }
+#course-list, .module-list ul, #material-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+#quiz-list a {
+    text-decoration: none;
+    color: #FF6F61; /* A beautiful coral color */
+    display: block;
+    padding: 10px;
+    background-color: #FFE5D4; /* Soft peach background */
+    border-radius: 5px;
+    margin-bottom: 50px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 200px;
+}
 
-        #course-list a, .module-list a, .material-link {
-            text-decoration: none;
-            color: #1F316F;
-            display: block;
-            padding: 5px;
-            margin-bottom: 20px;
+#quiz-list a:hover {
+    background-color: #FF6F61; /* Coral background on hover */
+    color: white; /* White text on hover */
+    text-decoration: none;
+}
 
-        }
 
-        .module-list {
-            display: none;
-            padding-left: 20px;
-        }
+#course-list li, .module-list ul li {
+    margin-bottom: 10px;
+}
 
-        .module-list a:hover, #course-list a:hover, .material-link:hover {
-            text-decoration: underline;
-        }
+#course-list a, .module-list a, .material-link {
+    text-decoration: none;
+    color: #1D3557; /* Deep blue text color */
+    display: block;
+    padding: 5px;
+    margin-bottom: 20px;
+}
 
-        .material-description {
-            color: #1c2841;
-            font-style: italic;
-            margin-bottom: 5px;
-        }
+.module-list {
+    display: none;
+    padding-left: 20px;
+}
 
-        .loading {
-            font-style: italic;
-            color: #555;
-        }
+.module-list a:hover, #course-list a:hover, .material-link:hover {
+    text-decoration: underline;
+}
+
+.material-description {
+    color: #457B9D; /* Soft blue for material description */
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.loading {
+    font-style: italic;
+    color: #555;
+}
+
     </style>
 </head>
 <body>
@@ -135,20 +173,21 @@
 <!-- Navbar -->
 <nav class="navbar">
     <div class="navbar-left">
-        <img src="/path/to/logo.png" alt="Logo" class="logo">
+        <img src="/images/Logo.png" alt="Logo" class="logo">
         <span class="site-name">LEARN CODE PRO</span>
     </div>
     <div class="navbar-right">
         <a href="/">Home</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
-        <a href="/login" class="register-btn">Register</a>
+        <a href="/sign-up" class="register-btn">Sign Up</a>
     </div>
 </nav>
 
 <!-- Main container for sidebar and content -->
 <div class="main-container">
     <div id="sidebar">
+    <img src="/images/Logo.png" alt="Logo" class="logo1">
         <h2>Courses</h2>
         <ul id="course-list">
             <% if (courses && courses.length > 0) { %>

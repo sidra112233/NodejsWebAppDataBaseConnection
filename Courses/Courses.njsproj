@@ -40,9 +40,10 @@
     <Content Include="views\home.ejs" />
     <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
-    <Content Include="views\login.ejs" />
+    <Content Include="views\sign-in.ejs" />
     <Content Include="views\quiz.ejs" />
     <Content Include="views\quizStart.ejs" />
+    <Content Include="views\sign-up.ejs" />
     <Content Include="views\result.ejs" />
   </ItemGroup>
   <ItemGroup>

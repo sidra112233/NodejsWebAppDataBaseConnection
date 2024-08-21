@@ -174,6 +174,21 @@
         .next-btn:focus {
             outline: none;
         }
+         .Back-btn {
+            position: absolute;
+            top: 20px; /* Position below header */
+            left: 20px;
+            background-color: #04AA6D;
+            color: #fff;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.5rem; /* Increased font size for button */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-style: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to button */
+            z-index: 1001; /* Ensure the button is above other elements */
+        }
         .progress-container {
     width: 110%;
     background-color: #e0e0e0;
@@ -262,6 +277,7 @@ function resetQuiz() {
             <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
                 <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
             </button>
+             <a href="/dashboard"class="button Back-btn">Back</a>
             <div class="question-container">
                 <h3><%= questions[currentQuestionIndex].question_text %></h3>
             </div>
