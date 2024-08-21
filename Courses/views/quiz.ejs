@@ -277,7 +277,13 @@ function resetQuiz() {
             <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
                 <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
             </button>
-             <a href="/dashboard"class="button Back-btn">Back</a>
+ <% if (currentQuestionIndex > 0) { %>
+                <button class="Back-btn" type="submit" onclick="document.getElementById('actionInput').value = 'back';">
+                    Back
+                </button>
+            <% } else { %>
+                <a href="/dashboard" class="Back-btn">Back</a>
+            <% } %>
             <div class="question-container">
                 <h3><%= questions[currentQuestionIndex].question_text %></h3>
             </div>

@@ -407,6 +407,7 @@ textarea::placeholder {
     margin-left: 300px;
     color: #00796b; /* Teal */
 }
+
 .material h4, .a, .quiz h4 {
     font-size: 1.5em;
     color: #00796b; /* Teal */
@@ -455,8 +456,22 @@ textarea::placeholder {
     white-space: pre-wrap;
     overflow-x: auto;
 }
-
-.example pre {
+.exercise {
+    margin-bottom: 50px;
+    margin-left: 300px;
+    color: #00796b; /* Teal */
+}
+.exercise h4{
+    margin-bottom: 50px;
+    margin-left: 100px;
+    color: #00796b; /* Teal */
+}
+.example {
+    margin-bottom: 50px;
+    margin-left: 300px;
+    color: #00796b; /* Teal */
+}
+.example pre,.exercise pre{
     background-color: #e3f2fd; /* Light blue background color */
     border: 1px solid #ccc; /* Border around the code block */
     padding: 10px; /* Padding inside the code block */
@@ -466,10 +481,10 @@ textarea::placeholder {
     font-family: 'Courier New', Courier, monospace; /* Monospaced font */
     font-size: 14px; /* Adjust font size as needed */
     color: #000000; /* Black text color */
-    margin-left: 300px;
+    margin-left: 100px;
 }
 
-.example code {
+.example code,.exercise code {
     color: #000000; /* Black text color */
     display: block; /* Display code block */
     white-space: pre-wrap; /* Preserve whitespace */
@@ -650,6 +665,21 @@ textarea::placeholder {
             } else {
                 moduleDetailsContent.innerHTML += `<p>No examples available for this module.</p>`;
             }
+            // Display exercise
+moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Exercises</h3>`;
+if (data.exercises && data.exercises.length > 0) {
+    data.exercises.forEach(exercise => {
+        moduleDetailsContent.innerHTML += `
+            <div class="exercise">
+                <h4>${exercise.question_text}</h4>
+                <pre><code>${escapeHtml(exercise.code_snippet)}</code></pre>
+                <a href="/exercises/${exercise.exercise_id}"></a>
+            </div>
+        `;
+    });
+} else {
+    moduleDetailsContent.innerHTML += `<p>No exercises available for this module.</p>`;
+}
 
             // Display quizzes
             moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Quizzes</h3>`;
@@ -735,7 +765,6 @@ function escapeHtml(pre) {
     const dashboard = document.getElementById('dashboard');
     dashboard.classList.toggle('hidden');
 });
-
 </script>
 </body>
 </html>

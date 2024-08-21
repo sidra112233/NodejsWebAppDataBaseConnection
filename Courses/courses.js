@@ -193,9 +193,7 @@ app.get('/courses/:courseId/modules', async (req, res) => {
         console.error('Error fetching modules or quizzes:', err.message);
         res.status(500).send('Error fetching modules or quizzes');
     }
-});
-
-// Route to fetch module details, materials, and quizzes
+});// Route to fetch module details, materials, quizzes, and exercises
 app.get('/modules/:moduleId', async (req, res) => {
     try {
         const moduleId = req.params.moduleId;
@@ -216,8 +214,8 @@ app.get('/modules/:moduleId', async (req, res) => {
         const moduleName = moduleResult.recordset[0].module_name;
         const moduleDescription = moduleResult.recordset[0].description;
 
-        // Fetch materials and quizzes
-        const materialsResult = await pool.request()
+        // Fetch materials, quizzes, and exercises
+        const materialsPromise = pool.request()
             .input('moduleId', sql.Int, moduleId)
             .query(`
                 SELECT material_id, title, link, description
@@ -225,7 +223,7 @@ app.get('/modules/:moduleId', async (req, res) => {
                 WHERE module_id = @moduleId
             `);
 
-        const quizzesResult = await pool.request()
+        const quizzesPromise = pool.request()
             .input('moduleId', sql.Int, moduleId)
             .query(`
                 SELECT quiz_id, quiz_title
@@ -233,15 +231,64 @@ app.get('/modules/:moduleId', async (req, res) => {
                 WHERE module_id = @moduleId
             `);
 
+        const exercisesPromise = pool.request()
+            .input('moduleId', sql.Int, moduleId)
+            .query(`
+                SELECT exercise_id, code_snippet
+                FROM Exercises
+                WHERE module_id = @moduleId
+            `);
+
+        // Use Promise.all to run all queries in parallel
+        const [materialsResult, quizzesResult, exercisesResult] = await Promise.all([
+            materialsPromise,
+            quizzesPromise,
+            exercisesPromise
+        ]);
+
+        // Send the combined result as JSON
         res.json({
             module_name: moduleName,
             description: moduleDescription,
-            materials: materialsResult.recordset,
-            quizzes: quizzesResult.recordset
+            materials: materialsResult.recordset || [],
+            quizzes: quizzesResult.recordset || [],
+            exercises: exercisesResult.recordset || []
         });
     } catch (err) {
-        console.error('Error fetching module details, materials, or quizzes:', err.message);
-        res.status(500).send('Error fetching module details, materials, or quizzes');
+        console.error('Error fetching module details, materials, quizzes, or exercises:', err.message);
+        res.status(500).send('Error fetching module details, materials, quizzes, or exercises');
+    }
+}); app.get('/exercises/:moduleId', async (req, res) => {
+    const moduleId = req.params.moduleId; // Get the module ID from the URL parameter
+
+    try {
+        const pool = await sql.connect(config);
+        // Query to fetch exercises for the specific module ID
+        const exercisesResult = await pool.request()
+            .input('module_id', sql.Int, moduleId) // Use parameterized query to prevent SQL injection
+            .query('SELECT * FROM Exercises WHERE module_id = @module_id');
+
+        if (exercisesResult.recordset.length > 0) {
+            // Process exercises if any are found
+            exercisesResult.recordset.forEach(exercise => {
+                // Replace placeholders with HTML input elements
+                exercise.code_snippet = exercise.code_snippet.replace(/<input(\d+)>/g, (match, p1) => {
+                    return `<input type="text" name="input${p1}" placeholder="Input ${p1}" class="code-input" />`;
+                });
+            });
+
+            // Render the exercise view with exercises and include a link to the dashboard
+            res.render('exercise', {
+                exercises: exercisesResult.recordset,
+                dashboardUrl: '/dashboard' // Optionally pass the URL to the view
+            });
+        } else {
+            res.status(404).send('Exercise not found');
+        }
+
+    } catch (err) {
+        console.error('SQL error', err);
+        res.status(500).send('Server error');
     }
 });
 
@@ -456,6 +503,13 @@ app.get('/dashboard', async (req, res) => {
             .input('student_id', sql.Int, student_id)
             .query(quizzesQuery);
 
+        const exercisesResult = pool.request()
+            .input('module_id', sql.Int, moduleId)
+            .query(`
+                SELECT exercise_id, code_snippet
+                FROM Exercises
+                WHERE module_id = @module_id
+            `);
         // Organize modules by course
         const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
             if (!acc[module.course_id]) {
@@ -473,15 +527,24 @@ app.get('/dashboard', async (req, res) => {
             acc[quiz.module_id].push(quiz);
             return acc;
         }, {});
-        
+
+        // Organize quizzes by module
+        const exercisesByModule = exercisesResult.recordset.reduce((acc, quiz) => {
+            if (!acc[exercise.module_id]) {
+                acc[exercise.module_id] = [];
+            }
+            acc[exercise.module_id].push(exercise);
+            return acc;
+        }, {});
+
         // Render dashboard with all necessary data
         res.render('dashboard', {
             student: student, // Pass the student data here
             enrolledCourses: coursesResult.recordset || [],
             courses: allCoursesResult.recordset || [],
             modulesByCourse: modulesByCourse,
-            quizzesByModule: quizzesByModule
-           
+            quizzesByModule: quizzesByModule,
+            exercisesByModule: exercisesByModule
         });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
@@ -512,10 +575,17 @@ app.get('/module-details/:moduleId', async (req, res) => {
             .input('module_id', sql.Int, moduleId)
             .query(examplesQuery);
 
+        // Fetch examples for the module
+        const exercisesQuery = 'SELECT * FROM Exercises WHERE module_id = @module_id';
+        const exercisesResult = await pool.request()
+            .input('module_id', sql.Int, moduleId)
+            .query(exercisesQuery);
+
         res.json({
             materials: materialsResult.recordset,
             examples: examplesResult.recordset,  // Fetch and include module-specific examples
-            quizzes: quizzesResult.recordset
+            quizzes: quizzesResult.recordset,
+            exercises: exercisesResult.recordset
         });
     } catch (err) {
         console.error('Error executing query:', err);
@@ -777,11 +847,10 @@ app.post('/next', async (req, res) => {
         }
     }
 
-    // Move to the next question or submit the quiz
-    if (action === 'next') {
+    if (req.body.action === 'next') {
         currentQuestionIndex++;
-        req.session.currentQuestionIndex = currentQuestionIndex;
-
+    } else if (req.body.action === 'back') {
+        currentQuestionIndex--;
     }
 
     if (action === 'submit' || currentQuestionIndex >= totalQuestions) {
