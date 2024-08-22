@@ -36,7 +36,6 @@
     <Content Include="views\enroll.ejs" />
     <Content Include="views\exercise.ejs" />
     <Content Include="views\home.ejs" />
-    <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
     <Content Include="views\sign-in.ejs" />
     <Content Include="views\quiz.ejs" />
