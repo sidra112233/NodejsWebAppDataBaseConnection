@@ -40,7 +40,7 @@ app.use('/quiz/start', ensureAuthenticated);
 app.use('/next', ensureAuthenticated);
 // Define fixed quiz parameters
 const quizParams = {
-    timeLimit: 30, // in minutes
+    timeLimit: 15, // in minutes
     numberOfQuestions: 10,
     pointsToScore: 100,
     passingScore: 50
@@ -53,7 +53,7 @@ app.get('/', async (req, res) => {
         // Fetch all courses
         const coursesResult = await pool.request().query(`
             SELECT course_id, course_name, description
-            FROM Courses
+            FROM Courses 
         `);
 
         res.render('home', {
@@ -64,9 +64,8 @@ app.get('/', async (req, res) => {
         res.status(500).send('Error fetching courses');
     }
 });
-
 app.get('/course/:courseId', async (req, res) => {
-    const courseId = req.query.courseId; // Optional query parameter for specific course
+    const courseId = req.params.courseId; // Course ID from URL parameters
 
     try {
         const pool = await sql.connect(config);
@@ -107,18 +106,12 @@ app.get('/course/:courseId', async (req, res) => {
             }
         }
 
-        // Render the homepage with the list of courses and optional course details
+        // Render the layout page with the list of courses and optional course details
         res.render('layout', {
             courses: coursesResult.recordset, // All courses for display
             modules: modulesResult.recordset, // Modules for the selected course
             materials: [], // Placeholder for materials if needed
-            "examples": [
-                {
-                    "title": "Hello World in JavaScript",
-                    "code": "console.log('Hello, World!');",
-                    "description": "A simple example of printing 'Hello, World!' to the console."
-                }
-            ],
+            examples: [],
             courseName: courseName,
             courseDescription: courseDescription,
             moduleName: '',
@@ -129,8 +122,6 @@ app.get('/course/:courseId', async (req, res) => {
         res.status(500).send('Error fetching course details');
     }
 });
-
-
 
 // Route to fetch modules and quizzes for a specific course
 app.get('/courses/:courseId/modules', async (req, res) => {
@@ -258,34 +249,29 @@ app.get('/modules/:moduleId', async (req, res) => {
         console.error('Error fetching module details, materials, quizzes, or exercises:', err.message);
         res.status(500).send('Error fetching module details, materials, quizzes, or exercises');
     }
-}); app.get('/exercises/:moduleId', async (req, res) => {
+});
+app.get('/exercises/:moduleId', async (req, res) => {
     const moduleId = req.params.moduleId; // Get the module ID from the URL parameter
 
     try {
+        // Connect to the database
         const pool = await sql.connect(config);
+
+        // Log the moduleId for debugging
+        console.log('Fetching exercises for moduleId:', moduleId);
+
         // Query to fetch exercises for the specific module ID
         const exercisesResult = await pool.request()
             .input('module_id', sql.Int, moduleId) // Use parameterized query to prevent SQL injection
             .query('SELECT * FROM Exercises WHERE module_id = @module_id');
 
-        if (exercisesResult.recordset.length > 0) {
-            // Process exercises if any are found
-            exercisesResult.recordset.forEach(exercise => {
-                // Replace placeholders with HTML input elements
-                exercise.code_snippet = exercise.code_snippet.replace(/<input(\d+)>/g, (match, p1) => {
-                    return `<input type="text" name="input${p1}" placeholder="Input ${p1}" class="code-input" />`;
-                });
-            });
-
-            // Render the exercise view with exercises and include a link to the dashboard
-            res.render('exercise', {
-                exercises: exercisesResult.recordset,
-                dashboardUrl: '/dashboard' // Optionally pass the URL to the view
-            });
-        } else {
-            res.status(404).send('Exercise not found');
-        }
-
+        // Log the result for debugging
+        console.log('Exercises Result:', exercisesResult.recordset);
+        // Render the exercise view with exercises and include a link to the dashboard
+        res.render('exercise', {
+            exercises: exercisesResult.recordset,
+            dashboardUrl: '/dashboard' // Optionally pass the URL to the view
+    });
     } catch (err) {
         console.error('SQL error', err);
         res.status(500).send('Server error');
@@ -503,54 +489,79 @@ app.get('/dashboard', async (req, res) => {
             .input('student_id', sql.Int, student_id)
             .query(quizzesQuery);
 
-        const exercisesResult = pool.request()
-            .input('module_id', sql.Int, moduleId)
-            .query(`
+        // Check if moduleId is passed as a query parameter or handle it appropriately
+        const moduleId = req.query.module_id; // Example of getting moduleId from query parameters
+        if (moduleId) {
+            // Fetch exercises for the specific module
+            const exercisesQuery = `
                 SELECT exercise_id, code_snippet
                 FROM Exercises
                 WHERE module_id = @module_id
-            `);
-        // Organize modules by course
-        const modulesByCourse = modulesResult.recordset.reduce((acc, module) => {
-            if (!acc[module.course_id]) {
-                acc[module.course_id] = [];
-            }
-            acc[module.course_id].push(module);
-            return acc;
-        }, {});
+            `;
+            const exercisesResult = await pool.request()
+                .input('module_id', sql.Int, moduleId)
+                .query(exercisesQuery);
 
-        // Organize quizzes by module
-        const quizzesByModule = quizzesResult.recordset.reduce((acc, quiz) => {
-            if (!acc[quiz.module_id]) {
-                acc[quiz.module_id] = [];
-            }
-            acc[quiz.module_id].push(quiz);
-            return acc;
-        }, {});
+            // Organize exercises by module
+            const exercisesByModule = exercisesResult.recordset.reduce((acc, exercise) => {
+                if (!acc[exercise.module_id]) {
+                    acc[exercise.module_id] = [];
+                }
+                acc[exercise.module_id].push(exercise);
+                return acc;
+            }, {});
 
-        // Organize quizzes by module
-        const exercisesByModule = exercisesResult.recordset.reduce((acc, quiz) => {
-            if (!acc[exercise.module_id]) {
-                acc[exercise.module_id] = [];
-            }
-            acc[exercise.module_id].push(exercise);
-            return acc;
-        }, {});
+            // Render dashboard with exercises data
+            return res.render('dashboard', {
+                student: student,
+                enrolledCourses: coursesResult.recordset || [],
+                courses: allCoursesResult.recordset || [],
+                modulesByCourse: modulesResult.recordset.reduce((acc, module) => {
+                    if (!acc[module.course_id]) {
+                        acc[module.course_id] = [];
+                    }
+                    acc[module.course_id].push(module);
+                    return acc;
+                }, {}),
+                quizzesByModule: quizzesResult.recordset.reduce((acc, quiz) => {
+                    if (!acc[quiz.module_id]) {
+                        acc[quiz.module_id] = [];
+                    }
+                    acc[quiz.module_id].push(quiz);
+                    return acc;
+                }, {}),
+                exercisesByModule: exercisesByModule // Pass exercises by module
+            });
+        } else {
+            // Render dashboard without exercises data
+            res.render('dashboard', {
+                student: student,
+                enrolledCourses: coursesResult.recordset || [],
+                courses: allCoursesResult.recordset || [],
+                modulesByCourse: modulesResult.recordset.reduce((acc, module) => {
+                    if (!acc[module.course_id]) {
+                        acc[module.course_id] = [];
+                    }
+                    acc[module.course_id].push(module);
+                    return acc;
+                }, {}),
+                quizzesByModule: quizzesResult.recordset.reduce((acc, quiz) => {
+                    if (!acc[quiz.module_id]) {
+                        acc[quiz.module_id] = [];
+                    }
+                    acc[quiz.module_id].push(quiz);
+                    return acc;
+                }, {}),
+                exercisesByModule: {} // Empty if no moduleId is provided
+            });
+        }
 
-        // Render dashboard with all necessary data
-        res.render('dashboard', {
-            student: student, // Pass the student data here
-            enrolledCourses: coursesResult.recordset || [],
-            courses: allCoursesResult.recordset || [],
-            modulesByCourse: modulesByCourse,
-            quizzesByModule: quizzesByModule,
-            exercisesByModule: exercisesByModule
-        });
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
         res.send('An error occurred while processing your request.');
     }
 });
+
 app.get('/module-details/:moduleId', async (req, res) => {
     const { moduleId } = req.params;
 
@@ -846,24 +857,23 @@ app.post('/next', async (req, res) => {
             req.session.scores[currentQuestionIndex] = score;
         }
     }
-
     if (req.body.action === 'next') {
         currentQuestionIndex++;
     } else if (req.body.action === 'back') {
         currentQuestionIndex--;
     }
 
+    req.session.currentQuestionIndex = currentQuestionIndex; // Update session
     if (action === 'submit' || currentQuestionIndex >= totalQuestions) {
         req.session.scores = req.session.scores || [];
         const totalScore = req.session.scores.reduce((acc, cur) => acc + cur, 0);
-
         await saveQuizSubmission(student_id, quiz_id, totalScore);
         const progress = Math.round((totalScore / 100) * 100); // Assuming 100 is the max score
 
         req.session.destroy(); // Clear session data
         return res.render('result', { totalScore,progress });
     }
-    const progressPercentage = Math.round((currentQuestionIndex / totalQuestions) * 100);
+    const progressPercentage = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
     // Render the next question
     res.render('quiz', {
         student_id,
@@ -904,17 +914,17 @@ app.post("/compilecode", function (req, res) {
         if (inputRadio === "true") {
             compiler.compileCPPWithInput(envData, code, input, function (data) {
                 if (data.error) {
-                    res.send(data.error);
+                    res.json({ error: data.error });
                 } else {
-                    res.send(data.output);
+                    res.json({ output: data.output });
                 }
             });
         } else {
             compiler.compileCPP(envData, code, function (data) {
                 if (data.error) {
-                    res.send(data.error);
+                    res.json({ error: data.error });
                 } else {
-                    res.send(data.output);
+                    res.json({ output: data.output });
                 }
             });
         }
@@ -923,24 +933,25 @@ app.post("/compilecode", function (req, res) {
         if (inputRadio === "true") {
             compiler.compilePythonWithInput(envData, code, input, function (data) {
                 if (data.error) {
-                    res.send(data.error);
+                    res.json({ error: data.error });
                 } else {
-                    res.send(data.output);
+                    res.json({ output: data.output });
                 }
             });
         } else {
             compiler.compilePython(envData, code, function (data) {
                 if (data.error) {
-                    res.send(data.error);
+                    res.json({ error: data.error });
                 } else {
-                    res.send(data.output);
+                    res.json({ output: data.output });
                 }
             });
         }
     } else {
-        res.send("Unsupported language");
+        res.json({ error: "Unsupported language" });
     }
 });
+
 
 app.get("/fullStat", function (req, res) {
     compiler.fullStat(function (data) {

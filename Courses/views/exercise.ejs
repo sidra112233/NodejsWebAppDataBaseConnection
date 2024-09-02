@@ -13,41 +13,65 @@
             padding: 0;
             background-color: #f4f4f4;
         }
-        h1 {
-            text-align: center;
-            padding: 20px;
-            background-color: #333;
-            color: #fff;
-            margin: 0;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 10px;
             background: #fff;
-            margin: 10px auto;
-            padding: 20px;
-            max-width: 800px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h3 {
-            margin-top: 0;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f4f4f4;
+            padding: 10px 20px;
+            border-bottom: 2px solid #ddd;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .header button:hover {
+            background: #0056b3;
+        }
+        .question-section {
+            padding: 20px;
+        }
+        .question-section h2 {
+            margin: 0;
+            font-size: 20px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
         }
         .code-area {
-            margin-top: 10px;
-            padding: 10px;
-            background: #fff;
+            padding: 20px;
+            background: #f9f9f9;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             font-family: monospace;
-            white-space: pre-wrap; /* Preserve whitespace and line breaks */
         }
         .code-input {
-            width: 100px;
+            width: 150px;
             height: 24px;
-            margin: 0 2px;
+            margin: 0 5px;
             padding: 2px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -55,120 +79,129 @@
             display: inline-block;
             text-align: center;
         }
-        .check-btn {
-            margin-top: 10px;
-            padding: 10px;
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .actions button {
             background: #007bff;
             color: #fff;
             border: none;
             border-radius: 4px;
+            padding: 10px 20px;
             cursor: pointer;
         }
-        .check-btn:hover {
+        .actions button:hover {
             background: #0056b3;
         }
         .feedback {
-            margin-top: 10px;
+            margin-top: 20px;
             padding: 10px;
-            border: 1px solid #ddd;
             border-radius: 4px;
             display: none;
         }
         .correct {
-            color: green;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
         }
         .incorrect {
-            color: red;
-        }
-        .label {
-            display: inline-block;
-            width: 120px;
-            text-align: right;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-        .code-area pre {
-            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
-    <h1>Exercises</h1>
-    <ul id="exercise-container">
+   <div class="container">
+    <div class="header">
+        <h1>Guess the correct words</h1>
+        <button>71s</button>
+    </div>
+    <div class="question-section">
         <% exercises.forEach((exercise, index) => { %>
-            <li>
-                <h3><%= exercise.title %></h3>
-                <p><strong>Question:</strong> <%= exercise.question_text %></p>
-                <div class="code-area">
-                    <p><strong>Complete the code below:</strong></p>
-                    <pre><code>
-                        <% 
-                            let parts = exercise.code_snippet.split(/(<input\d+>)/g);
-                            let inputIndex = 0;
-                        %>
-                        <% 
-                            parts.forEach(part => {
-                                if (part.startsWith('<input')) {
-                                    let label = `Placeholder ${++inputIndex}`;
-                                    %><input type="text" id="input-<%= index %>-<%= inputIndex %>" class="code-input" placeholder="<%= label %>"><% 
-                                } else {
-                                    %><%= part %><% 
-                                }
-                            });
-                        %>
-                    </code></pre>
-                    <button class="check-btn" onclick="checkCode(<%= index %>, '<%= exercise.correct_answers %>')">Check Answer</button>
-                    <div class="feedback" id="feedback-<%= index %>"></div>
-                </div>
-            </li>
-        <% }) %>
-    </ul>
-    <a href="<%= dashboardUrl %>" class="button">Back to Dashboard</a>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
-    <script>
-        function checkCode(index, correctAnswers) {
-            const correct = JSON.parse(correctAnswers);
-            const feedbackDiv = document.getElementById(`feedback-${index}`);
-            let isCorrect = true;
-
-            Object.keys(correct).forEach((key, idx) => {
-                const input = document.getElementById(`input-${index}-${idx + 1}`);
-                if (input.value.trim() !== correct[key]) {
-                    isCorrect = false;
+            <h2><%= exercise.title %></h2>
+            <p class="question"><%= exercise.question_text %></p>
+            <div class="code-area">
+    <pre><code>
+        <% 
+            let parts = exercise.code_snippet.split(/(<input\d+>)/g);
+            let inputIndex = 0;
+        %>
+        <% 
+            parts.forEach(part => {
+                if (part.startsWith('<input')) {
+                    let label = `Placeholder ${++inputIndex}`;
+                    %><input type="text" id="input-<%= index %>-<%= inputIndex %>" class="code-input" placeholder="<%= label %>"><% 
+                } else {
+                    %><%= part %><% 
                 }
             });
+        %>
+    </code></pre>
+</div>
+            <div class="actions">
+                <button onclick="showAnswer(<%= index %>, '<%= exercise.correct_answers %>')">Show Ans</button>
+                <button onclick="submitAnswer(<%= index %>, '<%= exercise.correct_answers %>')">Submit</button>
+            </div>
+            <div class="feedback" id="feedback-<%= index %>"></div>
+        <% }) %>
+    </div>
+</div>
+    <a href="<%= dashboardUrl %>" class="button">Back to Dashboard</a>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+    <script>
+   function showAnswer(index, correctAnswer) {
+    const feedbackDiv = document.getElementById(`feedback-${index}`);
+    feedbackDiv.textContent = `The correct code is: ${correctAnswer}`;
+    feedbackDiv.className = 'feedback correct';
+    feedbackDiv.style.display = 'block';
+}
 
-            if (isCorrect) {
-                feedbackDiv.textContent = 'Correct! Well done.';
-                feedbackDiv.className = 'feedback correct';
-            } else {
-                feedbackDiv.textContent = 'Incorrect, try again.';
-                feedbackDiv.className = 'feedback incorrect';
-            }
-            feedbackDiv.style.display = 'block'; // Show the feedback
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            const moduleId = '<%= moduleId %>'; // Assuming you're passing moduleId to the EJS
+function submitAnswer(index, correctAnswer) {
+    // Gather all input values for the current exercise
+    const inputs = document.querySelectorAll(`#input-${index}-1, #input-${index}-2, #input-${index}-3, #input-${index}-4`); // Adjust selectors as needed
+    let userAnswers = [];
+    
+    // Collect all input values
+    inputs.forEach(input => {
+        userAnswers.push(input.value.trim());
+    });
 
-            fetch(`/exercises/${moduleId}`)
-                .then(response => response.json())
-                .then(exercises => {
-                    const exercisesList = document.getElementById('exercises-list');
-                    exercises.forEach(exercise => {
-                        exercisesList.innerHTML += `
-                            <div class="exercise">
-                                <h4>${exercise.title}</h4>
-                                <p>${exercise.description}</p>
-                                <!-- Display other exercise details here -->
-                            </div>
-                        `;
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading exercises:', error);
-                });
-        });
-    </script>
+    // Debugging
+    console.log('User Answers:', userAnswers);
+    console.log('Correct Answer:', correctAnswer);
+
+    // Normalize userAnswers and correctAnswer for comparison
+    userAnswers = userAnswers.map(answer => normalizeAnswer(answer));
+    const correctAnswers = correctAnswer.split(',').map(answer => normalizeAnswer(answer.trim()));
+
+    // Debugging
+    console.log('Normalized User Answers:', userAnswers);
+    console.log('Normalized Correct Answers:', correctAnswers);
+
+    // Check the answers
+    const feedbackDiv = document.getElementById(`feedback-${index}`);
+    const isCorrect = userAnswers.length === correctAnswers.length &&
+                      userAnswers.every((ans, idx) => ans === correctAnswers[idx]);
+
+    if (isCorrect) {
+        feedbackDiv.textContent = 'Correct! Well done.';
+        feedbackDiv.className = 'feedback correct';
+    } else {
+        feedbackDiv.textContent = 'Incorrect, try again.';
+        feedbackDiv.className = 'feedback incorrect';
+    }
+    feedbackDiv.style.display = 'block';
+}
+
+function normalizeAnswer(answer) {
+    return answer.toLowerCase()
+                 .replace(/\s+/g, '') // Remove all spaces
+                 .replace(/[^\w]/g, ''); // Remove all non-word characters
+}
+</script>
 </body>
 </html>

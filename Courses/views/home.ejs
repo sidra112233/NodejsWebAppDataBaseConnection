@@ -463,7 +463,7 @@ body{
 
         .card-container {
             display: flex;
-            gap: 20px;
+            gap: 100px;
             perspective: 1000px;
         }
 
@@ -544,6 +544,9 @@ body{
         .card.open .card-content {
             opacity: 1;
         }
+        html {
+    scroll-behavior: smooth;
+}
             </style>
         </head>
 </head>
@@ -555,7 +558,7 @@ body{
         </div>
         <div class="navbar-right">
             <a href="#">Home</a>
-            <a href="#">About</a>
+            <a href="#about">About</a>
   <% if (student) { %>
                 <a href="/profile"><%= student %></a>
                 <a href="/sign-out">Sign Out</a>
@@ -726,9 +729,9 @@ const imageMap = {
                 </div>
             </div>
         </div>
-  <div class ="p">
+ <div class="p" id="about">
     <div class="p1">
-      <div class="about-section">
+        <div class="about-section">
           <h1>About Our Program</h1>
           <p>Our program provides a comprehensive learning experience, from fundamental programming concepts to advanced software development techniques. Learn from industry experts and enjoy a flexible, self-paced online learning environment.</p>
       </div>
@@ -862,6 +865,13 @@ const imageMap = {
               card.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
       }
+      document.querySelector('.navbar-right a[href="#about"]').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent the default anchor behavior
+    document.querySelector('#about').scrollIntoView({
+        behavior: 'smooth' // Smooth scroll
+    });
+});
+
   </script>
   </div>
 

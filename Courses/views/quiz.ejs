@@ -190,7 +190,7 @@
             z-index: 1001; /* Ensure the button is above other elements */
         }
         .progress-container {
-    width: 110%;
+    width: 100%;
     background-color: #e0e0e0;
     border-radius: 5px;
     overflow: hidden;
@@ -254,6 +254,27 @@ function resetQuiz() {
             var display = document.querySelector('#time');
             startTimer(timeLeftInSeconds, display);
         };
+     function handleNavigation(direction) {
+    let currentIndex = <%= currentQuestionIndex %>;
+    let totalQuestions = <%= totalQuestions %>;
+
+    if (direction === 'back') {
+        if (currentIndex > 0) {
+            window.location.href = `/quiz?questionIndex=${currentIndex - 1}`;
+        } else {
+            // Redirect to dashboard
+            window.location.href = '/dashboard';
+        }
+    } else if (direction === 'next') {
+        if (currentIndex < totalQuestions - 1) {
+            window.location.href = `/quiz?questionIndex=${currentIndex + 1}`;
+        } else {
+            // Submit the quiz
+            document.querySelector('form').submit();
+        }
+    }
+}
+
     </script>
 </head>
 <body>

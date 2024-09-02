@@ -340,16 +340,15 @@ textarea::placeholder {
 }
   #lang {
     position: absolute;
-    width: 60px;
+    width: 80px;
     top: -10px; /* Move the dropdown higher by 10px */
     right: 300px; /* Align to the right side of the container */
     margin-left: 10px; /* Space between label and dropdown */
 }
-
 .close-button {
     position: absolute;
-    top: 10px; /* Space from the top */
-    right: 0; /* Space from the right */
+    top: 0; /* Space from the top */
+    left: 350px; /* Space from the left */
     background-color: #ff4d4d; /* Background color for the button */
     color: white; /* Text color */
     border: none; /* Remove default border */
@@ -363,17 +362,15 @@ textarea::placeholder {
     cursor: pointer; /* Pointer cursor on hover */
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for better visibility */
     transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+    z-index: 1000; /* Ensure the close button is on top */
 }
-
 .close-button:hover {
     background-color: #e03e3e; /* Darker shade on hover */
     transform: scale(1.1); /* Slightly enlarge on hover */
 }
-
 .close-button:focus {
     outline: none; /* Remove default outline on focus */
 }
-
 .reset-button {
     background-color: #004d40;
     margin-right: 110px;
@@ -471,7 +468,7 @@ textarea::placeholder {
     margin-left: 300px;
     color: #00796b; /* Teal */
 }
-.example pre,.exercise pre{
+.example pre{
     background-color: #e3f2fd; /* Light blue background color */
     border: 1px solid #ccc; /* Border around the code block */
     padding: 10px; /* Padding inside the code block */
@@ -484,7 +481,7 @@ textarea::placeholder {
     margin-left: 100px;
 }
 
-.example code,.exercise code {
+.example code{
     color: #000000; /* Black text color */
     display: block; /* Display code block */
     white-space: pre-wrap; /* Preserve whitespace */
@@ -495,8 +492,8 @@ textarea::placeholder {
 <body>
 <!-- _navbar.ejs -->
 <header class="small-header-bar">
-        <button id="home-button">Home</button>
-    </header>
+        <a href="/dashboard">Home</a>
+      </header>
 <nav class="navbar">
     <div class="navbar-left">
         <img src="/images/Logo.png" alt="Logo" class="logo">
@@ -569,7 +566,8 @@ textarea::placeholder {
 
 </div>
 <div id="compiler-container" class="compiler-container hidden">
-    <form action="/compilecode" method="POST">
+    <button class="close-button" onclick="toggleCompiler()">&times;</button>
+    <form id="compiler-form"> <!-- Add an id to the form -->
         <div class="compiler-content">
             <div class="code-input">
                 <label for="code"></label><br>
@@ -579,20 +577,18 @@ textarea::placeholder {
                 <label for="input">Input (Optional):</label><br>
                 <textarea name="input" id="input" rows="5" cols="50" placeholder="Enter input (optional)"></textarea><br><br>
             </div>
-                <label for="lang"></label>
-                <select name="lang" id="lang">
-                    <option value="C">C</option>
-                    <option value="C++">C++</option>
-                    <option value="Python">Python</option>
-                </select>
-                <button class="close-button" onclick="toggleCompiler()">×</button>
+            <select name="lang" id="lang">
+                <option value="C">C</option>
+                <option value="C++">C++</option>
+                <option value="Python">Python</option>
+            </select>
         </div>
         <div class="compiler-actions">
             <button type="submit">Compile</button>
             <button class="reset-button" onclick="resetCompiler()">Reset</button>
         </div>
     </form>
-    <div id="compiler-output" class="compiler-output"></div>
+    <div id="compiler-output" class="compiler-output"></div> <!-- Output container -->
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
@@ -665,21 +661,20 @@ textarea::placeholder {
             } else {
                 moduleDetailsContent.innerHTML += `<p>No examples available for this module.</p>`;
             }
-            // Display exercise
+           // Display exercise
 moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Exercises</h3>`;
 if (data.exercises && data.exercises.length > 0) {
     data.exercises.forEach(exercise => {
         moduleDetailsContent.innerHTML += `
             <div class="exercise">
-                <h4>${exercise.question_text}</h4>
-                <pre><code>${escapeHtml(exercise.code_snippet)}</code></pre>
-                <a href="/exercises/${exercise.exercise_id}"></a>
+                <a href="/exercises/${exercise.exercise_id}" class="exercise-link">Go to Exercise</a>
             </div>
         `;
     });
 } else {
     moduleDetailsContent.innerHTML += `<p>No exercises available for this module.</p>`;
 }
+
 
             // Display quizzes
             moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Quizzes</h3>`;
@@ -724,37 +719,46 @@ function escapeHtml(pre) {
         console.error('Compiler container not found.');
     }
 }
+function resetCompiler() {
+    document.getElementById('code').value = ''; // Clear the code textarea
+    document.getElementById('input').value = ''; // Clear the input textarea
+    document.getElementById('compiler-output').innerText = ''; // Clear the output display
+}
+document.getElementById('compiler-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent form submission
 
- function resetCompiler() {
-            document.getElementById('code').value = '';
-            document.getElementById('input').value = '';
-            document.getElementById('lang').selectedIndex = 0;
-        }
-      document.querySelector('form').addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const codeInput = document.getElementById('code');
-    const inputInput = document.getElementById('input');
-    const langSelect = document.getElementById('lang');
-
-    const formData = new FormData();
-    formData.append('code', codeInput.value);
-    formData.append('input', inputInput.value);
-    formData.append('lang', langSelect.value);
+    const code = document.getElementById('code').value;
+    const input = document.getElementById('input').value;
+    const lang = document.getElementById('lang').value;
+    const inputRadio = document.getElementById('inputRadio').checked;
 
     fetch('/compilecode', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            code: code,
+            input: input,
+            inputRadio: inputRadio,
+            lang: lang
+        })
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('compiler-output').textContent = data.output;
+        const outputElement = document.getElementById('compiler-output');
+        if (data.error) {
+            outputElement.innerText = "Error: " + data.error;
+            outputElement.style.color = "red";
+        } else {
+            outputElement.innerText = data.output;
+            outputElement.style.color = "green";
+        }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('compiler-output').textContent = 'An error occurred while compiling the code.';
-    });
+    .catch(error => console.error('Error:', error));
 });
+
+
     function showDashboard() {
         document.getElementById('details-container').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');

@@ -4,18 +4,20 @@
   <style>
     /* Your existing styles */
     :root {
-    --primary-color: #8692a8;
-    --secondary-color: #4e5250;
-    --black: #000000;
-    --white: #ffffff;
-    --gray: #efefef;
-    --gray-2: #757575;
+  --primary-color: #a8d0e6; /* Light blue */
+  --secondary-color: #fdfcdc; /* Light yellow */
+  --tertiary-color: #ffb6b9; /* Light pink */
+  --accent-color: #bde0fe; /* Light sky blue */
+  --text-color: #575757; /* Soft gray for text */
+  --white: #ffffff;
+  --gray: #f5f5f5;
+  --input-bg: #ffffff;
   
-    --facebook-color: #4267b2;
-    --google-color: #db4437;
-    --twitter-color: #1da1f2;
-    --insta-color: #e1306c;
-  }
+  --facebook-color: #4267b2;
+  --google-color: #db4437;
+  --twitter-color: #1da1f2;
+  --insta-color: #e1306c;
+}
   
   @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap");
   
@@ -30,6 +32,8 @@
   body {
     height: 100vh;
     overflow: hidden;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+
   }
   
   .container {
@@ -63,6 +67,7 @@
   .form {
     padding: 1rem;
     background-color: var(--white);
+    border: 1px solid var(--accent-color);   
     border-radius: 1.5rem;
     width: 100%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -75,6 +80,8 @@
     position: relative;
     width: 100%;
     margin: 1rem 0;
+    background-color: var(--input-bg);
+    border: 1px solid var(--tertiary-color);
   }
   
   .input-group i {
@@ -107,7 +114,7 @@
     border-radius: 0.5rem;
     border: none;
     background-color: var(--primary-color);
-    color: var(--white);
+  color: var(--text-color);
     font-size: 1.2rem;
     outline: none;
   }
@@ -234,14 +241,16 @@
   .text.sign-in p,
   .img.sign-in img {
     transform: translateX(-250%);
+      color: var(--tertiary-color);
+      color: var(--text-color);
   }
-  
   .text.sign-up h2,
   .text.sign-up p,
   .img.sign-up img {
     transform: translateX(250%);
+    color: var(--tertiary-color);
+    color: var(--text-color);
   }
-  
   .container.sign-in .text.sign-in h2,
   .container.sign-in .text.sign-in p,
   .container.sign-in .img.sign-in img,

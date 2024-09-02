@@ -6,72 +6,106 @@
     <title><%= quizTitle %></title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Roboto', sans-serif;
+            background-color: #eef2f7;
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center; /* Ensure body text is centered */
-
+            height: 100vh;
         }
 
         .container {
-            background: #fff;
-            padding: 60px; /* Increased padding for more space */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Increased shadow for a more prominent effect */
-            border-radius: 8px;
-            max-width: 600px; /* Increased max-width */
+            position: relative; /* Position container relative for absolute positioning of the close button */
+            background: linear-gradient(135deg, #e0f7fa, #f1f8e9, #fff3e0);
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            max-width: 600px;
             width: 100%;
+            text-align: center;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e57373;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            font-size: 1em;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-button:hover {
+            background-color: #d32f2f;
         }
 
         h1 {
-            color: #4CAF50;
-            font-size: 2em;
-            margin-bottom: 10px;
+            color: #00acc1;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
 
         p {
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 15px;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #607d8b;
         }
 
         form {
             display: flex;
             justify-content: center;
+            margin-top: 30px;
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #00acc1;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1.1em;
-            border-radius: 5px;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #00838f;
+            transform: translateY(-3px);
         }
     </style>
 </head>
 
 <body>
-   <h1><%= quizTitle %></h1>
-    <p>Time Limit: <%= timeLimit %> minutes</p>
-    <p>Number of Questions: <%= numberOfQuestions %></p>
-    <p>Points to Score: <%= pointsToScore %></p>
-    <p>Passing Score: <%= passingScore %></p>
+    <div class="container">
+        <button class="close-button" onclick="closePage()">&times;</button>
+        <h1><%= quizTitle %></h1>
+        <p>Time Limit: <%= timeLimit %> minutes</p>
+        <p>Number of Questions: <%= numberOfQuestions %></p>
+        <p>Points to Score: <%= pointsToScore %></p>
+        <p>Passing Score: <%= passingScore %></p>
 
-    <!-- Button to start the quiz -->
-    <form action="/quiz/start" method="post">
-        <input type="hidden" name="quiz_id" value="<%= quiz_id %>">
-        <button type="submit">Start Quiz</button>
-    </form>
+        <!-- Button to start the quiz -->
+        <form action="/quiz/start" method="post">
+            <input type="hidden" name="quiz_id" value="<%= quiz_id %>">
+            <button type="submit">Start Quiz</button>
+        </form>
     </div>
+
+    <script>
+        function closePage() {
+            window.close(); // This may not work in some browsers unless the page was opened by JavaScript
+            window.location.href = '/dashboard'; // Redirect to another page, e.g., the dashboard
+        }
+    </script>
 </body>
 </html>
