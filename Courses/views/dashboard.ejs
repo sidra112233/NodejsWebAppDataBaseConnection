@@ -567,7 +567,7 @@ textarea::placeholder {
 </div>
 <div id="compiler-container" class="compiler-container hidden">
     <button class="close-button" onclick="toggleCompiler()">&times;</button>
-    <form id="compiler-form"> <!-- Add an id to the form -->
+    <form id="form" action="/compilecode" method="POST">
         <div class="compiler-content">
             <div class="code-input">
                 <label for="code"></label><br>
@@ -585,7 +585,7 @@ textarea::placeholder {
         </div>
         <div class="compiler-actions">
             <button type="submit">Compile</button>
-            <button class="reset-button" onclick="resetCompiler()">Reset</button>
+            <button type="button" class="reset-button" onclick="resetCompiler()">Reset</button>
         </div>
     </form>
     <div id="compiler-output" class="compiler-output"></div> <!-- Output container -->
@@ -708,29 +708,28 @@ function escapeHtml(pre) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
-   function toggleCompiler() {
+function toggleCompiler() {
     const compilerContainer = document.getElementById('compiler-container');
     if (compilerContainer) {
-        // Toggle between hidden and visible classes
         compilerContainer.classList.toggle('hidden');
         compilerContainer.classList.toggle('visible');
     } else {
         console.error('Compiler container not found.');
     }
 }
+
 function resetCompiler() {
     document.getElementById('code').value = ''; // Clear the code textarea
     document.getElementById('input').value = ''; // Clear the input textarea
     document.getElementById('compiler-output').innerText = ''; // Clear the output display
 }
-document.getElementById('compiler-form').addEventListener('submit', function(e) {
+
+document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault(); // Prevent form submission
 
     const code = document.getElementById('code').value;
     const input = document.getElementById('input').value;
     const lang = document.getElementById('lang').value;
-    const inputRadio = document.getElementById('inputRadio').checked;
 
     fetch('/compilecode', {
         method: 'POST',
@@ -740,7 +739,6 @@ document.getElementById('compiler-form').addEventListener('submit', function(e) 
         body: JSON.stringify({
             code: code,
             input: input,
-            inputRadio: inputRadio,
             lang: lang
         })
     })
@@ -757,7 +755,6 @@ document.getElementById('compiler-form').addEventListener('submit', function(e) 
     })
     .catch(error => console.error('Error:', error));
 });
-
 
     function showDashboard() {
         document.getElementById('details-container').classList.add('hidden');

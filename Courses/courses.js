@@ -903,56 +903,52 @@ app.get("/dashboard", function (req, res) {
         fontSize: 20
     });
 });
-app.post("/compilecode", function (req, res) {
+app.post('/compilecode', function (req, res) {
+
     var code = req.body.code;
     var input = req.body.input;
     var inputRadio = req.body.inputRadio;
     var lang = req.body.lang;
-
-    if (lang === "C" || lang === "C++") {
-        var envData = { OS: "windows", cmd: "g++", options: { timeout: 10000 } };
+    if ((lang === "C") || (lang === "C++")) {
         if (inputRadio === "true") {
+            var envData = { OS: "windows", cmd: "g++" };
             compiler.compileCPPWithInput(envData, code, input, function (data) {
                 if (data.error) {
-                    res.json({ error: data.error });
-                } else {
-                    res.json({ output: data.output });
+                    res.send(data.error);
+                }
+                else {
+                    res.send(data.output);
                 }
             });
-        } else {
+        }
+        else {
+
+            var envData = { OS: "windows", cmd: "g++" };
             compiler.compileCPP(envData, code, function (data) {
                 if (data.error) {
-                    res.json({ error: data.error });
-                } else {
-                    res.json({ output: data.output });
+                    res.send(data.error);
                 }
+                else {
+                    res.send(data.output);
+                }
+
             });
         }
-    } else if (lang === "Python") {
-        var envData = { OS: "windows" };
+    } if (lang === "Python") {
         if (inputRadio === "true") {
+            var envData = { OS: "windows" };
             compiler.compilePythonWithInput(envData, code, input, function (data) {
-                if (data.error) {
-                    res.json({ error: data.error });
-                } else {
-                    res.json({ output: data.output });
-                }
-            });
-        } else {
-            compiler.compilePython(envData, code, function (data) {
-                if (data.error) {
-                    res.json({ error: data.error });
-                } else {
-                    res.json({ output: data.output });
-                }
+                res.send(data);
             });
         }
-    } else {
-        res.json({ error: "Unsupported language" });
+        else {
+            var envData = { OS: "windows" };
+            compiler.compilePython(envData, code, function (data) {
+                res.send(data);
+            });
+        }
     }
 });
-
-
 app.get("/fullStat", function (req, res) {
     compiler.fullStat(function (data) {
         res.send(data);
