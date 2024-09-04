@@ -44,30 +44,32 @@ body {
             gap: 20px;
             justify-content: center;
         }
-
-        .course {
-            background-color: #e6f7ff; /* Light blue */
-            border: 1px solid #b3e0ff; /* Slightly darker blue */
-            border-radius: 5px;
-            overflow: hidden;
-            width: calc(25% - 20px);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .course img {
-    width: 100%;
-    height: 200px; /* Maintain aspect ratio */
-    object-fit: cover; /* Cover the container, cropping if necessary */
-    display: block; /* Remove any default margin/padding */
+      .course {
+    background-color: #fff; /* White background for a clean look */
+    border: 1px solid #ddd; /* Light border similar to Udemy */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* To ensure the image and content stay within the card */
+    width: 260px; /* Fixed width similar to Udemy cards */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin: 15px; /* Space between cards */
+    transition: transform 0.2s; /* Smooth hover effect */
 }
-        .course-details {
-            padding: 15px;
-            flex-grow: 1;
-        }
+.course:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+}
 
-        .course-details h2 {
+.course img {
+    width: 100%;
+    height: 150px; /* Fixed height for the image */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+}
+
+.course-details {
+    padding: 15px; /* Padding around the text content */
+    text-align: left; /* Align text to the left */
+    }
+
+   .course-details h2 {
             margin: 10px 0;
             color: #00509e; /* Darker blue */
         }
@@ -86,7 +88,7 @@ body {
             cursor: pointer;
             border-radius: 5px;
             transition: background-color 0.3s;
-            margin: 15px;
+            margin: 30px;
             text-align: center;
         }
 
@@ -99,21 +101,26 @@ body{
     .mySlides {display: none}
      img {vertical-align: middle;
 }
-}
+}/* Navbar Styling */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9); /* Light blue gradient */
     padding: 10px 20px;
-   
-    
+    position: fixed;  /* Freezes the navbar */
+    top: 0;
+    left: 0;
+    width: 100%;  /* Ensures the navbar spans the full width */
+    z-index: 1000; /* Keeps the navbar on top of other content */
 }
 
+/* Navbar Left (Logo and Site Name) */
 .navbar-left {
     display: flex;
     align-items: center;
 }
+
 .logo {
     height: 40px;
     width: 50px;
@@ -125,6 +132,7 @@ body{
     font-size: 1.5em;
 }
 
+/* Navbar Right (Links and Buttons) */
 .navbar-right a {
     color: #1a237e; /* Deep blue for better contrast */
     padding: 14px 20px;
@@ -135,34 +143,37 @@ body{
 .navbar-right a:hover {
     background-color: #82b1ff; /* Slightly darker blue hover effect */
 }
+
 .register-btn, .profile-btn, .logout-btn {
     border: 1px solid #1a237e; /* Deep blue border */
     border-radius: 5px;
     color: #1a237e; /* Deep blue text color */
 }
 
+/* Responsive Design */
+@media screen and (max-width: 500px) {
+    .navbar a {
+        float: none;
+        display: block;
+    }
+}
+
 .sign-up-btn:hover, .profile-btn:hover, .sign-in-btn:hover {
     background-color: #e3f2fd; /* Light blue hover effect */
 }
-        * {box-sizing: border-box}
-        body {font-family: Verdana, sans-serif; margin:0}
-        .mySlides {display: none}
-        img {vertical-align: middle;}
-        
-        /* Slideshow container */
-      .s {
-    margin-top: 0;
+
+/* Slideshow Container Styling */
+.s {
+    margin-top: 70px; /* Adjust this value based on the height of your navbar */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    width: 100vw; /* Set to full screen width */
+    height: calc(100vh - 70px); /* Full screen height minus the navbar height */
+    width: 100vw; /* Full screen width */
     background: linear-gradient(135deg, #f0f8ff, #e6f7ff); /* Light gradient background */
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
-
-
         .scene {
             position: relative;
             width: 300vw; /* Width relative to viewport width */
@@ -324,6 +335,13 @@ body{
     color: #333;
   border-radius: 6px;
 }
+.footer-branding {
+  font-size: 2em;
+  color: #1a237e; /* Deep blue or other color for branding */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .footer .footer-row {
   display: flex;
   flex-wrap: wrap;
@@ -425,7 +443,7 @@ body{
 }
  /* about programmineg */
 .p {
-            font-family: 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background: #ffffff; /* Light white background */
@@ -547,6 +565,51 @@ body{
         html {
     scroll-behavior: smooth;
 }
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
             </style>
         </head>
 </head>
@@ -557,8 +620,19 @@ body{
             <span class="site-name">LEARN CODE PRO</span>
         </div>
         <div class="navbar-right">
-            <a href="#">Home</a>
             <a href="#about">About</a>
+           <div class="dropdown">
+            <button class="dropbtn">Select Language</button>
+            <div class="dropdown-content">
+               <a href="#" data-target="course-cards">HTML</a>
+        <a href="#" data-target="course-cards">CSS</a>
+        <a href="#" data-target="course-cards">Java</a>
+        <a href="#" data-target="course-cards">PHP</a>
+        <a href="#" data-target="course-cards">Ruby</a>
+        <a href="#" data-target="course-cards">Python</a>
+        <a href="#" data-target="course-cards">JavaScript</a>
+            </div>
+        </div>
   <% if (student) { %>
                 <a href="/profile"><%= student %></a>
                 <a href="/sign-out">Sign Out</a>
@@ -657,8 +731,8 @@ body{
       </script>
   </div>
         
-         <div class ="container1">
-          <div class="container">
+         <div id="course-cards" class ="container1">
+<div id="course-cards" class="container">
             <h1>Language Courses</h1>
             <div class="gallery">
    <%
@@ -691,7 +765,7 @@ const imageMap = {
                     <img src="/images/nodejs.jpg" alt="Node JS Course" height="200px" width="300px">
                     <div class="course-details">
                         <h2>Node JS</h2>
-                        <p>Master the art of styling web pages with CSS. Provide interactive webpage.</p>
+                        <p>Learn Node Js  Server-side programming</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>
@@ -699,7 +773,7 @@ const imageMap = {
                     <img src="/images/js.png" alt="JavaScript Course" height="200px" width="300px">
                     <div class="course-details">
                         <h2>JavaScript</h2>
-                        <p>Learn JavaScript to make your web pages interactive and dynamic. It provides responsive webpages.</p>
+                        <p>Learn JavaScript to make your web pages interactive and dynamic.</p>
                     </div>
                     <button class="enroll-btn">Enroll Now</button>
                 </div>
@@ -871,65 +945,69 @@ const imageMap = {
         behavior: 'smooth' // Smooth scroll
     });
 });
+// JavaScript for Smooth Scrolling
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownLinks = document.querySelectorAll('.dropdown-content a');
+
+    dropdownLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default link behavior
+            const target = this.getAttribute('data-target'); // Get target section ID
+
+            document.getElementById(target).scrollIntoView({
+                behavior: 'smooth' // Smooth scrolling
+            });
+        });
+    });
+});
+
 
   </script>
   </div>
 
-  
-    <section class="footer">
-      <div class="footer-row">
-        <div class="footer-col">
-          <h4><b>Languages</b></h4>
-          <ul class="links">
-            <li><a href="#">Html</a></li>
-            <li><a href="#">CSS</a></li>
-            <li><a href="#">java</a></li>
-            <li><a href="#">Php</a></li>
-            <li><a href="#">Rubby </a></li>
-            <li><a href="#">Phython</a></li>
-            <li><a href="#">JavaScript</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4><b>  Quick Links</b></h4>
-          <ul class="links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Language</a></li>
-        
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4><b>Legal</b></h4>
-          <ul class="links">
-            <li><a href="#">Customer Agreement</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">GDPR</a></li>
-            <li><a href="#">Security</a></li>
-            <li><a href="#">Testimonials</a></li>
-            <li><a href="#">Media Kit</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4><b>Newsletter</b></h4>
-          <p>
-            Subscribe to our newsletter for a weekly dose
-            of news, updates, helpful tips, and
-            exclusive offers.
-          </p>
-          <form action="#">
-            <input type="text" placeholder="Your email" required>
-            <button type="submit">SUBSCRIBE</button>
-          </form>
-           <div class="icons">
-            <i class="fa-brands fa-facebook-f"></i>
-            <i class="fa-brands fa-twitter"></i>
-            <i class="fa-brands fa-linkedin"></i>
-            <i class="fa-brands fa-github"></i>
-          </div>
-        </div>
+      <section class="footer">
+  <div class="footer-row">
+    <div class="footer-col">
+      <!-- Add the footer branding -->
+      <h1 class="footer-branding">Learn Code Pro</h1>
+    </div>
+    <div class="footer-col">
+      <h4><b>Quick Links</b></h4>
+      <ul class="links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Language</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4><b>Legal</b></h4>
+      <ul class="links">
+        <li><a href="#">Customer Agreement</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">GDPR</a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#">Testimonials</a></li>
+        <li><a href="#">Media Kit</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4><b>Newsletter</b></h4>
+      <p>
+        For a weekly dose of news, updates, practical advice, and special deals, sign up for our newsletter.
+      </p>
+      <form action="#">
+        <input type="text" placeholder="Your email" required>
+        <button type="submit">SUBSCRIBE</button>
+      </form>
+      <div class="icons">
+        <i class="fa-brands fa-facebook-f"></i>
+        <i class="fa-brands fa-twitter"></i>
+        <i class="fa-brands fa-linkedin"></i>
+        <i class="fa-brands fa-github"></i>
       </div>
+    </div>
+  </div>
     </section>
   </body>
 </html>
