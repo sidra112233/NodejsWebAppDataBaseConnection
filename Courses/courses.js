@@ -672,8 +672,11 @@ app.post('/quiz/start', async (req, res) => {
         }
 
         const quiz = quizResult.recordset[0];
+        // Only generate student ID if it does not exist in session
+        if (!req.session.student_id) {
+            req.session.student_id = await getNextStudentId(); // This should only be done once
+        }
         req.session.quiz_id = quiz.quiz_id;
-        req.session.student_id = await getNextStudentId();
         req.session.currentQuestionIndex = 0;
         req.session.startTime = new Date().getTime();
 
@@ -689,10 +692,11 @@ async function getQuestionsFromDatabase(quizId) {
     const result = await pool.request()
         .input('quizId', sql.Int, quizId)
         .query(`
-            SELECT TOP 10 question_id, question_text, option1, option2, option3, option4,correct_option
-            FROM QuizQuestions 
-            WHERE quiz_id = @quizId  ORDER BY NEWID()
-        `);
+        SELECT TOP 10 question_id, question_text, option1, option2, option3, option4, correct_option
+        FROM QuizQuestions 
+        WHERE quiz_id = @quizId
+        ORDER BY NEWID();
+    `);
     return result.recordset.map(question => ({
         question_id: question.question_id,
         question_text: question.question_text,
@@ -767,10 +771,11 @@ app.get('/quiz/start/:id', async (req, res) => {
         const questionsResult = await pool.request()
             .input('quizId', sql.Int, quizId)
             .query(`
-            SELECT TOP 10 question_id, question_text, option1, option2, option3, option4,correct_option
-            FROM QuizQuestions 
-            WHERE quiz_id = @quizId  ORDER BY NEWID()
-        `);
+        SELECT TOP 10  question_id, question_text, option1, option2, option3, option4, correct_option
+        FROM QuizQuestions 
+        WHERE quiz_id = @quizId
+        ORDER BY NEWID();
+    `);
 
         console.log('Questions query result:', questionsResult);
 
@@ -849,68 +854,97 @@ app.get('/quiz/restart', (req, res) => {
     // Redirect to the first question of the quiz
     res.redirect('/quiz/start');
 });
+// Helper function to shuffle an array (Fisher-Yates shuffle)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 app.post('/next', async (req, res) => {
     const { action, answers, currentQuestionId } = req.body;
     const student_id = req.session.student_id;
     const quiz_id = req.session.quiz_id;
-    const questions = await getQuestionsFromDatabase(quiz_id);
+
+    // Check if the 10 shuffled questions are already stored in the session
+    let questions = req.session.questions;
+
+    // If questions are not in the session, fetch and shuffle them
+    if (!questions) {
+        questions = await getQuestionsFromDatabase(quiz_id); // Fetch 10 questions
+        req.session.questions = shuffleArray(questions); // Shuffle and store in session
+    }
+
     const totalQuestions = questions.length;
     let currentQuestionIndex = req.session.currentQuestionIndex || 0;
+
     const timeLimitInSeconds = quizParams.timeLimit * 60;
     const currentTime = new Date().getTime(); // Current time in milliseconds
-
     const elapsedTime = (currentTime - req.session.startTime) / 1000; // Convert to seconds
 
     if (!req.session.scores) {
         req.session.scores = [];
     }
-    if (answers && currentQuestionId) {
-        console.log("Current Question ID:", currentQuestionId); // Log the current question ID
-        console.log("Questions array:", questions); // Log the questions array
 
+    // Log received currentQuestionId and shuffled questions array for debugging
+    console.log("Received Current Question ID:", currentQuestionId);
+    console.log("Shuffled Questions array:", questions);
+
+    // Ensure answers and currentQuestionId are provided
+    if (answers && currentQuestionId) {
         const answersObj = Array.isArray(answers) ? { [currentQuestionId]: answers[0] } : answers;
         const selectedOptionId = parseInt(answersObj[currentQuestionId], 10);
+
+        // Find the current question from the shuffled list of questions
         const currentQuestion = questions.find(q => q.question_id == currentQuestionId);
 
+        // Check if the current question exists
         if (!currentQuestion) {
             console.error(`Question with ID ${currentQuestionId} not found.`);
-            return res.status(400).send('Current question not found.'); // Return if question not found
+            return res.status(400).send('Current question not found.');
         }
 
         const correctOptionId = currentQuestion.correct_option;
+
+        // Ensure the selected option is valid before proceeding with scoring
         if (!isNaN(selectedOptionId)) {
             const score = selectedOptionId === correctOptionId ? 10 : 0;
             req.session.scores[currentQuestionIndex] = score;
         }
     }
 
-    // Handle navigation action
+    // Handle navigation action (next, back, or submit)
     if (action === 'next') {
-        // Move to the next question
         if (currentQuestionIndex < totalQuestions - 1) {
             currentQuestionIndex++;
         }
     } else if (action === 'back') {
-        // Move to the previous question
-        if (currentQuestionIndex > 0  ) {
+        if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
         }
     }
 
     req.session.currentQuestionIndex = currentQuestionIndex; // Update session
+
+    // Handle quiz submission
     if (action === 'submit' || currentQuestionIndex >= totalQuestions) {
-        req.session.scores = req.session.scores || [];
         const totalScore = req.session.scores.reduce((acc, cur) => acc + cur, 0);
         await saveQuizSubmission(student_id, quiz_id, totalScore);
         const progress = Math.round((totalScore / 100) * 100); // Assuming 100 is the max score
 
-        // Instead of destroying the entire session, only clear quiz-related session data
+        // Clear quiz-related session data
         req.session.quiz_id = null;
         req.session.currentQuestionIndex = null;
         req.session.startTime = null;
+        req.session.questions = null; // Clear questions from session
         return res.render('result', { totalScore, progress });
     }
+
+    // Calculate the progress percentage
     const progressPercentage = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
+
     // Render the next question
     res.render('quiz', {
         student_id,
@@ -921,9 +955,9 @@ app.post('/next', async (req, res) => {
         timeLimit: quizParams.timeLimit,
         timeLeft: Math.max(0, Math.round(timeLimitInSeconds - elapsedTime)), // Time left in seconds
         progressPercentage // Pass the progress percentage to the template
-
     });
 });
+
 app.get("/dashboard", function (req, res) {
     res.render("dashboard", {
         languages: [

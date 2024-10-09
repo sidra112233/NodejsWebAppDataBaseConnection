@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <div id="video-container" style="display: none;">
-    <button id="close-video">Close</button>
-    <iframe id="video-player" width="560" height="315" frameborder="0" allowfullscreen></iframe>
-</div>
+  
 <head>
     <title>Dashboard</title>
     <!-- Include the updated CSS here -->
@@ -471,7 +468,7 @@
         <% } %>
     <% } %>
 </div>
-<<aside id="sidebar" class="sidebar">
+<aside id="sidebar" class="sidebar">
     <h2 id="sidebar-course-name"></h2>
     <div id="sidebar-modules"></div>
 </aside>
@@ -506,18 +503,6 @@
     <div id="compiler-output" class="compiler-output"></div>
     </div>
 <script>
-
-document.getElementById('close-video').addEventListener('click', function() {
-    const videoContainer = document.getElementById('video-container');
-    const videoPlayer = document.getElementById('video-player');
-    
-    videoContainer.style.display = 'none'; // Hide the video container
-    videoPlayer.src = ''; // Stop the video
-});
-
-    document.addEventListener('DOMContentLoaded', (event) => {
-        console.log('DOM fully loaded and parsed');
-    });
 
     function showEnrollForm(courseId) {
         console.log('Showing enroll form');
