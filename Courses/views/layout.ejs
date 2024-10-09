@@ -18,7 +18,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #A8DADC, #F1FAEE); /* Soft teal to very light mint gradient */
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9); /* Light blue gradient */
     padding: 10px 20px;
 }
 
@@ -67,16 +67,16 @@
     overflow: hidden;
     height: calc(100vh - 60px); /* Adjust height based on navbar height */
 }
-
 /* Sidebar styling */
 #sidebar {
     width: 250px;
-    background: linear-gradient(135deg, #F4A261, #FFE8D6); /* Soft orange to light peach gradient */
+    background: linear-gradient(135deg, #f9f9f9, #e0f7fa, #f0e9d2); /* Gradient with light gray, light blue, and beige */
     color: #1D3557; /* Deep blue text color */
     padding: 15px;
     overflow-y: auto;
     height: 100%;
 }
+
 .logo1 {
     height: 150px;
     width: 200px;
@@ -90,24 +90,33 @@ margin-top:0;
     padding: 10px;
     overflow-y: auto;
     height: 100%;
-    background: linear-gradient(135deg, #F1FAEE, #A8DADC); /* Very light mint to soft teal gradient */
+    background: white 
 }
-.module-description {
-    color: #4A4E69; /* Soft dark blue color */
-    font-style: italic;
-    font-size: 1.1em;
-    background-color: #F2E9E4; /* Light beige background */
-    padding: 10px;
-    border-left: 4px solid #9A8C98; /* Accent color on the left */
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for a slight 3D effect */
-    transition: background-color 0.3s ease, color 0.3s ease;
+.module-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    gap: 15px; /* Add space between buttons */
 }
 
-.module-description:hover {
-    background-color: #E8D6CF; /* Slightly darker beige on hover */
-    color: #333; /* Darker text on hover */
+.nav-btn {
+    background-color: #457B9D; /* Soft blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #1D3557; /* Dark navy blue on hover */
 }
 
 #course-list, .module-list ul, #material-list {
@@ -115,20 +124,20 @@ margin-top:0;
     padding: 0;
     margin: 0;
 }
-#quiz-list a {
+#quiz-list a ,#exercise-list a{
     text-decoration: none;
-    color: #FF6F61; /* A beautiful coral color */
+    color: white; /* White text on hover */
     display: block;
     padding: 10px;
-    background-color: #FFE5D4; /* Soft peach background */
+    background-color: #3399FF; /* Darker blue */
     border-radius: 5px;
     margin-bottom: 50px;
     transition: background-color 0.3s ease, color 0.3s ease;
     width: 200px;
 }
 
-#quiz-list a:hover {
-    background-color: #FF6F61; /* Coral background on hover */
+#quiz-list a:hover ,#exercise-list a:hover{
+    background-color: #004080; /* Even darker blue */
     color: white; /* White text on hover */
     text-decoration: none;
 }
@@ -165,6 +174,54 @@ margin-top:0;
     font-style: italic;
     color: #555;
 }
+/* General heading styling */
+h2, h3,h4 {
+    color: #003366; /* Dark navy blue for better contrast */
+    font-family: 'Poppins', sans-serif; /* Use a modern sans-serif font like Poppins */
+    font-weight: 600;
+    text-transform: uppercase;
+    position: relative;
+    margin-bottom: 20px;
+    text-align: left; /* Align to the left */
+    z-index: 1; /* Ensure text stays on top */
+}
+
+/* Static underline (fill bar) effect */
+h2::after, h3::after {
+    content: '';
+    width: 100%;
+    height: 35px; /* Thickness of the fill bar */
+    background: #00509e; /* Plain navy blue */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: -1; /* Behind the text */
+        transition: width 0.5s ease;
+
+}
+
+/* Full width fill effect on hover without transition */
+h2:hover::after, h3:hover::after {
+    width: 100%; /* Fill the heading fully on hover */
+}
+
+/* For specific section headings */
+#course-name {
+    color: white; /* Navy blue color for course name */
+    font-size: 2em;
+    text-align: center; /* Center the text */
+}
+
+#module-name {
+    color: #00509e; /* Soft blue for module name */
+    font-size: 1.8em;
+}
+
+#material-list h3, #quiz-list h3, #exercise-list h3 {
+    color: white; /* Darker blue */
+    font-size: 1.4em;
+    text-align: center; /* Center the text */
+}
 
     </style>
 </head>
@@ -178,8 +235,6 @@ margin-top:0;
     </div>
     <div class="navbar-right">
         <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
         <a href="/sign-up" class="register-btn">Sign Up</a>
     </div>
 </nav>
@@ -188,14 +243,14 @@ margin-top:0;
 <div class="main-container">
     <div id="sidebar">
     <img src="/images/Logo.png" alt="Logo" class="logo1">
-        <h2>Courses</h2>
+        <h4>Courses</h4>
         <ul id="course-list">
             <% if (courses && courses.length > 0) { %>
                 <% courses.forEach(course => { %>
                     <li>
                         <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
                         <div class="module-list" data-course-id="<%= course.course_id %>">
-                            <h3>Modules</h3>
+                            <h4>Modules</h4>
                             <ul class="module-items"></ul>
                         </div>
                     </li>
@@ -212,141 +267,272 @@ margin-top:0;
         <div id="module-description"></div>
         <ul id="material-list"></ul>
         <ul id="quiz-list"></ul>
+        <ul id="exercise-list"></ul>
+        <div class="module-navigation">
+        <button id="prev-module" class="nav-btn">&larr;</button>
+        <button id="next-module" class="nav-btn">&rarr;</button>
+    </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const courseList = document.getElementById('course-list');
-            const courseNameElement = document.getElementById('course-name');
-            const courseDescriptionElement = document.getElementById('course-description');
-            const moduleNameElement = document.getElementById('module-name');
-            const moduleDescriptionElement = document.getElementById('module-description');
-            const materialList = document.getElementById('material-list');
-            const quizList = document.getElementById('quiz-list');
-            const sidebar = document.getElementById('sidebar');
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseList = document.getElementById('course-list');
+        const courseNameElement = document.getElementById('course-name');
+        const courseDescriptionElement = document.getElementById('course-description');
+        const moduleNameElement = document.getElementById('module-name');
+        const moduleDescriptionElement = document.getElementById('module-description');
+        const materialList = document.getElementById('material-list');
+        const quizList = document.getElementById('quiz-list');
+        const exerciseList =document.getElementById('exercise-list');
+        const sidebar = document.getElementById('sidebar');
 
-            courseList.addEventListener('click', async (event) => {
-                if (event.target && event.target.classList.contains('course-link')) {
-                    event.preventDefault();
-                    const courseId = event.target.dataset.courseId;
+        courseList.addEventListener('click', async (event) => {
+            if (event.target && event.target.classList.contains('course-link')) {
+                event.preventDefault();
+                const courseId = event.target.dataset.courseId;
 
-                    // Hide all module lists and remove module list content from other courses
-                    document.querySelectorAll('.module-list').forEach(moduleList => {
-                        if (moduleList.dataset.courseId !== courseId) {
-                            moduleList.style.display = 'none';
-                        }
-                    });
-
-                    const selectedModuleList = document.querySelector(`.module-list[data-course-id="${courseId}"]`);
-
-                    try {
-                        // Show loading message
-                        courseNameElement.textContent = 'Loading...';
-                        courseDescriptionElement.textContent = '';
-
-                        // Fetch modules for the selected course
-                        const response = await fetch(`/courses/${courseId}/modules`);
-                        const data = await response.json();
-
-                        // Update course content
-                        courseNameElement.textContent = data.courseName || 'Course Name';
-                        courseDescriptionElement.textContent = data.courseDescription || 'Course Description';
-
-                        // Show or update the module list for the selected course
-                        if (selectedModuleList) {
-                            selectedModuleList.style.display = 'block';
-                            const moduleItemsElement = selectedModuleList.querySelector('.module-items');
-                            moduleItemsElement.innerHTML = '';
-                            data.modules.forEach(module => {
-                                moduleItemsElement.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
-                            });
-                        }
-
-                        // Clear materials and quizzes
-                        materialList.innerHTML = '';
-                        quizList.innerHTML = '';
-                        moduleNameElement.textContent = '';
-                        moduleDescriptionElement.textContent = '';
-                    } catch (error) {
-                        console.error('Error fetching course modules:', error);
-                        courseNameElement.textContent = 'Error loading course';
-                        courseDescriptionElement.textContent = '';
+                // Hide all module lists and remove module list content from other courses
+                document.querySelectorAll('.module-list').forEach(moduleList => {
+                    if (moduleList.dataset.courseId !== courseId) {
+                        moduleList.style.display = 'none';
                     }
-                }
-            });
+                });
 
-            sidebar.addEventListener('click', async (event) => {
-                if (event.target && event.target.classList.contains('module-link')) {
-                    event.preventDefault();
-                    const moduleId = event.target.dataset.moduleId;
+                const selectedModuleList = document.querySelector(`.module-list[data-course-id="${courseId}"]`);
 
-                    try {
-                        // Show loading message
-                        moduleNameElement.textContent = 'Loading...';
-                        moduleDescriptionElement.textContent = '';
+                try {
+                    // Show loading message
+                    courseNameElement.textContent = 'Loading...';
+                    courseDescriptionElement.textContent = '';
 
-                        // Fetch module details, materials, and quizzes
-                        const moduleResponse = await fetch(`/modules/${moduleId}`);
-                        const moduleData = await moduleResponse.json();
+                    // Fetch modules for the selected course
+                    const response = await fetch(`/courses/${courseId}/modules`);
+                    const data = await response.json();
 
-                        // Update content with module and materials
-                        moduleNameElement.textContent = moduleData.module_name || 'Module Name';
-                        moduleDescriptionElement.textContent = moduleData.description || 'Module Description';
+                    // Update course content
+                    courseNameElement.textContent = data.courseName || 'Course Name';
+                    courseDescriptionElement.textContent = data.courseDescription || 'Course Description';
 
-                        // Update content with materials
-                        materialList.innerHTML = '<h3>Materials</h3><ul>';
-                        moduleData.materials.forEach(material => {
-                            materialList.innerHTML += `
-                                <li>
-                                    <span class="material-description">${material.description}</span><br>
-                                    <a href="#" class="material-link" data-material-id="${material.material_id}">${material.link}</a>
-                                </li>`;
+                    // Show or update the module list for the selected course
+                    if (selectedModuleList) {
+                        selectedModuleList.style.display = 'block';
+                        const moduleItemsElement = selectedModuleList.querySelector('.module-items');
+                        moduleItemsElement.innerHTML = '';
+                        data.modules.forEach(module => {
+                            moduleItemsElement.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
                         });
-                        materialList.innerHTML += '</ul>';
-
-                        // Update content with quizzes
-                        quizList.innerHTML = '<h3>Quizzes</h3><ul>';
-                        if (moduleData.quizzes.length === 0) {
-                            quizList.innerHTML += '<li>No quizzes available.</li>';
-                        } else {
-                            moduleData.quizzes.forEach(quiz => {
-                                quizList.innerHTML += `<li><a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a></li>`;
-                            });
-                        }
-                        quizList.innerHTML += '</ul>';
-                    } catch (error) {
-                        console.error('Error fetching module details, materials, or quizzes:', error);
-                        moduleNameElement.textContent = 'Error loading module';
-                        moduleDescriptionElement.textContent = '';
-                        materialList.innerHTML = '<li>Error loading materials.</li>';
-                        quizList.innerHTML = '<li>Error loading quizzes.</li>';
                     }
-                }
-            });
-            
-            materialList.addEventListener('click', async (event) => {
-                if (event.target && event.target.classList.contains('material-link')) {
-                    event.preventDefault();
-                    const materialId = event.target.dataset.materialId;
 
-                    try {
-                        // Fetch material details
-                        const response = await fetch(`/materials/${materialId}`);
-                        if (response.redirected) {
-                            // Redirect to login page if not authenticated
-                            window.location.href = response.url;
-                        } else {
-                            const material = await response.json();
-                            // Open material link in a new tab
-                            window.open(material.link, '_blank');
-                        }
-                    } catch (error) {
-                        console.error('Error fetching material details:', error);
+                    // Automatically load the first module
+                    if (data.modules.length > 0) {
+                        const firstModuleId = data.modules[0].module_id;
+                        const firstModuleLink = document.querySelector(`.module-link[data-module-id="${firstModuleId}"]`);
+                        firstModuleLink.click(); // Simulate a click on the first module
                     }
+
+                    // Clear materials and quizzes
+                    materialList.innerHTML = '';
+                    quizList.innerHTML = '';
+                    exerciseList.innerHTML = '';
+                    moduleNameElement.textContent = '';
+                    moduleDescriptionElement.textContent = '';
+                } catch (error) {
+                    console.error('Error fetching course modules:', error);
+                    courseNameElement.textContent = 'Error loading course';
+                    courseDescriptionElement.textContent = '';
                 }
-            });
+            }
         });
-    </script>
+
+        sidebar.addEventListener('click', async (event) => {
+            if (event.target && event.target.classList.contains('module-link')) {
+                event.preventDefault();
+                const moduleId = event.target.dataset.moduleId;
+
+                try {
+                    // Show loading message
+                    moduleNameElement.textContent = 'Loading...';
+                    moduleDescriptionElement.textContent = '';
+
+                    // Fetch module details, materials, and quizzes
+                    const moduleResponse = await fetch(`/modules/${moduleId}`);
+                    const moduleData = await moduleResponse.json();
+
+                    // Update content with module and materials
+                    moduleNameElement.textContent = moduleData.module_name || 'Module Name';
+                    moduleDescriptionElement.textContent = moduleData.description || 'Module Description';
+
+                    // Update content with materials
+                    materialList.innerHTML = '<h3>Materials</h3><ul>';
+                    moduleData.materials.forEach(material => {
+                        materialList.innerHTML += `
+                            <li>
+                                <span class="material-description">${material.description}</span><br>
+                                <a href="#" class="material-link" data-material-id="${material.material_id}">${material.link}</a>
+                            </li>`;
+                    });
+                    materialList.innerHTML += '</ul>';
+
+                    // Update content with quizzes
+                    quizList.innerHTML = '<h3>Quizzes</h3><ul>';
+                    if (moduleData.quizzes.length === 0) {
+                        quizList.innerHTML += '<li>No quizzes available.</li>';
+                    } else {
+                        moduleData.quizzes.forEach(quiz => {
+                            quizList.innerHTML += `<li><a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a></li>`;
+                        });
+                    }
+                    quizList.innerHTML += '</ul>';
+                    
+                    // Update content with exercises
+                    exerciseList.innerHTML = '<h3>Exercises</h3><ul>';
+                    if (moduleData.exercises.length === 0) {
+                        exerciseList.innerHTML += '<li>No exercises available.</li>';
+                    } else {
+                        moduleData.exercises.forEach(exercise => {
+                            exerciseList.innerHTML += `<li><a href="/exercises/${exercise.exercise_id}" class="exercise-link">Go to Exercise</a></li>`;
+                        });
+                    }
+                    exerciseList.innerHTML += '</ul>';
+                } catch (error) {
+                    console.error('Error fetching module details, materials, or quizzes:', error);
+                    moduleNameElement.textContent = 'Error loading module';
+                    moduleDescriptionElement.textContent = '';
+                    materialList.innerHTML = '<li>Error loading materials.</li>';
+                    quizList.innerHTML = '<li>Error loading quizzes.</li>';
+                    quizList.innerHTML = '<li>Error loading exercises.</li>';
+                }
+            }
+        });
+
+        materialList.addEventListener('click', async (event) => {
+            if (event.target && event.target.classList.contains('material-link')) {
+                event.preventDefault();
+                const materialId = event.target.dataset.materialId;
+
+                try {
+                    // Fetch material details
+                    const response = await fetch(`/materials/${materialId}`);
+                    if (response.redirected) {
+                        // Redirect to login page if not authenticated
+                        window.location.href = response.url;
+                    } else {
+                        const material = await response.json();
+                        // Open material link in a new tab
+                        window.open(material.link, '_blank');
+                    }
+                } catch (error) {
+                    console.error('Error fetching material details:', error);
+                }
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+    let currentModuleIndex = 0;
+    let modules = [];
+
+    const prevButton = document.getElementById('prev-module');
+    const nextButton = document.getElementById('next-module');
+    const courseList = document.getElementById('course-list');
+    const moduleNameElement = document.getElementById('module-name');
+    const materialList = document.getElementById('material-list');
+    const quizList = document.getElementById('quiz-list');
+    const exerciseList = document.getElementById('exercise-list');
+
+    // Fetch and load modules when a course is selected
+    courseList.addEventListener('click', async (event) => {
+        if (event.target && event.target.classList.contains('course-link')) {
+            event.preventDefault();
+            const courseId = event.target.dataset.courseId;
+
+            try {
+                // Fetch course modules
+                const response = await fetch(`/courses/${courseId}/modules`);
+                const data = await response.json();
+
+                // Update the modules list
+                modules = data.modules.map(module => ({
+                    id: module.module_id,
+                    name: module.module_name
+                }));
+
+                // Automatically load the first module
+                currentModuleIndex = 0;
+                loadModule(currentModuleIndex);
+                updateButtonState();
+            } catch (error) {
+                console.error('Error fetching course modules:', error);
+            }
+        }
+    });
+
+    // Function to load a module by index
+    const loadModule = async (index) => {
+        if (modules[index]) {
+            const moduleId = modules[index].id;
+
+            try {
+                // Fetch module details
+                const moduleResponse = await fetch(`/modules/${moduleId}`);
+                const moduleData = await moduleResponse.json();
+
+                // Update module content
+                moduleNameElement.textContent = moduleData.module_name || 'Module Name';
+                materialList.innerHTML = '<h3>Materials</h3><ul>';
+                moduleData.materials.forEach(material => {
+                    materialList.innerHTML += `
+                        <li>
+                            <span class="material-description">${material.description}</span><br>
+                            <a href="#" class="material-link" data-material-id="${material.material_id}">${material.link}</a>
+                        </li>`;
+                });
+                materialList.innerHTML += '</ul>';
+
+                // Update quizzes
+                quizList.innerHTML = '<h3>Quizzes</h3><ul>';
+                moduleData.quizzes.forEach(quiz => {
+                    quizList.innerHTML += `<li><a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a></li>`;
+                });
+                quizList.innerHTML += '</ul>';
+
+                // Update exercises
+                exerciseList.innerHTML = '<h3>Exercises</h3><ul>';
+                moduleData.exercises.forEach(exercise => {
+                    exerciseList.innerHTML += `<li><a href="/exercises/${exercise.exercise_id}" class="exercise-link">Go to Exercise</a></li>`;
+                });
+                exerciseList.innerHTML += '</ul>';
+            } catch (error) {
+                console.error('Error fetching module details:', error);
+            }
+        }
+    };
+
+    // Update the button states
+    const updateButtonState = () => {
+        prevButton.disabled = currentModuleIndex === 0;
+        nextButton.disabled = currentModuleIndex === modules.length - 1;
+    };
+
+    // Event listener for the previous button
+    prevButton.addEventListener('click', () => {
+        if (currentModuleIndex > 0) {
+            currentModuleIndex--;
+            loadModule(currentModuleIndex);
+            updateButtonState();
+        }
+    });
+
+    // Event listener for the next button
+    nextButton.addEventListener('click', () => {
+        if (currentModuleIndex < modules.length - 1) {
+            currentModuleIndex++;
+            loadModule(currentModuleIndex);
+            updateButtonState();
+        }
+    });
+});
+
+</script>
 </body>
 </html>
 

@@ -144,7 +144,7 @@ body{
     background-color: #82b1ff; /* Slightly darker blue hover effect */
 }
 
-.register-btn, .profile-btn, .logout-btn {
+.register-btn, .profile-btn, .signout-btn {
     border: 1px solid #1a237e; /* Deep blue border */
     border-radius: 5px;
     color: #1a237e; /* Deep blue text color */
@@ -565,51 +565,7 @@ body{
         html {
     scroll-behavior: smooth;
 }
-/* Dropdown Styles */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
 
-.dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 5px;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-}
-
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.dropdown:hover .dropbtn {
-    background-color: #3e8e41;
-}
             </style>
         </head>
 </head>
@@ -621,26 +577,21 @@ body{
         </div>
         <div class="navbar-right">
             <a href="#about">About</a>
-           <div class="dropdown">
-            <button class="dropbtn">Select Language</button>
-            <div class="dropdown-content">
-               <a href="#" data-target="course-cards">HTML</a>
-        <a href="#" data-target="course-cards">CSS</a>
-        <a href="#" data-target="course-cards">Java</a>
-        <a href="#" data-target="course-cards">PHP</a>
-        <a href="#" data-target="course-cards">Ruby</a>
-        <a href="#" data-target="course-cards">Python</a>
-        <a href="#" data-target="course-cards">JavaScript</a>
-            </div>
-        </div>
-  <% if (student) { %>
-                <a href="/profile"><%= student %></a>
-                <a href="/sign-out">Sign Out</a>
-            <% } else { %>
-                <a href="/sign-up">Sign Up</a>
-                <a href="/sign-in">Sign In</a>
+ <% if (student) { %>
+    <!-- Show profile link with student's name or info -->
+    <a href="/profile"><%= student %></a>
 
-            <% } %>
+    <!-- Show dashboard link when student is logged in -->
+    <a href="/dashboard">Dashboard</a>
+
+    <!-- Sign out link -->
+    <a href="/sign-out">Sign Out</a>
+<% } else { %>
+    <!-- If not signed in, show sign-up and sign-in options -->
+    <a href="/sign-up">Sign Up</a>
+    <a href="/sign-in">Sign In</a>
+<% } %>
+
             </div>
     </nav>
      <!-- slider -->
@@ -737,7 +688,7 @@ body{
             <div class="gallery">
    <%
 const imageMap = {
-    'Introduction to Python': 'python.jpg',
+    'Introduction to Python': 'py.jpg',
     'Java for Beginners': 'java.jpg'
 };
 %>
@@ -749,7 +700,8 @@ const imageMap = {
             <h2><%= course.course_name %></h2>
             <p><%= course.description %></p>
         </div>
-        <a href="/course/<%= course.course_id %>" class="enroll-btn">Enroll Now</a>
+             <a href="/course/<%= course.course_id %>" class="enroll-btn">Enroll Now</a>
+
     </div>
 <% }); %>
 

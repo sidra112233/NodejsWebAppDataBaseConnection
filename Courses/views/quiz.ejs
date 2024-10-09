@@ -8,53 +8,128 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #001f3f, #003366); /* Navy Blue gradient background */
+            background: linear-gradient(to right, #87ceeb, #b0e0e6);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            position: relative; /* Position relative to manage header and button */
+            position: relative;
         }
 
         .header {
             position: fixed;
-            top: 0;
+            top: 60px;
             left: 0;
             width: 100%;
-            background-color: #001f3f; /* Navy Blue header */
-            color: #fff; /* White text for contrast */
+            background-color: #87ceeb;
+            color: #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             padding: 10px 20px;
             box-sizing: border-box;
             font-size: 1.2rem;
             display: flex;
-            justify-content: space-between; /* Space between question info and timer */
-            align-items: center; /* Center items vertically */
-            z-index: 1000; /* Ensure the header is above other elements */
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
         }
+        /* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9); /* Light blue gradient */
+    padding: 10px 20px;
+    position: fixed;  /* Freezes the navbar */
+    top: 0;
+    left: 0;
+    width: 100%;  /* Ensures the navbar spans the full width */
+    z-index: 1000; /* Keeps the navbar on top of other content */
+}
 
-        .header .question-info {
+/* Navbar Left (Logo and Site Name) */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 40px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+.site-name {
+    color: #1a237e; /* Deep blue for better contrast */
+    font-size: 1.5em;
+}
+
+/* Navbar Right (Links and Buttons) */
+.navbar-right a {
+    color: #1a237e; /* Deep blue for better contrast */
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.navbar-right a:hover {
+    background-color: #82b1ff; /* Slightly darker blue hover effect */
+}
+
+.register-btn, .profile-btn, .signout-btn {
+    border: 1px solid #1a237e; /* Deep blue border */
+    border-radius: 5px;
+    color: #1a237e; /* Deep blue text color */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 500px) {
+    .navbar a {
+        float: none;
+        display: block;
+    }
+}
+
+.sign-up-btn:hover, .profile-btn:hover, .sign-in-btn:hover {
+    background-color: #e3f2fd; /* Light blue hover effect */
+}
+
+        .question-info {
             flex: 1;
-            text-align: center; /* Center text in header */
+            text-align: left;
         }
 
-        .header .timer {
-            text-align: right; /* Align timer to the right */
+        .timer {
+            text-align: right;
+        }
+
+        .progress-container {
+            width: 70%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0 20px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #007bff;
+            width: 0;
+            transition: width 0.3s ease;
         }
 
         .quiz-container {
             display: flex;
-            width: 90vw; /* Decreased width */
-            height: 90vh; /* Decreased height */
+            width: 90vw;
+            height: 80vh;
             background: #fff;
-            border-radius: 8px; /* Optional: Add border-radius for rounded corners */
+            border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             position: relative;
-            margin-top: 60px; /* Space for header */
-            margin-bottom: 20px; /* Add some space below */
+            margin-top: 100px;
+            margin-bottom: 10px;
             box-sizing: border-box;
-            overflow: hidden; /* Prevents overflow issues */
+            overflow: hidden;
         }
 
         .question-container,
@@ -62,61 +137,57 @@
             flex: 1;
             padding: 20px;
             box-sizing: border-box;
-            overflow-y: auto; /* Allow scrolling if content exceeds view */
+            overflow-y: auto;
         }
 
         .question-container {
-            flex: 1; /* Takes half of the width */
             border-right: 2px solid #ddd;
             background-color: #f9f9f9;
-            font-size: 1.7rem; /* Increased font size for question */
+            font-size: 1.7rem;
             color: #333;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            width: 50%; /* Takes half of the width */
         }
 
         .options-container {
             background-color: #f4f4f4;
             font-size: 1.7rem;
-            display: grid; /* Use grid layout */
-            grid-template-columns: 1fr; /* Single column layout */
-            width: 50%; /* Takes half of the width */
-            gap: 0; /* Remove gap between grid items */
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
         }
 
         .options-container label {
-            font-size: 1.5rem; /* Increased font size for options */
+            font-size: 1.5rem;
             color: #555;
             display: flex;
             align-items: center;
-            width: 100%; /* Ensure labels take full width */
-            text-align: center; /* Center text in label */
-            padding: 10px; /* Add padding to labels */
-            border: 1px solid #ddd; /* Border around options */
-            border-radius: 5px; /* Rounded corners for options */
-            background-color: #fff; /* Background color for options */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Shadow for options */
-            box-sizing: border-box; /* Ensure padding and border are included in width */
-            margin: 0; /* Remove margin to eliminate spacing between options */
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            margin: 0;
         }
-
         .options-container input[type="radio"] {
-            display: none; /* Hide the default radio button */
+            display: none;
         }
 
         .options-container .custom-radio {
             position: relative;
             display: flex;
             align-items: center;
-            font-size: 1.3rem; /* Match the font size of options */
+            font-size: 1.3rem;
         }
 
         .options-container .custom-radio input[type="radio"] + span {
             position: relative;
-            padding-left: 2rem; /* Space for the custom radio button */
+            padding-left: 2rem;
             cursor: pointer;
         }
 
@@ -126,17 +197,17 @@
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 1.3em; /* Adjust size to match font size */
-            height: 1.3em; /* Adjust size to match font size */
+            width: 1.3em;
+            height: 1.3em;
             border: 2px solid #555;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 0 0 3px #fff inset; /* Add inner white circle to make it look cleaner */
+            box-shadow: 0 0 0 3px #fff inset;
         }
 
         .options-container input[type="radio"]:checked + span::before {
-            background: #001f3f; /* Navy blue background for selected state */
-            box-shadow: 0 0 0 6px #fff inset; /* Add inner white circle to make it look cleaner */
+            background: #87ceeb;
+            box-shadow: 0 0 0 3px #fff inset;
         }
 
         .options-container input[type="radio"]:checked + span::after {
@@ -144,167 +215,128 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
-            width: 0.5em; /* Smaller inner circle for selected state */
+            width: 0.5em;
             height: 0.5em;
             border-radius: 50%;
             background: #fff;
         }
 
-        .next-btn {
+        .next-btn, .back-btn {
             position: absolute;
-            top: 20px; /* Position below header */
-            right: 20px;
-            background-color: #04AA6D;
+            top: 20px;
+            background-color: #007bff;
             color: #fff;
             border-radius: 12px;
             padding: 15px 30px;
-            font-size: 1.5rem; /* Increased font size for button */
+            font-size: 1.5rem;
             cursor: pointer;
             transition: background-color 0.3s ease;
             border-style: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to button */
-            z-index: 1001; /* Ensure the button is above other elements */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1001;
         }
 
-        .next-btn:hover {
-            background-color: #028a5e;
+        .next-btn {
+            right: 20px;
         }
 
-        .next-btn:focus {
+        .back-btn {
+            left: 20px;
+        }
+
+        .next-btn:hover, .back-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .next-btn:focus, .back-btn:focus {
             outline: none;
         }
-         .Back-btn {
-            position: absolute;
-            top: 20px; /* Position below header */
-            left: 20px;
-            background-color: #04AA6D;
-            color: #fff;
-            border-radius: 12px;
-            padding: 15px 30px;
-            font-size: 1.5rem; /* Increased font size for button */
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border-style: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to button */
-            z-index: 1001; /* Ensure the button is above other elements */
-        }
-        .progress-container {
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 20px 0;
-}
-
-.progress-bar {
-    height: 20px;
-    background-color: #76c7c0;
-    width: 0;
-    transition: width 0.3s ease;
-}
-
     </style>
-    <script>
-      // Set the time limit (in seconds)
-let timeLimit = 120; // For example, 2 minutes
+<script>
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        const interval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
 
-// Display the remaining time
-let timerElement = document.getElementById('timer');
-timerElement.innerHTML = `Time left: ${timeLimit} seconds`;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
 
-// Countdown function
-let countdown = setInterval(function() {
-  timeLimit--;
+            display.textContent = minutes + ":" + seconds;
 
-  // Update the timer display
-  timerElement.innerHTML = `Time left: ${timeLimit} seconds`;
-
-  // When time is up
-  if (timeLimit <= 0) {
-    clearInterval(countdown);
-
-    // Show prompt to user
-    let restart = confirm("Time is up! Do you want to restart the quiz?");
-    
-    if (restart) {
-      resetQuiz();
-    } else {
-      // Optionally, you can redirect to another page or handle it differently
-      alert("Quiz will not be submitted.");
+            if (--timer < 0) {
+                clearInterval(interval);
+                let restart = confirm("Time is up! Do you want to restart the quiz?");
+                if (restart) {
+                    window.location.href = '/quiz/restart';
+                } else {
+                    window.location.href = '/dashboard';
+                }
+            }
+        }, 1000);
     }
-  }
-}, 1000);
-   window.onload = function () {
-            var timeLimitInSeconds = <%= timeLimit * 60 %>; // Total quiz time in seconds
-            var timeLeftInSeconds = <%= timeLeft %>; // Remaining time in seconds
-            var display = document.querySelector('#time');
-            startTimer(timeLeftInSeconds, display);
-        }
-// Reset quiz function
-function resetQuiz() {
-  // Reload the page to reset the quiz
-  location.reload();
-}
 
+    window.onload = function () {
+        let timeLeftInSeconds = <%= timeLeft %>;
+        let display = document.querySelector('#time');
+        startTimer(timeLeftInSeconds, display);
+        updateProgress();
+    };
 
-        window.onload = function () {
-            var timeLimitInSeconds = <%= timeLimit * 60 %>; // Total quiz time in seconds
-            var timeLeftInSeconds = <%= timeLeft %>; // Remaining time in seconds
-            var display = document.querySelector('#time');
-            startTimer(timeLeftInSeconds, display);
-        };
-     function handleNavigation(direction) {
-    let currentIndex = <%= currentQuestionIndex %>;
-    let totalQuestions = <%= totalQuestions %>;
-
-    if (direction === 'back') {
-        if (currentIndex > 0) {
-            window.location.href = `/quiz?questionIndex=${currentIndex - 1}`;
-        } else {
-            // Redirect to dashboard
-            window.location.href = '/dashboard';
-        }
-    } else if (direction === 'next') {
-        if (currentIndex < totalQuestions - 1) {
-            window.location.href = `/quiz?questionIndex=${currentIndex + 1}`;
-        } else {
-            // Submit the quiz
-            document.querySelector('form').submit();
-        }
+    function updateProgress() {
+        const currentIndex = <%= currentQuestionIndex %>;
+        const totalQuestions = <%= totalQuestions %>;
+        const progressPercentage = ((currentIndex + 1) / totalQuestions) * 100;
+        document.querySelector('.progress-bar').style.width = progressPercentage + '%';
     }
-}
 
-    </script>
+    function handleNavigation(direction) {
+        let form = document.querySelector('form');
+        
+        // Create a hidden input field to pass the action (next or back)
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'action';
+        input.value = direction;  // 'back' or 'next'
+        form.appendChild(input);
+
+        form.submit();  // Submit the form with the updated action
+    }
+</script>
 </head>
 <body>
+  <nav class="navbar">
+      <div class="navbar-left">
+            <img src="/images/Logo.png" alt="Logo" class="logo">
+            <span class="site-name">LEARN CODE PRO</span>
+        </div>
+        <div class="navbar-right">
+<% if (student) { %>
+    <a href="/profile"><%= student %></a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/sign-out">Sign Out</a>
+<% } else { %>
+    <a href="/sign-up">Sign Up</a>
+    <a href="/sign-in">Sign In</a>
+<% } %>
+        </div>
+    </nav>
     <div class="header">
         <div class="question-info">
             Question <%= currentQuestionIndex + 1 %> of <%= totalQuestions %>
         </div>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: <%= ((currentQuestionIndex + 1) / totalQuestions) * 100 %>%;"></div>
+        </div>
         <div class="timer">
             Time Left: <span id="time"></span>
         </div>
-        <div class="progress-container">
-    <div class="progress-bar" style="width: <%= progressPercentage %>%;"></div>
-</div>
-
     </div>
     <form action="/next" method="POST">
         <input type="hidden" name="student_id" value="<%= student_id %>">
         <input type="hidden" name="currentQuestionId" value="<%= questions[currentQuestionIndex].question_id %>">
 
         <div class="quiz-container">
-            <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
-                <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
-            </button>
- <% if (currentQuestionIndex > 0) { %>
-                <button class="Back-btn" type="submit" onclick="document.getElementById('actionInput').value = 'back';">
-                    Back
-                </button>
-            <% } else { %>
-                <a href="/dashboard" class="Back-btn">Back</a>
-            <% } %>
             <div class="question-container">
                 <h3><%= questions[currentQuestionIndex].question_text %></h3>
             </div>
@@ -315,6 +347,17 @@ function resetQuiz() {
                         <span><%= option %></span>
                     </label>
                 <% }) %>
+            </div>
+            <div class="navigation-buttons">
+                <% if (currentQuestionIndex > 0) { %>
+                    <button class="back-btn" type="button" onclick="handleNavigation('back')">Back</button>
+                <% } else { %>
+                    <a class="back-btn" onclick="window.history.back()">&#8592; Back</a>
+                <% } %>
+                
+                <button class="next-btn" type="submit" name="action" value="<%= currentQuestionIndex < totalQuestions - 1 ? 'next' : 'submit' %>">
+                    <%= currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Submit' %>
+                </button>
             </div>
         </div>
     </form>

@@ -6,134 +6,198 @@
     <title>Exercises</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+      body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f8ff; /* Light Alice Blue */
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff; /* White */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+ .back-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #007bff; /* Blue color */
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            transition: color 0.3s ease;
         }
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 10px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        .back-button:hover {
+            color: #0056b3; /* Darker blue on hover */
         }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #f4f4f4;
-            padding: 10px 20px;
-            border-bottom: 2px solid #ddd;
+            background-color: #e6f7ff; /* Light Blue */
+            padding: 15px 20px;
+            border-bottom: 2px solid #b3e0ff; /* Light Blue Border */
             border-radius: 8px 8px 0 0;
+            position: relative; /* Relative positioning for the back button */
         }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .header button {
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px;
-            cursor: pointer;
-        }
-        .header button:hover {
-            background: #0056b3;
-        }
-        .question-section {
-            padding: 20px;
-        }
-        .question-section h2 {
-            margin: 0;
-            font-size: 20px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .question {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        .code-area {
-            padding: 20px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-family: monospace;
-        }
-        .code-input {
-            width: 150px;
-            height: 24px;
-            margin: 0 5px;
-            padding: 2px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            display: inline-block;
-            text-align: center;
-        }
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .actions button {
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-        .actions button:hover {
-            background: #0056b3;
-        }
-        .feedback {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        .correct {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-        .incorrect {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #003366; /* Dark Blue */
+}
+
+.header button {
+    background: #4db8ff; /* Light Blue */
+    color: #ffffff; /* White */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.header button:hover {
+    background: #3399ff; /* Medium Blue */
+}
+
+.question-section {
+    padding: 20px;
+}
+
+.question-section h2 {
+    margin: 0;
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 1px solid #cce0ff; /* Light Blue Border */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #003366; /* Dark Blue */
+}
+
+.question {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333333; /* Dark Gray */
+}
+
+.code-area {
+    padding: 20px;
+    background: #f9f9f9; /* Light Gray */
+    border: 1px solid #e0e0e0; /* Light Gray Border */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-family: monospace;
+    overflow-x: auto; /* Handle long code lines */
+}
+
+/* Style code blocks with Prism.js */
+pre {
+    background: #f4f4f4; /* Light Gray */
+    padding: 10px;
+    border-radius: 8px;
+    overflow-x: auto; /* Handle long code lines */
+    border: 1px solid #ddd; /* Light Gray Border */
+}
+
+code {
+    display: block;
+    padding: 10px;
+    background: #ffffff; /* White */
+    border: 1px solid #e0e0e0; /* Light Gray Border */
+    border-radius: 4px;
+    white-space: pre-wrap; /* Preserve spaces */
+    color: #333; /* Dark Gray for text */
+}
+
+/* Style placeholders with more space */
+.code-input::placeholder {
+    color: #aaa; /* Light Gray */
+    padding: 5px;
+    font-style: italic;
+}
+
+/* Code input styling */
+.code-input {
+    width: 150px;
+    height: 24px;
+    margin: 0 5px;
+    padding: 2px;
+    border: 1px solid #b3b3b3; /* Light Gray */
+    border-radius: 4px;
+    font-family: monospace;
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.actions button {
+    background: #4db8ff; /* Light Blue */
+    color: #ffffff; /* White */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background: #3399ff; /* Medium Blue */
+}
+
+.feedback {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+.correct {
+    background-color: #d4edda; /* Light Green */
+    border-color: #c3e6cb; /* Lighter Green */
+    color: #155724; /* Dark Green */
+}
+
+.incorrect {
+    background-color: #f8d7da; /* Light Red */
+    border-color: #f5c6cb; /* Lighter Red */
+    color: #721c24; /* Dark Red */
+}
+
     </style>
 </head>
 <body>
    <div class="container">
     <div class="header">
+            <button class="back-button" onclick="window.history.back()"&#8592;>Back</button>
         <h1>Guess the correct words</h1>
-        <button>71s</button>
     </div>
     <div class="question-section">
         <% exercises.forEach((exercise, index) => { %>
             <h2><%= exercise.title %></h2>
             <p class="question"><%= exercise.question_text %></p>
             <div class="code-area">
-    <pre><code>
+   <pre><code>
         <% 
-            let parts = exercise.code_snippet.split(/(<input\d+>)/g);
+            let parts = exercise.code_snippet.split(/(<input\d+>)/g); // Split the snippet by placeholders like <input1>, <input2>, etc.
             let inputIndex = 0;
-        %>
-        <% 
             parts.forEach(part => {
-                if (part.startsWith('<input')) {
-                    let label = `Placeholder ${++inputIndex}`;
-                    %><input type="text" id="input-<%= index %>-<%= inputIndex %>" class="code-input" placeholder="<%= label %>"><% 
+                if (part.match(/<input\d+>/)) { // If the part matches an input placeholder
+                    inputIndex++;
+                    let label = `Input ${inputIndex}`; // Placeholder label
+                    %><input type="text" id="input-<%= index %>-<%= inputIndex %>" class="code-input" placeholder="<%= label %>" /><% 
                 } else {
                     %><%= part %><% 
                 }
@@ -149,11 +213,10 @@
         <% }) %>
     </div>
 </div>
-    <a href="<%= dashboardUrl %>" class="button">Back to Dashboard</a>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
     <script>
-   function showAnswer(index, correctAnswer) {
+  function showAnswer(index, correctAnswer) {
     const feedbackDiv = document.getElementById(`feedback-${index}`);
     feedbackDiv.textContent = `The correct code is: ${correctAnswer}`;
     feedbackDiv.className = 'feedback correct';
@@ -164,7 +227,7 @@ function submitAnswer(index, correctAnswer) {
     // Gather all input values for the current exercise
     const inputs = document.querySelectorAll(`#input-${index}-1, #input-${index}-2, #input-${index}-3, #input-${index}-4`); // Adjust selectors as needed
     let userAnswers = [];
-    
+
     // Collect all input values
     inputs.forEach(input => {
         userAnswers.push(input.value.trim());
@@ -174,18 +237,18 @@ function submitAnswer(index, correctAnswer) {
     console.log('User Answers:', userAnswers);
     console.log('Correct Answer:', correctAnswer);
 
-    // Normalize userAnswers and correctAnswer for comparison
-    userAnswers = userAnswers.map(answer => normalizeAnswer(answer));
-    const correctAnswers = correctAnswer.split(',').map(answer => normalizeAnswer(answer.trim()));
+    // Normalize correctAnswer to get possible correct substrings
+    const correctAnswerObject = JSON.parse(correctAnswer); // Parse the JSON string to get the object
+    const correctAnswers = Object.values(correctAnswerObject); // Get the values of the object
 
     // Debugging
-    console.log('Normalized User Answers:', userAnswers);
     console.log('Normalized Correct Answers:', correctAnswers);
 
     // Check the answers
     const feedbackDiv = document.getElementById(`feedback-${index}`);
-    const isCorrect = userAnswers.length === correctAnswers.length &&
-                      userAnswers.every((ans, idx) => ans === correctAnswers[idx]);
+    const isCorrect = userAnswers.every((userAnswer, idx) => {
+        return correctAnswers[idx] && userAnswer.includes(correctAnswers[idx]);
+    });
 
     if (isCorrect) {
         feedbackDiv.textContent = 'Correct! Well done.';
@@ -202,6 +265,7 @@ function normalizeAnswer(answer) {
                  .replace(/\s+/g, '') // Remove all spaces
                  .replace(/[^\w]/g, ''); // Remove all non-word characters
 }
+
 </script>
 </body>
 </html>

@@ -1,33 +1,24 @@
 <!DOCTYPE html>
 <html>
+  <div id="video-container" style="display: none;">
+    <button id="close-video">Close</button>
+    <iframe id="video-player" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+</div>
 <head>
     <title>Dashboard</title>
     <!-- Include the updated CSS here -->
     /* Combined and corrected CSS */
     <style> /* Include the updated CSS here */
-     body {
+    body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f0f9ff; /* Lightest blue */
-    color: #333; /* Dark text for contrast */
-}
-.small-header-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background-color: #007BFF; /* Blue background */
-    color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+    background-color: white; 
+    color: #003366; /* Dark text for contrast */
 }
 
 #home-button {
-    background-color: #ffffff; /* White button */
-    color: #007BFF; /* Blue text */
+    background-color: #1a237e; /* Dark blue */
+    color: white;
     border: none;
     padding: 10px 20px;
     font-size: 1em;
@@ -36,12 +27,11 @@
 }
 
 #home-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    color: #ffffff;
+    background-color: #0d1b5e; /* Darker blue on hover */
 }
 
 .navbar {
-    background: linear-gradient(135deg, #a2c2e8, #6e9ecf); /* Light blue gradient */
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9); /* Light blue gradient */
     overflow: hidden;
     display: flex;
     justify-content: space-between;
@@ -51,7 +41,7 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    height: 40px; /* Adjusted height */
+    height: 40px;
 }
 
 .navbar-left {
@@ -65,21 +55,21 @@
 }
 
 .site-name {
-    color: #ffffff;
+    color: #1a237e;
     font-size: 1.5em;
 }
 
 .navbar-right a {
-    color: #ffffff;
+    color: #1a237e;
     padding: 14px 20px;
     text-decoration: none;
     text-align: center;
-    background: linear-gradient(135deg, #6e9ecf, #a2c2e8); /* Light blue gradient */
     border-radius: 5px;
+    margin-right: 20px;
 }
 
 .navbar-right a:hover {
-    background: linear-gradient(135deg, #a2c2e8, #6e9ecf); /* Inverted gradient */
+    background: #82b1ff;
 }
 
 @media screen and (max-width: 500px) {
@@ -89,22 +79,21 @@
     }
 }
 
- .home-btn.profile-btn, .sign-out-btn {
+.home-btn.profile-btn, .log-out-btn {
     border: 1px solid #ffffff;
     border-radius: 3px;
-    margin-right: 30px;
-    background: linear-gradient(135deg, #ffffff, #e3f2fd); /* Light blue gradient */
-    color: #003366;
+    background: #1a237e;
+    color: white;
 }
 
 .container {
-    margin-top: 90px; /* Match this value to the height of your navbar */
+    margin-top: 40px;
     padding: 40px;
-    color: #004d40; /* Dark teal */
     overflow-y: auto;
-    height: calc(100vh - 60px); /* Adjust height accordingly */
-    width: calc(110% - 90px); /* Adjusted width */
+    height: 80vh;
+    width: calc(100% - 60px); /* Adjusted to account for sidebar */
     box-sizing: border-box;
+    margin-left: 60px; /* Space from sidebar */
 }
 
 .course-header {
@@ -112,8 +101,7 @@
     margin-bottom: 20px;
     font-size: 1.8em;
     font-weight: bold;
-    color: #00796b; /* Teal */
-    margin-left:70px;
+    color: #00509e;
 }
 
 .module-container {
@@ -121,26 +109,36 @@
     flex-direction: row;
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 20px;
-    margin-left: 0;
-    margin-right: 0;
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    padding: 50px;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
     width: 100%;
     box-sizing: border-box;
-
 }
 
 .details-container {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    margin-left: 300px; /* Space from sidebar */
 }
 
 .details-container h2#module-details-title {
-    font-size: 1.5em;
-    color: #00796b; /* Teal */
+    font-size: 2.5em;
+    color: #00509e;
     margin: 40px 0;
     text-align: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.details-container h2#module-details-title::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    width: 100%;
+    background-color: #00509e;
 }
 
 .module {
@@ -148,7 +146,7 @@
     padding: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
-    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Light blue gradient */
+    background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
     margin-bottom: 10px;
     border-radius: 5px;
 }
@@ -156,7 +154,7 @@
 .module h4 {
     margin-bottom: 5px;
     font-size: 1.2em;
-    color: #00796b; /* Teal */
+    color: #00509e;
 }
 
 .module p {
@@ -166,10 +164,6 @@
 
 .hidden {
     display: none;
-}
-
-.module:last-child {
-    border-bottom: none;
 }
 
 .course-cards {
@@ -187,23 +181,19 @@
     width: calc(33.333% - 20px);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
-    color: #004d40; /* Dark teal */
-    margin-left: 100px;
-    margin-right: 0;
-
-
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+    color: #00509e;
 }
 
 .card h3 {
     margin-top: 0;
     font-size: 1.5em;
-    color: #00796b; /* Teal */
+    color: #00509e;
 }
 
 .card button {
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
-    color: #004d40; /* Dark teal */
+    background: #1a237e;
+    color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -213,29 +203,34 @@
 }
 
 .card button:hover {
-    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Inverted gradient */
+    background: #0d1b5e;
 }
 
 .sidebar {
     width: 250px;
-    height: calc(100vh - 60px); /* Adjusted for navbar height */
+    height: calc(100vh - 60px);
     position: fixed;
-    top: 60px; /* Adjusted for navbar height */
+    top: 60px;
     left: 0;
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
-    color: #004d40; /* Dark teal */
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+    color: #00509e;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    display: none;
+    display: none; /* Hide sidebar in main module container */
     flex-direction: column;
     font-size: 1em;
+    z-index: 1000;
+}
+
+.sidebar.show {
+    display: flex;
 }
 
 .sidebar h2 {
     margin-top: 0;
     font-size: 1.5em;
-    color: #00796b; /* Teal */
+    color: #003366;
 }
 
 .sidebar .module {
@@ -250,7 +245,7 @@
 .sidebar .module h4 {
     margin: 0;
     font-size: 1.2em;
-    color: #00796b; /* Teal */
+    color: #003366;
 }
 
 .sidebar .module:last-child {
@@ -261,186 +256,147 @@
     width: 400px;
     max-width: 100%;
     position: fixed;
-    right: 0;
+    right: -400px;
     top: 0;
     height: 100%;
     overflow-y: auto;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    color: #004d40; /* Dark teal */
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+    color: #003366;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+    transition: right 0.3s;
+    z-index: 1000;
     padding: 30px;
-    display: none;
     top: 70px;
     box-sizing: border-box;
 }
 
-.compiler-container h1 {
-    font-size: 1.5em;
-    color: #00796b; /* Teal */
-    margin-bottom: 20px;
-    position: relative;
+.compiler-container.open {
+    right: 0;
 }
 
-.compiler-container textarea#code, .compiler-container textarea#input {
-    width: 100%;
-    border-radius: 5px;
-    padding: 10px;
-    font-family: 'Courier New', Courier, monospace;
-    border: 1px solid #ddd;
-    resize: vertical;
-}
-
-.compiler-container textarea#code {
-    height: 200px;
-    background-color: #ffffff;
-    color: #000000;
-}
-
-.compiler-container textarea#input {
-    height: 80px;
-    background-color: #ffffff;
-    color: #000000;
-}
-
-.compiler-container select {
-    margin: 40px 0;
-    width: 100%;
-    text-align: center;
-}
-
-.compiler-container button {
-    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Light blue gradient */
-    color: #004d40; /* Dark teal */
+.toggle-button {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
+    color: #00509e;
     border: none;
-    padding: 10px 20px;
+    padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
     font-size: 1em;
+    writing-mode: vertical-rl;
+    text-align: center;
+    transition: transform 0.3s;
+    z-index: 1001;
+}
+
+.toggle-button.open {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.compile-button, .reset-button {
+    background-color: #00509e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+.compile-button:hover, .reset-button:hover {
+    background-color: #004080;
+}
+
+#lang {
     position: absolute;
-    top: 10px;
-    right: 80px;
-}
-
-.compiler-container button:hover {
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Inverted gradient on hover */
-}
-
-textarea::placeholder {
-    color: #888;
-    font-style: italic;
-}
-
-.compiler-container.hidden {
-    display: none;
-}
-
-.compiler-container.visible {
-    display: block;
-}
-  #lang {
-    position: absolute;
-    width: 80px;
-    top: -10px; /* Move the dropdown higher by 10px */
-    right: 300px; /* Align to the right side of the container */
-    margin-left: 10px; /* Space between label and dropdown */
-}
-.close-button {
-    position: absolute;
-    top: 0; /* Space from the top */
-    left: 350px; /* Space from the left */
-    background-color: #ff4d4d; /* Background color for the button */
-    color: white; /* Text color */
-    border: none; /* Remove default border */
-    border-radius: 50%; /* Circular shape */
-    width: 30px; /* Width of the button */
-    height: 30px; /* Height of the button */
-    display: flex; /* Center the content */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    font-size: 16px; /* Font size for the × symbol */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for better visibility */
-    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
-    z-index: 1000; /* Ensure the close button is on top */
-}
-.close-button:hover {
-    background-color: #e03e3e; /* Darker shade on hover */
-    transform: scale(1.1); /* Slightly enlarge on hover */
-}
-.close-button:focus {
-    outline: none; /* Remove default outline on focus */
-}
-.reset-button {
-    background-color: #004d40;
-    margin-right: 110px;
-}
-
-.reset-button:hover {
-    background-color: #e03e3e;
+    top: 30px;
+    right: 50px;
+    width: 100px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    color: #004080;
 }
 
 .code-output {
-    padding: 10px;
+    padding: 30px;
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 5px;
-    font-family: 'Courier New', Courier, monospace;
-    color: #004d40; /* Dark teal */
+    font-family: Arial, sans-serif;
+    color: #004080;
     overflow-x: auto;
+    margin-top: 10px;
 }
 
-.material-and-quizzes {
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
+.material-and-quizzes, .material, .quiz, .exercise, .example {
+    font-size: 1.5em;
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 20px;
     margin-bottom: 20px;
-    margin-left: 290px;
+    color: #004080;
 }
 
-.material {
-    margin-bottom: 50px;
-    margin-left: 300px;
-    color: #00796b; /* Teal */
+.material h4, .example h4, .exercise h4, .quiz h4 {
+    font-size: 1.6em;
+    color: #004080;
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    text-align: center;
 }
 
-.material h4, .a, .quiz h4 {
-    font-size: 1.5em;
-    color: #00796b; /* Teal */
-    left:0;
+.material h4::before, .example h4::before, .exercise h4::before, .quiz h4::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    height: 4px;
+    width: 0;
+    background-color: #004080;
+    transition: width 0.4s ease-in-out;
+    transform: translateX(-50%);
+                text-align: center;
+
 }
 
-.material a {
-    color: #00796b; /* Teal */
+.material h4:hover::before, .example h4:hover::before, .exercise h4:hover::before, .quiz h4:hover::before {
+    width: 100%;
 }
 
-.quiz {
-    margin-bottom: 70px;
-    margin-left: 300px;
+#video-player {
+    width: 100%;
+    height: auto;
 }
 
-.quiz a {
-    color: #00796b; /* Teal */
-}
-
-#toggle-compiler {
-    position: fixed;
-    top: 60px;
-    left: 300px;
-    background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Light blue gradient */
-    color: #004d40; /* Dark teal */
+#close-video {
+    background-color: #f00;
+    color: #fff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1em;
-    z-index: 1001;
+    margin-bottom: 10px;
 }
 
-#toggle-compiler:hover {
-    background: linear-gradient(135deg, #b3e5fc, #e1f5fe); /* Inverted gradient on hover */
+#video-container {
+    margin-top: 20px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#video-container.show {
+    display: block;
+    opacity: 1;
 }
 
 .compiler-output {
@@ -449,51 +405,13 @@ textarea::placeholder {
     background-color: #f4f4f4;
     border: 1px solid #ddd;
     border-radius: 5px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: Arial, sans-serif;
     white-space: pre-wrap;
     overflow-x: auto;
 }
-.exercise {
-    margin-bottom: 50px;
-    margin-left: 300px;
-    color: #00796b; /* Teal */
-}
-.exercise h4{
-    margin-bottom: 50px;
-    margin-left: 100px;
-    color: #00796b; /* Teal */
-}
-.example {
-    margin-bottom: 50px;
-    margin-left: 300px;
-    color: #00796b; /* Teal */
-}
-.example pre{
-    background-color: #e3f2fd; /* Light blue background color */
-    border: 1px solid #ccc; /* Border around the code block */
-    padding: 10px; /* Padding inside the code block */
-    border-radius: 5px; /* Rounded corners */
-    white-space: pre-wrap; /* Preserve whitespace and line breaks */
-    overflow-x: auto; /* Horizontal scroll if code is too wide */
-    font-family: 'Courier New', Courier, monospace; /* Monospaced font */
-    font-size: 14px; /* Adjust font size as needed */
-    color: #000000; /* Black text color */
-    margin-left: 100px;
-}
-
-.example code{
-    color: #000000; /* Black text color */
-    display: block; /* Display code block */
-    white-space: pre-wrap; /* Preserve whitespace */
-}
-
 </style>
 </head>
 <body>
-<!-- _navbar.ejs -->
-<header class="small-header-bar">
-        <a href="/dashboard">Home</a>
-      </header>
 <nav class="navbar">
     <div class="navbar-left">
         <img src="/images/Logo.png" alt="Logo" class="logo">
@@ -553,21 +471,22 @@ textarea::placeholder {
         <% } %>
     <% } %>
 </div>
-
-<div id="sidebar" class="sidebar">
+<<aside id="sidebar" class="sidebar">
     <h2 id="sidebar-course-name"></h2>
     <div id="sidebar-modules"></div>
-</div>
-
+</aside>
 <div id="details-container" class="details-container hidden">
     <h2 id="module-details-title"></h2>
     <div id="module-details-content"></div>
-    <button id="toggle-compiler" onclick="toggleCompiler()">Open Compiler</button>
-
+    <div id="video-container" style="display: none;">
 </div>
-<div id="compiler-container" class="compiler-container hidden">
-    <button class="close-button" onclick="toggleCompiler()">&times;</button>
+<button class="toggle-button" id="toggleButton">>></button>
+</div>
+
+<div class="compiler-container" id="compilerContainer">
     <form id="form" action="/compilecode" method="POST">
+        <button type="submit" class="compile-button">Compile</button>
+        <button type="button" class="reset-button" onclick="resetCompiler()">Reset</button>
         <div class="compiler-content">
             <div class="code-input">
                 <label for="code"></label><br>
@@ -583,14 +502,19 @@ textarea::placeholder {
                 <option value="Python">Python</option>
             </select>
         </div>
-        <div class="compiler-actions">
-            <button type="submit">Compile</button>
-            <button type="button" class="reset-button" onclick="resetCompiler()">Reset</button>
-        </div>
     </form>
-    <div id="compiler-output" class="compiler-output"></div> <!-- Output container -->
-</div>
+    <div id="compiler-output" class="compiler-output"></div>
+    </div>
 <script>
+
+document.getElementById('close-video').addEventListener('click', function() {
+    const videoContainer = document.getElementById('video-container');
+    const videoPlayer = document.getElementById('video-player');
+    
+    videoContainer.style.display = 'none'; // Hide the video container
+    videoPlayer.src = ''; // Stop the video
+});
+
     document.addEventListener('DOMContentLoaded', (event) => {
         console.log('DOM fully loaded and parsed');
     });
@@ -633,19 +557,45 @@ textarea::placeholder {
             document.getElementById('module-details-title').innerText = moduleName;
             const moduleDetailsContent = document.getElementById('module-details-content');
             moduleDetailsContent.innerHTML = '';
+          
 
-            // Display materials
-            moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Materials</h3>`;
-            data.materials.forEach(material => {
-                moduleDetailsContent.innerHTML += `
-                    <div class="material">
-                        <h4>${material.title}</h4>
-                        <p>Type: ${material.type}</p>
-                        <p>Description: ${material.description}</p>
-                        <a href="${material.link}" target="_blank">Link</a>
-                    </div>
-                `;
-            });
+ // Display materials
+moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Materials</h3>`;
+data.materials.forEach(material => {
+    moduleDetailsContent.innerHTML += `
+        <div class="material">
+            <h4>${material.title}</h4>
+            <p>Type: ${material.type}</p>
+            <p>Description: ${material.description}</p>
+<a href="${material.link}" class="material-link" data-material-id="${material.material_id}" data-video-url="${material.link}">Watch Video</a>
+        </div>
+    `;
+});
+function extractYouTubeVideoID(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
+function showVideo(videoUrl) {
+    const videoId = extractYouTubeVideoID(videoUrl);
+    const videoPlayer = document.getElementById('video-player');
+
+    if (videoId) {
+        videoPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        document.getElementById('video-container').style.display = 'block';
+    } else {
+        alert('Invalid YouTube URL');
+    }
+}
+
+document.querySelectorAll('.material-link').forEach(link => {
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const videoUrl = this.getAttribute('data-video-url');
+        showVideo(videoUrl);
+    });
+});
 
             // Display examples
             moduleDetailsContent.innerHTML += `<h3 class="module-details-heading">Examples</h3>`;
@@ -708,15 +658,16 @@ function escapeHtml(pre) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-function toggleCompiler() {
-    const compilerContainer = document.getElementById('compiler-container');
-    if (compilerContainer) {
-        compilerContainer.classList.toggle('hidden');
-        compilerContainer.classList.toggle('visible');
-    } else {
-        console.error('Compiler container not found.');
-    }
-}
+ const compilerContainer = document.getElementById('compilerContainer');
+    const toggleButton = document.getElementById('toggleButton');
+        const detailsContainer = document.getElementById("detailsContainer");
+
+
+    toggleButton.addEventListener('click', () => {
+        compilerContainer.classList.toggle('open');
+        toggleButton.classList.toggle('open');
+            detailsContainer.classList.toggle("compact");
+    });
 
 function resetCompiler() {
     document.getElementById('code').value = ''; // Clear the code textarea

@@ -6,8 +6,8 @@
     <title><%= quizTitle %></title>
     <style>
         body {
-            font-family:  Arial, sans-serif;
-            background-color: #eef2f7;
+            font-family: Arial, sans-serif;
+            background-color: white; /* Light sky blue background */
             color: #333;
             margin: 0;
             padding: 0;
@@ -19,7 +19,7 @@
 
         .container {
             position: relative; /* Position container relative for absolute positioning of the close button */
-            background: linear-gradient(135deg, #e0f7fa, #f1f8e9, #fff3e0);
+            background: linear-gradient(135deg, #f9f9f9, #e0f7fa, #f0e9d2); /* Gradient with light gray, light blue, and beige */
             padding: 40px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
@@ -28,11 +28,11 @@
             text-align: center;
         }
 
-        .close-button {
+        .back-button {
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: #e57373;
+            background-color: #00509e; /* Light red for the close button */
             color: white;
             border: none;
             padding: 8px 12px;
@@ -42,12 +42,12 @@
             transition: background-color 0.3s ease;
         }
 
-        .close-button:hover {
-            background-color: #d32f2f;
+        .back-button:hover {
+            background-color: #004080;
         }
 
         h1 {
-            color: #00acc1;
+            color: #0277bd; /* Dark sky blue for the title */
             font-size: 2.5em;
             margin-bottom: 20px;
             font-weight: 700;
@@ -57,7 +57,7 @@
             font-size: 1.2em;
             line-height: 1.8;
             margin-bottom: 20px;
-            color: #607d8b;
+            color: #4f5b62; /* Soft gray for text */
         }
 
         form {
@@ -67,7 +67,7 @@
         }
 
         button {
-            background-color: #00acc1;
+            background-color: #0288d1; /* Sky blue for the button */
             color: white;
             border: none;
             padding: 12px 30px;
@@ -79,7 +79,7 @@
         }
 
         button:hover {
-            background-color: #00838f;
+            background-color: #0277bd;
             transform: translateY(-3px);
         }
     </style>
@@ -87,7 +87,7 @@
 
 <body>
     <div class="container">
-        <button class="close-button" onclick="closePage()">&times;</button>
+    <button class="back-button" onclick="window.history.back()">&#8592; Back</button>
         <h1><%= quizTitle %></h1>
         <p>Time Limit: <%= timeLimit %> minutes</p>
         <p>Number of Questions: <%= numberOfQuestions %></p>
@@ -101,11 +101,5 @@
         </form>
     </div>
 
-    <script>
-        function closePage() {
-            window.close(); // This may not work in some browsers unless the page was opened by JavaScript
-            window.location.href = '/dashboard'; // Redirect to another page, e.g., the dashboard
-        }
-    </script>
 </body>
 </html>

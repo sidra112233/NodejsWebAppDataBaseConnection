@@ -35,9 +35,11 @@ app.use((req, res, next) => {
 // Define protected routes
 app.use('/modules/:moduleId/materials', ensureAuthenticated);
 app.use('/modules/:moduleId/quizzes', ensureAuthenticated);
+app.use('/exercises/:moduleId', ensureAuthenticated);
 app.use('/quiz', ensureAuthenticated);
 app.use('/quiz/start', ensureAuthenticated);
 app.use('/next', ensureAuthenticated);
+
 // Define fixed quiz parameters
 const quizParams = {
     timeLimit: 15, // in minutes
@@ -271,7 +273,7 @@ app.get('/exercises/:moduleId', async (req, res) => {
         res.render('exercise', {
             exercises: exercisesResult.recordset,
             dashboardUrl: '/dashboard' // Optionally pass the URL to the view
-    });
+        });
     } catch (err) {
         console.error('SQL error', err);
         res.status(500).send('Server error');
@@ -300,6 +302,7 @@ app.post('/sign-in', async (req, res) => {
 
         if (userResult.recordset.length > 0) {
             const student = userResult.recordset[0];
+            req.session.studentId = userResult.recordset[0].student_id; // Save ID in session
 
             // Set session data
             req.session.student_id = student.student_id;
@@ -340,6 +343,7 @@ app.post('/sign-in', async (req, res) => {
                 acc[module.course_id].push(module);
                 return acc;
             }, {});
+
             // Render dashboard with all necessary data
             res.render('dashboard', {
                 student: student,
@@ -428,7 +432,7 @@ app.post('/enroll', async (req, res) => {
         }
     }
 });
-app.get('/dashboard', async (req, res) => {
+app.get('/dashboard', ensureAuthenticated, async (req, res) => {
     const student_id = req.session.student_id;
 
     if (!student_id) {
@@ -649,7 +653,6 @@ app.get('/modules/:moduleId/quizzes', async (req, res) => {
 });
 
 
-
 // Route to start the quiz
 app.post('/quiz/start', async (req, res) => {
     const quizId = parseInt(req.body.quiz_id, 10);
@@ -685,7 +688,11 @@ async function getQuestionsFromDatabase(quizId) {
     const pool = await sql.connect(config);
     const result = await pool.request()
         .input('quizId', sql.Int, quizId)
-        .query('SELECT * FROM QuizQuestions WHERE quiz_id = @quizId ORDER BY NEWID()');
+        .query(`
+            SELECT TOP 10 question_id, question_text, option1, option2, option3, option4,correct_option
+            FROM QuizQuestions 
+            WHERE quiz_id = @quizId  ORDER BY NEWID()
+        `);
     return result.recordset.map(question => ({
         question_id: question.question_id,
         question_text: question.question_text,
@@ -694,6 +701,7 @@ async function getQuestionsFromDatabase(quizId) {
     }));
 }
 
+
 // Helper function to fetch the next student ID
 async function getNextStudentId() {
     const pool = await sql.connect(config);
@@ -701,21 +709,31 @@ async function getNextStudentId() {
         .query('SELECT ISNULL(MAX(student_id), 0) + 1 as nextStudentId FROM QuizSubmissions');
     return result.recordset[0].nextStudentId;
 }
-
-// Helper function to save quiz submission
 async function saveQuizSubmission(student_id, quiz_id, totalScore) {
-    const progress = Math.round((totalScore / 100) * 100); // Assuming 100 is the max score
+    const progress = Math.round((totalScore / 100) * 100);
     const pool = await sql.connect(config);
+
+    // Check if student_id exists in Student table
+    const studentCheck = await pool.request()
+        .input('student_id', sql.Int, student_id)
+        .query('SELECT COUNT(*) AS studentExists FROM Student WHERE student_id = @student_id');
+
+    if (studentCheck.recordset[0].exists === 0) {
+        throw new Error('Student ID does not exist');
+    }
+
+    // Proceed to save the submission
     await pool.request()
         .input('student_id', sql.Int, student_id)
         .input('quiz_id', sql.Int, quiz_id)
-        .input('score', sql.Int, totalScore)
+        .input('score', sql.Int, totalScore) // Make sure totalScore is defined at this point
         .input('progress', sql.Int, progress)
         .query('INSERT INTO QuizSubmissions (student_id, quiz_id, score, progress) VALUES (@student_id, @quiz_id, @score, @progress)');
 }
 
 app.get('/quiz/start/:id', async (req, res) => {
     const quizId = req.params.id;
+    const questions = req.session.questions;
 
     console.log('Received quiz ID:', quizId);
 
@@ -740,6 +758,7 @@ app.get('/quiz/start/:id', async (req, res) => {
         }
 
         const quiz = quizResult.recordset[0];
+        req.session.questions = questions;
         req.session.quiz_id = quiz.quiz_id;
         req.session.currentQuestionIndex = 0;
         req.session.startTime = new Date().getTime();
@@ -748,7 +767,7 @@ app.get('/quiz/start/:id', async (req, res) => {
         const questionsResult = await pool.request()
             .input('quizId', sql.Int, quizId)
             .query(`
-            SELECT question_id, question_text, option1, option2, option3, option4
+            SELECT TOP 10 question_id, question_text, option1, option2, option3, option4,correct_option
             FROM QuizQuestions 
             WHERE quiz_id = @quizId  ORDER BY NEWID()
         `);
@@ -820,9 +839,16 @@ app.get('/quiz', async (req, res) => {
         res.status(500).send('Error serving quiz');
     }
 });
+// Restart the quiz route
+app.get('/quiz/restart', (req, res) => {
+    // Reset session data for the quiz
+    req.session.startTime = new Date().getTime(); // Reset start time
+    req.session.currentQuestionIndex = 0; // Restart from the first question
+    req.session.scores = []; // Clear previous scores
 
-
-// Handle quiz navigation and submission
+    // Redirect to the first question of the quiz
+    res.redirect('/quiz/start');
+});
 app.post('/next', async (req, res) => {
     const { action, answers, currentQuestionId } = req.body;
     const student_id = req.session.student_id;
@@ -830,37 +856,45 @@ app.post('/next', async (req, res) => {
     const questions = await getQuestionsFromDatabase(quiz_id);
     const totalQuestions = questions.length;
     let currentQuestionIndex = req.session.currentQuestionIndex || 0;
+    const timeLimitInSeconds = quizParams.timeLimit * 60;
+    const currentTime = new Date().getTime(); // Current time in milliseconds
+
+    const elapsedTime = (currentTime - req.session.startTime) / 1000; // Convert to seconds
 
     if (!req.session.scores) {
         req.session.scores = [];
     }
-
-    // Check if the quiz has timed out
-    const currentTime = new Date().getTime();
-    const startTime = req.session.startTime;
-    const elapsedTime = (currentTime - startTime) / 1000; // Time in seconds
-    const timeLimitInSeconds = quizParams.timeLimit * 60; // Total quiz time in seconds
-    if (elapsedTime > timeLimitInSeconds) {
-        req.session.destroy(); // Clear session data
-        return res.render('result', { totalScore: req.session.scores.reduce((acc, cur) => acc + cur, 0), timeExpired: true });
-    }
-
-    // Process answers
     if (answers && currentQuestionId) {
+        console.log("Current Question ID:", currentQuestionId); // Log the current question ID
+        console.log("Questions array:", questions); // Log the questions array
+
         const answersObj = Array.isArray(answers) ? { [currentQuestionId]: answers[0] } : answers;
         const selectedOptionId = parseInt(answersObj[currentQuestionId], 10);
         const currentQuestion = questions.find(q => q.question_id == currentQuestionId);
-        const correctOptionId = currentQuestion.correct_option;
 
+        if (!currentQuestion) {
+            console.error(`Question with ID ${currentQuestionId} not found.`);
+            return res.status(400).send('Current question not found.'); // Return if question not found
+        }
+
+        const correctOptionId = currentQuestion.correct_option;
         if (!isNaN(selectedOptionId)) {
             const score = selectedOptionId === correctOptionId ? 10 : 0;
             req.session.scores[currentQuestionIndex] = score;
         }
     }
-    if (req.body.action === 'next') {
-        currentQuestionIndex++;
-    } else if (req.body.action === 'back') {
-        currentQuestionIndex--;
+
+    // Handle navigation action
+    if (action === 'next') {
+        // Move to the next question
+        if (currentQuestionIndex < totalQuestions - 1) {
+            currentQuestionIndex++;
+        }
+    } else if (action === 'back') {
+        // Move to the previous question
+        if (currentQuestionIndex > 0  ) {
+            currentQuestionIndex--;
+        }
     }
 
     req.session.currentQuestionIndex = currentQuestionIndex; // Update session
@@ -870,8 +904,11 @@ app.post('/next', async (req, res) => {
         await saveQuizSubmission(student_id, quiz_id, totalScore);
         const progress = Math.round((totalScore / 100) * 100); // Assuming 100 is the max score
 
-        req.session.destroy(); // Clear session data
-        return res.render('result', { totalScore,progress });
+        // Instead of destroying the entire session, only clear quiz-related session data
+        req.session.quiz_id = null;
+        req.session.currentQuestionIndex = null;
+        req.session.startTime = null;
+        return res.render('result', { totalScore, progress });
     }
     const progressPercentage = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
     // Render the next question
