@@ -111,6 +111,7 @@ app.get('/course/:courseId', async (req, res) => {
         // Render the layout page with the list of courses and optional course details
         res.render('layout', {
             courses: coursesResult.recordset, // All courses for display
+            selectedCourse: courseId, // Pass the selected course ID to the template
             modules: modulesResult.recordset, // Modules for the selected course
             materials: [], // Placeholder for materials if needed
             examples: [],
@@ -964,6 +965,7 @@ app.get("/dashboard", function (req, res) {
             { value: "c", label: "C" },
             { value: "cpp", label: "C++" },
             { value: "python", label: "Python" }
+
         ],
         themes: [
             { value: "vs-dark", label: "Dark" },
@@ -1005,7 +1007,10 @@ app.post('/compilecode', function (req, res) {
 
             });
         }
-    } if (lang === "Python") {
+    }
+  
+        
+    if (lang === "Python") {
         if (inputRadio === "true") {
             var envData = { OS: "windows" };
             compiler.compilePythonWithInput(envData, code, input, function (data) {

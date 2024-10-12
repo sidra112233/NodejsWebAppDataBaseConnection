@@ -156,7 +156,6 @@ margin-top:0;
 }
 
 .module-list {
-    display: none;
     padding-left: 20px;
 }
 
@@ -181,8 +180,8 @@ h2, h3,h4 {
     font-weight: 600;
     text-transform: uppercase;
     position: relative;
-    margin-bottom: 20px;
-    text-align: left; /* Align to the left */
+    margin-bottom: 10px;
+    text-align: centre; /* Align to the left */
     z-index: 1; /* Ensure text stays on top */
 }
 
@@ -219,7 +218,7 @@ h2:hover::after, h3:hover::after {
 
 #material-list h3, #quiz-list h3, #exercise-list h3 {
     color: white; /* Darker blue */
-    font-size: 1.4em;
+    font-size: 1.8em;
     text-align: center; /* Center the text */
 }
 
@@ -235,31 +234,44 @@ h2:hover::after, h3:hover::after {
     </div>
     <div class="navbar-right">
         <a href="/">Home</a>
-        <a href="/sign-up" class="register-btn">Sign Up</a>
     </div>
 </nav>
-
 <!-- Main container for sidebar and content -->
 <div class="main-container">
     <div id="sidebar">
-    <img src="/images/Logo.png" alt="Logo" class="logo1">
+        <img src="/images/Logo.png" alt="Logo" class="logo1">
         <h4>Courses</h4>
         <ul id="course-list">
-            <% if (courses && courses.length > 0) { %>
-                <% courses.forEach(course => { %>
-                    <li>
-                        <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
-                        <div class="module-list" data-course-id="<%= course.course_id %>">
-                            <h4>Modules</h4>
-                            <ul class="module-items"></ul>
-                        </div>
-                    </li>
-                <% }); %>
-            <% } else { %>
-                <li>No courses available</li>
-            <% } %>
-        </ul>
+   <% if (courses && courses.length > 0) { %>
+    <% courses.forEach(course => { %>
+        <% if (course.course_id == selectedCourse) { %> <!-- Only display selected course -->
+            <li>
+                <a href="#" class="course-link" data-course-id="<%= course.course_id %>"><%= course.course_name %></a>
+                <div class="module-list" data-course-id="<%= course.course_id %>"<%= course.module_name %>>
+                    <h4>Modules</h4>
+                    <ul class="module-items">
+                        <% if (modules && modules.length > 0) { %> <!-- Check if modules exist -->
+                            <% modules.forEach(module => { %>
+                                <li>
+                                    <a href="#" class="module-link" data-module-id="<%= module.module_id %>"><%= module.module_name %></a>
+                                </li>
+                            <% }); %>
+                        <% } else { %>
+                            <li>No modules available for this course.</li>
+                        <% } %>
+                    </ul>
+                </div>
+            </li>
+        <% } %>
+    <% }); %>
+<% } else { %>
+    <li>No courses available</li>
+<% } %>
+
+</ul>
+
     </div>
+    
     <div id="content">
         <h2 id="course-name"><%= courseName || 'Select a Course' %></h2>
         <p id="course-description"><%= courseDescription || 'Course description will appear here.' %></p>
@@ -269,10 +281,11 @@ h2:hover::after, h3:hover::after {
         <ul id="quiz-list"></ul>
         <ul id="exercise-list"></ul>
         <div class="module-navigation">
-        <button id="prev-module" class="nav-btn">&larr;</button>
-        <button id="next-module" class="nav-btn">&rarr;</button>
+            <button id="prev-module" class="nav-btn">&larr;</button>
+            <button id="next-module" class="nav-btn">&rarr;</button>
+        </div>
     </div>
-    </div>
+</div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -346,7 +359,6 @@ h2:hover::after, h3:hover::after {
 
         sidebar.addEventListener('click', async (event) => {
             if (event.target && event.target.classList.contains('module-link')) {
-                event.preventDefault();
                 const moduleId = event.target.dataset.moduleId;
 
                 try {
@@ -378,8 +390,9 @@ h2:hover::after, h3:hover::after {
                     if (moduleData.quizzes.length === 0) {
                         quizList.innerHTML += '<li>No quizzes available.</li>';
                     } else {
+
                         moduleData.quizzes.forEach(quiz => {
-                            quizList.innerHTML += `<li><a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a></li>`;
+                            quizList.innerHTML += `<a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>`;
                         });
                     }
                     quizList.innerHTML += '</ul>';
@@ -390,7 +403,7 @@ h2:hover::after, h3:hover::after {
                         exerciseList.innerHTML += '<li>No exercises available.</li>';
                     } else {
                         moduleData.exercises.forEach(exercise => {
-                            exerciseList.innerHTML += `<li><a href="/exercises/${exercise.exercise_id}" class="exercise-link">Go to Exercise</a></li>`;
+                            exerciseList.innerHTML += `<a href="/exercises/${exercise.exercise_id}" class="exercise-link">Go to Exercise</a>`;
                         });
                     }
                     exerciseList.innerHTML += '</ul>';
@@ -438,33 +451,33 @@ h2:hover::after, h3:hover::after {
     const materialList = document.getElementById('material-list');
     const quizList = document.getElementById('quiz-list');
     const exerciseList = document.getElementById('exercise-list');
+// Fetch and load modules when a course is selected
+courseList.addEventListener('click', async (event) => {
+    if (event.target && event.target.classList.contains('course-link')) {
+        event.preventDefault();
+        const courseId = event.target.dataset.courseId;
 
-    // Fetch and load modules when a course is selected
-    courseList.addEventListener('click', async (event) => {
-        if (event.target && event.target.classList.contains('course-link')) {
-            event.preventDefault();
-            const courseId = event.target.dataset.courseId;
+        try {
+            // Fetch course modules
+            const response = await fetch(`/courses/${courseId}/modules`);
+            const data = await response.json();
 
-            try {
-                // Fetch course modules
-                const response = await fetch(`/courses/${courseId}/modules`);
-                const data = await response.json();
+            // Update the modules list
+            modules = data.modules.map(module => ({
+                id: module.module_id,
+                name: module.module_name
+            }));
 
-                // Update the modules list
-                modules = data.modules.map(module => ({
-                    id: module.module_id,
-                    name: module.module_name
-                }));
-
-                // Automatically load the first module
-                currentModuleIndex = 0;
-                loadModule(currentModuleIndex);
-                updateButtonState();
-            } catch (error) {
-                console.error('Error fetching course modules:', error);
-            }
+            // Automatically load the first module
+            currentModuleIndex = 0;
+            loadModule(currentModuleIndex);
+            updateButtonState();
+        } catch (error) {
+            console.error('Error fetching course modules:', error);
         }
-    });
+    }
+});
+
 
     // Function to load a module by index
     const loadModule = async (index) => {
