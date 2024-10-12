@@ -87,7 +87,7 @@
     margin-top: 40px;
     padding: 40px;
     overflow-y: auto;
-    height: 80vh;
+    height: 90vh;
     width: calc(100% - 60px); /* Adjusted to account for sidebar */
     box-sizing: border-box;
     margin-left: 60px; /* Space from sidebar */
@@ -109,6 +109,7 @@
     padding: 50px;
     background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
     width: 100%;
+    height: 100%;
     box-sizing: border-box;
 }
 
@@ -266,10 +267,22 @@
     top: 70px;
     box-sizing: border-box;
 }
+  .details-container {
+        transition: margin-right 0.3s ease;
+    }
 
-.compiler-container.open {
-    right: 0;
-}
+    .details-container.shifted {
+        margin-right: 400px; /* Adjust based on compiler width */
+    }
+
+    .compiler-container {
+        right: -400px;
+        transition: right 0.3s;
+    }
+
+    .compiler-container.open {
+        right: 0;
+    }
 
 .toggle-button {
     position: fixed;
@@ -335,7 +348,7 @@
 }
 
 .material-and-quizzes, .material, .quiz, .exercise, .example {
-    font-size: 1.5em;
+    font-size: 1.1em;
     background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -345,7 +358,7 @@
 }
 
 .material h4, .example h4, .exercise h4, .quiz h4 {
-    font-size: 1.6em;
+    font-size: 1.9em;
     color: #004080;
     position: relative;
     padding-bottom: 10px;
@@ -437,12 +450,7 @@
                         <% modulesByCourse[course.course_id].forEach(module => { %>
                             <div class="module" onclick="showModuleInSidebar('<%= course.course_name %>', <%= JSON.stringify(modulesByCourse[course.course_id]) %>, <%= module.module_id %>)">
                                 <h4><%= module.module_name %></h4>
-                                <% if (module.quiz_id) { %>
-                                    <form action="/quiz/start" method="post">
-                                        <input type="hidden" name="quiz_id" value="<%= module.quiz_id %>">
-                                        <button type="submit">Start Quiz</button>
                                     </form>
-                                <% } %>
                             </div>
                         <% }); %>
                     <% } else { %>
@@ -618,7 +626,6 @@ if (data.exercises && data.exercises.length > 0) {
                     moduleDetailsContent.innerHTML += `
                         <div class="quiz">
                             <h4>${quiz.quiz_title}</h4>
-                            <p>Total Marks: ${quiz.total_marks}</p>
                             <a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>
 
                         </div>
@@ -643,15 +650,12 @@ function escapeHtml(pre) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
- const compilerContainer = document.getElementById('compilerContainer');
-    const toggleButton = document.getElementById('toggleButton');
-        const detailsContainer = document.getElementById("detailsContainer");
+ document.getElementById('toggleButton').addEventListener('click', function() {
+        const compiler = document.querySelector('.compiler-container');
+        const detailsContainer = document.querySelector('.details-container');
 
-
-    toggleButton.addEventListener('click', () => {
-        compilerContainer.classList.toggle('open');
-        toggleButton.classList.toggle('open');
-            detailsContainer.classList.toggle("compact");
+        compiler.classList.toggle('open');
+        detailsContainer.classList.toggle('shifted');
     });
 
 function resetCompiler() {
