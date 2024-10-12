@@ -26,19 +26,29 @@ function ensureAuthenticated(req, res, next) {
     }
     res.redirect('/sign-in');
 }
+// Middleware to check if the user is an admin
+function ensureAdmin(req, res, next) {
+    if (req.session && req.session.role === 'admin') {
+        return next();
+    }
+    // Sending a JSON response to be handled on the client side
+    res.status(403).json({ message: 'Access Denied. Admins only.' });
+}
+
+// Make student name and role available in EJS templates
 app.use((req, res, next) => {
-    res.locals.student = req.session.student_name; // Make student name available in EJS templates
+    res.locals.student = req.session.student_name;
+    res.locals.role = req.session.role; // Make role available in EJS templates
     next();
 });
 
-
-// Define protected routes
-app.use('/modules/:moduleId/materials', ensureAuthenticated);
-app.use('/modules/:moduleId/quizzes', ensureAuthenticated);
-app.use('/exercises/:moduleId', ensureAuthenticated);
-app.use('/quiz', ensureAuthenticated);
-app.use('/quiz/start', ensureAuthenticated);
-app.use('/next', ensureAuthenticated);
+// Define routes that require admin access
+app.use('/modules/:moduleId/materials', ensureAuthenticated, ensureAdmin);
+app.use('/modules/:moduleId/quizzes', ensureAuthenticated, ensureAdmin);
+app.use('/exercises/:moduleId', ensureAuthenticated, ensureAdmin);
+app.use('/quiz', ensureAuthenticated, ensureAdmin);
+app.use('/quiz/start', ensureAuthenticated, ensureAdmin);
+app.use('/next', ensureAuthenticated, ensureAdmin);
 
 // Define fixed quiz parameters
 const quizParams = {
@@ -611,7 +621,7 @@ app.get('/module-details/:moduleId', async (req, res) => {
 
 
 // Serve the material link if authenticated
-app.get('/materials/:materialId', ensureAuthenticated, async (req, res) => {
+app.get('/materials/:materialId', ensureAuthenticated, ensureAdmin, async (req, res) => {
     try {
         const materialId = req.params.materialId;
         const pool = await sql.connect(config);
