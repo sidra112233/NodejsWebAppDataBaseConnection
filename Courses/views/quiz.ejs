@@ -8,7 +8,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #87ceeb, #b0e0e6);
+    background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -100,11 +100,12 @@
         }
 
         .timer {
+        flex:1;
             text-align: right;
         }
 
         .progress-container {
-            width: 70%;
+            width: 60%;
             background-color: #e0e0e0;
             border-radius: 5px;
             overflow: hidden;
@@ -113,15 +114,15 @@
 
         .progress-bar {
             height: 20px;
-            background-color: #007bff;
+            background-color: #0056b3;
             width: 0;
             transition: width 0.3s ease;
         }
 
         .quiz-container {
             display: flex;
-            width: 90vw;
-            height: 80vh;
+            width: 85vw;
+            height: 75vh;
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -143,7 +144,7 @@
         .question-container {
             border-right: 2px solid #ddd;
             background-color: #f9f9f9;
-            font-size: 1.7rem;
+            font-size: 1.4rem;
             color: #333;
             display: flex;
             align-items: center;
@@ -153,14 +154,14 @@
 
         .options-container {
             background-color: #f4f4f4;
-            font-size: 1.7rem;
+            font-size: 1.4rem;
             display: grid;
             grid-template-columns: 1fr;
             gap: 0;
         }
 
         .options-container label {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: #555;
             display: flex;
             align-items: center;
@@ -182,12 +183,12 @@
             position: relative;
             display: flex;
             align-items: center;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
 
         .options-container .custom-radio input[type="radio"] + span {
             position: relative;
-            padding-left: 2rem;
+            padding-left: 2.5rem;
             cursor: pointer;
         }
 
@@ -268,7 +269,7 @@
                 clearInterval(interval);
                 let restart = confirm("Time is up! Do you want to restart the quiz?");
                 if (restart) {
-                    window.location.href = '/quiz/restart';
+                    window.location.href = '/quiz/start/${quiz.quiz_id}${quiz.quiz_title}'
                 } else {
                     window.location.href = '/dashboard';
                 }
@@ -286,7 +287,7 @@
     function updateProgress() {
         const currentIndex = <%= currentQuestionIndex %>;
         const totalQuestions = <%= totalQuestions %>;
-        const progressPercentage = ((currentIndex + 1) / totalQuestions) * 100;
+        const progressPercentage = ((currentIndex ) / totalQuestions) * 100;
         document.querySelector('.progress-bar').style.width = progressPercentage + '%';
     }
 

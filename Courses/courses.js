@@ -846,15 +846,7 @@ app.get('/quiz', async (req, res) => {
     }
 });
 // Restart the quiz route
-app.get('/quiz/restart', (req, res) => {
-    // Reset session data for the quiz
-    req.session.startTime = new Date().getTime(); // Reset start time
-    req.session.currentQuestionIndex = 0; // Restart from the first question
-    req.session.scores = []; // Clear previous scores
 
-    // Redirect to the first question of the quiz
-    res.redirect('/quiz/start');
-});
 // Helper function to shuffle an array (Fisher-Yates shuffle)
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
