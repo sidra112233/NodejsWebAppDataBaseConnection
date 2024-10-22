@@ -111,19 +111,15 @@
 </head>
 <body>
     <div class="container">
-        <h2>Enroll in Course</h2>
-        <form id="enroll-form" action="/enroll" method="post">
-            <input type="hidden" name="course_id" id="course_id" value="<%= courseId %>">
-            
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required>
-            
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
-            
-            <button type="submit">Confirm Enrollment</button>
-            <button type="button" class="cancel-btn" onclick="window.location.href='/dashboard'">Cancel</button>
-        </form>
+    <h3><%= course.course_name %></h3>
+    <p><%= course.description %></p>
+    <!-- Enroll button triggers the POST request to enroll the user -->
+    <form action="/enroll" method="POST">
+        <input type="hidden" name="course_id" value="<%= course.course_id %>" />
+        <button type="submit">Enroll</button>
+    </form>
+</div>
+
     </div>
 </body>
 </html>

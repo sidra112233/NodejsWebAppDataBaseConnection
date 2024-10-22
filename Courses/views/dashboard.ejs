@@ -467,7 +467,11 @@
                     <div class="card">
                         <h3><%= course.course_name %></h3>
                         <p><%= course.description %></p>
-                        <button onclick="showEnrollForm(<%= course.course_id %>)">Enroll</button>
+<!-- Enroll button triggers the POST request to enroll the user -->
+                    <form action="/enroll" method="POST">
+                        <input type="hidden" name="course_id" value="<%= course.course_id %>">
+                        <button type="submit">Enroll</button>
+                    </form>
                     </div>
                 <% }); %>
             </div>

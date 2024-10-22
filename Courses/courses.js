@@ -437,12 +437,7 @@ app.get('/sign-out', (req, res) => {
         res.redirect('/');
     });
 });
-
-app.get('/enroll', (req, res) => {
-    const courseId = req.query.course_id;
-    res.render('enroll', { courseId });
-});
-// Add this route to your `courses.js` or relevant file
+// POST route for enrolling in a course
 app.post('/enroll', async (req, res) => {
     const { course_id } = req.body;
     const student_id = req.session.student_id;
@@ -461,7 +456,9 @@ app.post('/enroll', async (req, res) => {
             .input('student_id', sql.Int, student_id)
             .input('course_id', sql.Int, course_id)
             .query(query);
-        res.redirect('/dashboard');
+
+        // After successful enrollment, redirect to the modules page of the course
+        res.redirect(`/dashboard`);
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             res.status(400).send('You are already enrolled in this course.');
@@ -471,6 +468,7 @@ app.post('/enroll', async (req, res) => {
         }
     }
 });
+
 app.get('/dashboard', ensureAuthenticated, async (req, res) => {
     const student_id = req.session.student_id;
 
