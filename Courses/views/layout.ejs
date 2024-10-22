@@ -156,6 +156,7 @@ margin-top:0;
 }
 
 .module-list {
+    display: none;
     padding-left: 20px;
 }
 
@@ -180,8 +181,8 @@ h2, h3,h4 {
     font-weight: 600;
     text-transform: uppercase;
     position: relative;
-    margin-bottom: 10px;
-    text-align: centre; /* Align to the left */
+    margin-bottom: 20px;
+    text-align: left; /* Align to the left */
     z-index: 1; /* Ensure text stays on top */
 }
 
@@ -218,7 +219,7 @@ h2:hover::after, h3:hover::after {
 
 #material-list h3, #quiz-list h3, #exercise-list h3 {
     color: white; /* Darker blue */
-    font-size: 1.8em;
+    font-size: 1.9em;
     text-align: center; /* Center the text */
 }
 
@@ -299,104 +300,98 @@ h2:hover::after, h3:hover::after {
         const exerciseList =document.getElementById('exercise-list');
         const sidebar = document.getElementById('sidebar');
         
-        courseList.addEventListener('click', async (event) => {
-            if (event.target && event.target.classList.contains('course-link')) {
-                event.preventDefault();
-                const courseId = event.target.dataset.courseId;
+    const prevButton = document.getElementById('prev-module');
+    const nextButton = document.getElementById('next-module');
+            courseList.addEventListener('click', async (event) => {
+                if (event.target && event.target.classList.contains('course-link')) {
+                    event.preventDefault();
+                    const courseId = event.target.dataset.courseId;
 
-                // Hide all module lists and remove module list content from other courses
-                document.querySelectorAll('.module-list').forEach(moduleList => {
-                    if (moduleList.dataset.courseId !== courseId) {
-                        moduleList.style.display = 'none';
-                    }
-                });
-
-                const selectedModuleList = document.querySelector(`.module-list[data-course-id="${courseId}"]`);
-
-                try {
-                    // Show loading message
-                    courseNameElement.textContent = 'Loading...';
-                    courseDescriptionElement.textContent = '';
-
-                    // Fetch modules for the selected course
-                    const response = await fetch(`/courses/${courseId}/modules`);
-                    const data = await response.json();
-
-                    // Update course content
-                    courseNameElement.textContent = data.courseName || 'Course Name';
-                    courseDescriptionElement.textContent = data.courseDescription || 'Course Description';
-
-                    // Show or update the module list for the selected course
-                    if (selectedModuleList) {
-                        selectedModuleList.style.display = 'block';
-                        const moduleItemsElement = selectedModuleList.querySelector('.module-items');
-                        moduleItemsElement.innerHTML = '';
-                        data.modules.forEach(module => {
-                            moduleItemsElement.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
-                        });
-                    }
-
-                    // Automatically load the first module
-                    if (data.modules.length > 0) {
-                        const firstModuleId = data.modules[0].module_id;
-                        const firstModuleLink = document.querySelector(`.module-link[data-module-id="${firstModuleId}"]`);
-                        firstModuleLink.click(); // Simulate a click on the first module
-                    }
-
-                    // Clear materials and quizzes
-                    materialList.innerHTML = '';
-                    quizList.innerHTML = '';
-                    exerciseList.innerHTML = '';
-                    moduleNameElement.textContent = '';
-                    moduleDescriptionElement.textContent = '';
-                } catch (error) {
-                    console.error('Error fetching course modules:', error);
-                    courseNameElement.textContent = 'Error loading course';
-                    courseDescriptionElement.textContent = '';
-                }
-            }
-        });
-
-        sidebar.addEventListener('click', async (event) => {
-            if (event.target && event.target.classList.contains('module-link')) {
-                const moduleId = event.target.dataset.moduleId;
-
-                try {
-                    // Show loading message
-                    moduleNameElement.textContent = 'Loading...';
-                    moduleDescriptionElement.textContent = '';
-
-                    // Fetch module details, materials, and quizzes
-                    const moduleResponse = await fetch(`/modules/${moduleId}`);
-                    const moduleData = await moduleResponse.json();
-
-                    // Update content with module and materials
-                    moduleNameElement.textContent = moduleData.module_name || 'Module Name';
-                    moduleDescriptionElement.textContent = moduleData.description || 'Module Description';
-
-                    // Update content with materials
-                    materialList.innerHTML = '<h3>Materials</h3><ul>';
-                    moduleData.materials.forEach(material => {
-                        materialList.innerHTML += `
-                            <li>
-                                <span class="material-description">${material.description}</span><br>
-                                <a href="#" class="material-link" data-material-id="${material.material_id}">${material.link}</a>
-                            </li>`;
+                    // Hide all module lists and remove module list content from other courses
+                    document.querySelectorAll('.module-list').forEach(moduleList => {
+                        if (moduleList.dataset.courseId !== courseId) {
+                            moduleList.style.display = 'none';
+                        }
                     });
-                    materialList.innerHTML += '</ul>';
 
-                    // Update content with quizzes
-                    quizList.innerHTML = '<h3>Quizzes</h3><ul>';
-                    if (moduleData.quizzes.length === 0) {
-                        quizList.innerHTML += '<li>No quizzes available.</li>';
-                    } else {
+                    const selectedModuleList = document.querySelector(`.module-list[data-course-id="${courseId}"]`);
 
-                        moduleData.quizzes.forEach(quiz => {
-                            quizList.innerHTML += `<a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a>`;
-                        });
+                    try {
+                        // Show loading message
+                        courseNameElement.textContent = 'Loading...';
+                        courseDescriptionElement.textContent = '';
+
+                        // Fetch modules for the selected course
+                        const response = await fetch(`/courses/${courseId}/modules`);
+                        const data = await response.json();
+
+                        // Update course content
+                        courseNameElement.textContent = data.courseName || 'Course Name';
+                        courseDescriptionElement.textContent = data.courseDescription || 'Course Description';
+
+                        // Show or update the module list for the selected course
+                        if (selectedModuleList) {
+                            selectedModuleList.style.display = 'block';
+                            const moduleItemsElement = selectedModuleList.querySelector('.module-items');
+                            moduleItemsElement.innerHTML = '';
+                            data.modules.forEach(module => {
+                                moduleItemsElement.innerHTML += `<li><a href="#" class="module-link" data-module-id="${module.module_id}">${module.module_name}</a></li>`;
+                            });
+                        }
+
+                        // Clear materials and quizzes
+                        materialList.innerHTML = '';
+                        quizList.innerHTML = '';
+                        moduleNameElement.textContent = '';
+                        moduleDescriptionElement.textContent = '';
+                    } catch (error) {
+                        console.error('Error fetching course modules:', error);
+                        courseNameElement.textContent = 'Error loading course';
+                        courseDescriptionElement.textContent = '';
                     }
-                    quizList.innerHTML += '</ul>';
-                    
+                }
+            });
+
+            
+            sidebar.addEventListener('click', async (event) => {
+                if (event.target && event.target.classList.contains('module-link')) {
+                    event.preventDefault();
+                    const moduleId = event.target.dataset.moduleId;
+
+                    try {
+                        // Show loading message
+                        moduleNameElement.textContent = 'Loading...';
+                        moduleDescriptionElement.textContent = '';
+
+                        // Fetch module details, materials, and quizzes
+                        const moduleResponse = await fetch(`/modules/${moduleId}`);
+                        const moduleData = await moduleResponse.json();
+
+                        // Update content with module and materials
+                        moduleNameElement.textContent = moduleData.module_name || 'Module Name';
+                        moduleDescriptionElement.textContent = moduleData.description || 'Module Description';
+
+                        // Update content with materials
+                        materialList.innerHTML = '<h3>Materials</h3><ul>';
+                        moduleData.materials.forEach(material => {
+                            materialList.innerHTML += `
+                                <li>
+                                    <span class="material-description">${material.description}</span><br>
+                                    <a href="#" class="material-link" data-material-id="${material.material_id}">${material.link}</a>
+                                </li>`;
+                        });
+                        materialList.innerHTML += '</ul>';
+
+                        // Update content with quizzes
+                        quizList.innerHTML = '<h3>Quizzes</h3><ul>';
+                        if (moduleData.quizzes.length === 0) {
+                            quizList.innerHTML += '<li>No quizzes available.</li>';
+                        } else {
+                            moduleData.quizzes.forEach(quiz => {
+                                quizList.innerHTML += `<li><a href="/quiz/start/${quiz.quiz_id}">${quiz.quiz_title}</a></li>`;
+                            });
+                        }
+                        quizList.innerHTML += '</ul>';
                     // Update content with exercises
                     exerciseList.innerHTML = '<h3>Exercises</h3><ul>';
                     if (moduleData.exercises.length === 0) {

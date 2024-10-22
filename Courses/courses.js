@@ -41,14 +41,24 @@ app.use((req, res, next) => {
     res.locals.role = req.session.role; // Make role available in EJS templates
     next();
 });
+// Admin layout routes
+app.use('/admin/modules/:moduleId/materials', ensureAuthenticated, ensureAdmin);
+app.use('/admin/modules/:moduleId/quizzes', ensureAuthenticated, ensureAdmin);
+app.use('/admin/quiz/start', ensureAuthenticated, ensureAdmin);
+app.use('/admin/exercises/:moduleId', ensureAuthenticated, ensureAdmin);
 
-// Define routes that require admin access
-app.use('/modules/:moduleId/materials', ensureAuthenticated, ensureAdmin);
-app.use('/modules/:moduleId/quizzes', ensureAuthenticated, ensureAdmin);
-app.use('/exercises/:moduleId', ensureAuthenticated, ensureAdmin);
-app.use('/quiz', ensureAuthenticated, ensureAdmin);
-app.use('/quiz/start', ensureAuthenticated, ensureAdmin);
-app.use('/next', ensureAuthenticated, ensureAdmin);
+// Student-accessible routes (require authentication, but no admin role)
+app.use('/modules/:moduleId/materials', ensureAuthenticated);
+app.use('/modules/:moduleId/quizzes', ensureAuthenticated);
+app.use('/exercises/:moduleId', ensureAuthenticated);
+app.use('/quiz', ensureAuthenticated);
+app.use('/quiz/start', ensureAuthenticated);
+app.use('/next', ensureAuthenticated); 
+// Dashboard routes (student-facing)
+app.use('/dashboard/modules/:moduleId/materials', ensureAuthenticated);
+app.use('/dashboard/modules/:moduleId/quizzes', ensureAuthenticated);
+app.use('/dashboard/quiz/start', ensureAuthenticated);
+
 
 // Define fixed quiz parameters
 const quizParams = {
@@ -263,11 +273,27 @@ app.get('/modules/:moduleId', async (req, res) => {
         res.status(500).send('Error fetching module details, materials, quizzes, or exercises');
     }
 });
-app.get('/exercises/:moduleId', async (req, res) => {
+// Admin-only route for managing exercises
+app.get('/admin/exercises/:moduleId', ensureAuthenticated, ensureAdmin, async (req, res) => {
+    const moduleId = req.params.moduleId;
+
+    try {
+        const pool = await sql.connect(config);
+        const exercisesResult = await pool.request()
+            .input('module_id', sql.Int, moduleId)
+            .query('SELECT * FROM Exercises WHERE module_id = @module_id');
+
+        res.render('exercise', { exercises: exercisesResult.recordset });
+    } catch (err) {
+        console.error('SQL error', err);
+        res.status(500).send('Server error');
+    }
+});
+// Student-accessible route for viewing exercises in the dashboard
+app.get('/exercises/:moduleId', ensureAuthenticated, async (req, res) => {
     const moduleId = req.params.moduleId; // Get the module ID from the URL parameter
 
     try {
-        // Connect to the database
         const pool = await sql.connect(config);
 
         // Log the moduleId for debugging
@@ -275,11 +301,12 @@ app.get('/exercises/:moduleId', async (req, res) => {
 
         // Query to fetch exercises for the specific module ID
         const exercisesResult = await pool.request()
-            .input('module_id', sql.Int, moduleId) // Use parameterized query to prevent SQL injection
+            .input('module_id', sql.Int, moduleId)
             .query('SELECT * FROM Exercises WHERE module_id = @module_id');
 
         // Log the result for debugging
         console.log('Exercises Result:', exercisesResult.recordset);
+
         // Render the exercise view with exercises and include a link to the dashboard
         res.render('exercise', {
             exercises: exercisesResult.recordset,
@@ -290,6 +317,7 @@ app.get('/exercises/:moduleId', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
 
 // Login and signup routes
 app.get('/sign-in', (req, res) => {
@@ -509,9 +537,12 @@ app.get('/dashboard', ensureAuthenticated, async (req, res) => {
         if (moduleId) {
             // Fetch exercises for the specific module
             const exercisesQuery = `
-                SELECT exercise_id, code_snippet
-                FROM Exercises
-                WHERE module_id = @module_id
+               SELECT e.exercise_id, e.code_snippet, e.module_id
+    FROM Exercises e
+    JOIN Modules m ON e.module_id = m.module_id
+    JOIN Enrollments en ON m.course_id = en.course_id
+    WHERE en.student_id = @student_id
+    AND e.module_id = @module_id
             `;
             const exercisesResult = await pool.request()
                 .input('module_id', sql.Int, moduleId)
@@ -577,7 +608,7 @@ app.get('/dashboard', ensureAuthenticated, async (req, res) => {
     }
 });
 
-app.get('/module-details/:moduleId', async (req, res) => {
+app.get('/module-details/:moduleId', ensureAuthenticated, async (req, res) => {
     const { moduleId } = req.params;
 
     try {
