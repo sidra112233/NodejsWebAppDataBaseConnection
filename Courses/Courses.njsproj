@@ -33,7 +33,6 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="views\dashboard.ejs" />
-    <Content Include="views\enroll.ejs" />
     <Content Include="views\exercise.ejs" />
     <Content Include="views\home.ejs" />
     <Content Include="views\layout.ejs" />
